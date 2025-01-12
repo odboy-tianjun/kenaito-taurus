@@ -23,7 +23,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import lombok.Getter;
 import lombok.Setter;
-import me.zhengjie.base.BaseEntity;
+import me.zhengjie.base.MyEntity;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -34,7 +34,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @TableName("mnt_server")
-public class Server extends BaseEntity implements Serializable {
+public class Server extends MyEntity implements Serializable {
 
     @TableId(value = "server_id", type = IdType.AUTO)
     @ApiModelProperty(value = "ID", hidden = true)

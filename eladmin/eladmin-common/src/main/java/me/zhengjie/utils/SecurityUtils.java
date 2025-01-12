@@ -91,9 +91,17 @@ public class SecurityUtils {
      */
     public static String getDataScopeType() {
         List<Long> dataScopes = getCurrentUserDataScope();
-        if(dataScopes.size() != 0){
+        if(!dataScopes.isEmpty()){
             return "";
         }
         return DataScopeEnum.ALL.getValue();
+    }
+
+    public static String safeGetCurrentUsername(){
+        try {
+            return SecurityUtils.getCurrentUsername();
+        }catch (Exception e){
+            return "system";
+        }
     }
 }

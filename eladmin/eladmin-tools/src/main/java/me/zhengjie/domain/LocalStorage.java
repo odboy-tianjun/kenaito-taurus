@@ -22,7 +22,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
-import me.zhengjie.base.BaseEntity;
+import me.zhengjie.base.MyEntity;
 import java.io.Serializable;
 
 /**
@@ -33,7 +33,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @TableName("tool_local_storage")
-public class LocalStorage extends BaseEntity implements Serializable {
+public class LocalStorage extends MyEntity implements Serializable {
 
     @TableId(value = "storage_id", type = IdType.AUTO)
     @ApiModelProperty(value = "ID", hidden = true)

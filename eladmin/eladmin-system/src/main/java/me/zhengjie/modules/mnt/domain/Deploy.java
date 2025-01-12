@@ -25,7 +25,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import lombok.Getter;
 import lombok.Setter;
-import me.zhengjie.base.BaseEntity;
+import me.zhengjie.base.MyEntity;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @TableName("mnt_deploy")
-public class Deploy extends BaseEntity implements Serializable {
+public class Deploy extends MyEntity implements Serializable {
 
 	@TableId(value = "deploy_id", type = IdType.AUTO)
 	@ApiModelProperty(value = "ID", hidden = true)

@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import me.zhengjie.base.BaseEntity;
+import me.zhengjie.base.MyEntity;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -38,7 +38,7 @@ import java.util.Set;
 @Getter
 @Setter
 @TableName("sys_user")
-public class User extends BaseEntity implements Serializable {
+public class User extends MyEntity implements Serializable {
 
     @NotNull(groups = Update.class)
     @TableId(value="user_id", type = IdType.AUTO)

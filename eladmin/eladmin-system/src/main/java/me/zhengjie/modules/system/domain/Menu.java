@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import me.zhengjie.base.BaseEntity;
+import me.zhengjie.base.MyEntity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
@@ -37,7 +37,7 @@ import java.util.Set;
 @Getter
 @Setter
 @TableName("sys_menu")
-public class Menu extends BaseEntity implements Serializable {
+public class Menu extends MyEntity implements Serializable {
 
     @NotNull(groups = {Update.class})
     @TableId(value="menu_id", type = IdType.AUTO)

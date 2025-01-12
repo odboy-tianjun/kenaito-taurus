@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.base.BaseEntity;
+import me.zhengjie.base.MyEntity;
 import me.zhengjie.constant.ElConstant;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.infra.mybatisplus.common.MpDataScope;
@@ -245,7 +245,7 @@ public class MybatisHelper {
 
     @TableName("test_domain")
     private static class TestDomain {
-        @NotNull(groups = BaseEntity.Update.class)
+        @NotNull(groups = MyEntity.Update.class)
         @TableId(value = "user_id", type = IdType.AUTO)
         private Long id;
         @TableField(value = "dept_id")

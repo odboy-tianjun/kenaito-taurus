@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import me.zhengjie.base.BaseEntity;
+import me.zhengjie.base.MyEntity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -34,7 +34,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @TableName("sys_quartz_job")
-public class QuartzJob extends BaseEntity implements Serializable {
+public class QuartzJob extends MyEntity implements Serializable {
 
     public static final String JOB_KEY = "JOB_KEY";
 

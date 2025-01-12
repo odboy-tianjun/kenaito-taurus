@@ -17,11 +17,11 @@ package me.zhengjie.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.domain.SysLog;
+import me.zhengjie.infra.exception.util.ThrowableUtil;
 import me.zhengjie.service.SysLogService;
 import me.zhengjie.utils.RequestHolder;
 import me.zhengjie.utils.SecurityUtils;
 import me.zhengjie.utils.StringUtils;
-import me.zhengjie.utils.ThrowableUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -69,7 +69,7 @@ public class LogAspect {
         SysLog sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get());
         currentTime.remove();
         HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        sysLogService.save(getUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request),joinPoint, sysLog);
+        sysLogService.save(SecurityUtils.safeGetCurrentUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request),joinPoint, sysLog);
         return result;
     }
 
@@ -85,14 +85,6 @@ public class LogAspect {
         currentTime.remove();
         sysLog.setExceptionDetail(new String(ThrowableUtil.getStackTrace(e).getBytes()));
         HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        sysLogService.save(getUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request), (ProceedingJoinPoint)joinPoint, sysLog);
-    }
-
-    public String getUsername() {
-        try {
-            return SecurityUtils.getCurrentUsername();
-        }catch (Exception e){
-            return "";
-        }
+        sysLogService.save(SecurityUtils.safeGetCurrentUsername(), StringUtils.getBrowser(request), StringUtils.getIp(request), (ProceedingJoinPoint)joinPoint, sysLog);
     }
 }

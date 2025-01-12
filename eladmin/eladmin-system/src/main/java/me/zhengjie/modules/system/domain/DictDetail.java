@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
-import me.zhengjie.base.BaseEntity;
+import me.zhengjie.base.MyEntity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -33,7 +33,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @TableName("sys_dict_detail")
-public class DictDetail extends BaseEntity implements Serializable {
+public class DictDetail extends MyEntity implements Serializable {
 
     @NotNull(groups = Update.class)
     @ApiModelProperty(value = "ID", hidden = true)
