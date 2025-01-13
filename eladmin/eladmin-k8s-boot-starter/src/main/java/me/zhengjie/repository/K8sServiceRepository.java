@@ -106,8 +106,7 @@ public class K8sServiceRepository {
             ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             String serviceName = Objects.requireNonNull(service.getMetadata()).getName();
-            // 执行验收测试, dryRun="All"
-            coreV1Api.replaceNamespacedService(serviceName, args.getNamespace(), service, null, K8sDryRunUtil.transferState(args.getDryRun()), null);
+            coreV1Api.replaceNamespacedService(serviceName, args.getNamespace(), service, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
             return service;
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();

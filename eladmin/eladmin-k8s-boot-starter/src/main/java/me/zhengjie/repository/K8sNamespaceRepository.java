@@ -8,6 +8,7 @@ import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Namespace;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import io.kubernetes.client.util.Yaml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.context.K8sClientAdmin;
@@ -98,6 +99,9 @@ public class K8sNamespaceRepository {
             log.error("根据appName获取Namespace: {}", responseBody, e);
             K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
             if (actionExceptionBody != null) {
+                if (actionExceptionBody.getReason().contains("NotFound")) {
+                    return null;
+                }
                 throw new BadRequestException("根据appName获取Namespace, 原因：" + actionExceptionBody.getReason());
             }
             throw new BadRequestException("根据appName获取Namespace");
@@ -141,6 +145,40 @@ public class K8sNamespaceRepository {
         } catch (Exception e) {
             log.error("创建namespace失败:", e);
             throw new BadRequestException("创建namespace失败");
+        }
+    }
+
+    public K8sResource.Namespace loadNamespaceFromYaml(K8sNamespace.LoadFromYamlArgs args) {
+        try {
+            ValidationUtil.validate(args);
+            V1Namespace v1Namespace = Yaml.loadAs(args.getYamlContent(), V1Namespace.class);
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            CoreV1Api coreV1Api = new CoreV1Api(apiClient);
+
+            K8sResource.Namespace localNamespace = getNamespaceByAppName(args.getClusterCode(), args.getAppName());
+            if (localNamespace == null) {
+                coreV1Api.createNamespace(v1Namespace, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            } else {
+                coreV1Api.replaceNamespace(args.getAppName(), v1Namespace, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            }
+
+            K8sResource.Namespace simpleNamespace = new K8sResource.Namespace();
+            simpleNamespace.setSpec(v1Namespace.getSpec());
+            simpleNamespace.setKind(v1Namespace.getKind());
+            simpleNamespace.setMetadata(v1Namespace.getMetadata());
+            simpleNamespace.setStatus(v1Namespace.getStatus());
+            return simpleNamespace;
+        } catch (ApiException e) {
+            String responseBody = e.getResponseBody();
+            log.error("从yml加载Namespace失败: {}", responseBody, e);
+            K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
+            if (actionExceptionBody != null) {
+                throw new BadRequestException("从yml加载Namespace失败, 原因：" + actionExceptionBody.getReason());
+            }
+            throw new BadRequestException("从yml加载Namespace失败");
+        } catch (Exception e) {
+            log.error("从yml加载Namespace失败:", e);
+            throw new BadRequestException("从yml加载Namespace失败");
         }
     }
 }

@@ -36,7 +36,7 @@ public class K8sClusterConfig extends MyLogicEntity {
     private String envCode;
 
     /**
-     * 例如: local、aliyunxx、tencentxx、huaweixx
+     * 例如: v20250113、aliyunxx、tencentxx、huaweixx
      */
     @ApiModelProperty("集群编码")
     @TableField("cluster_code")
