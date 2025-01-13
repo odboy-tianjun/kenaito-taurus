@@ -19,12 +19,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.zhengjie.modules.mnt.domain.App;
 import me.zhengjie.modules.mnt.domain.vo.AppQueryCriteria;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**

@@ -1,7 +1,6 @@
 package me.zhengjie.repository;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import io.kubernetes.client.custom.Quantity;
 import io.kubernetes.client.openapi.ApiClient;
@@ -11,15 +10,17 @@ import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Yaml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.constant.EnvEnum;
-import me.zhengjie.constant.PodStatusEnum;
+import me.zhengjie.constant.K8sPodStatusEnum;
 import me.zhengjie.context.K8sClientAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
+import me.zhengjie.model.K8sDeployment;
+import me.zhengjie.model.K8sPod;
 import me.zhengjie.model.K8sResource;
-import me.zhengjie.util.K8sResourceTool;
+import me.zhengjie.util.K8sDryRunUtil;
+import me.zhengjie.util.K8sNameUtil;
+import me.zhengjie.util.ValidationUtil;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
@@ -34,32 +35,22 @@ public class K8sDeploymentRepository {
     /**
      * 创建Deployment
      *
-     * @param envEnum     环境编码
-     * @param namespace   命名空间
-     * @param appName     应用名称
-     * @param annotations deployment注解
-     * @param image       镜像地址
-     * @param replicas    副本数量
-     * @param port        容器服务端口号
-     * @return /
+     * @param args /
      */
-    public V1Deployment createDeployment(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, Map<String, String> annotations,
-                                         @NotNull String image, @NotNull Integer replicas, @NotNull Integer port) {
+    public V1Deployment createDeployment(K8sDeployment.CreateArgs args) {
         try {
-            if (replicas == null || replicas < 0) {
-                replicas = 1;
-            }
-            Map<String, String> labels = K8sResourceTool.getLabelsMap(appName);
-            String deploymentName = K8sResourceTool.getDeploymentName(appName);
+            ValidationUtil.validate(args);
+            Map<String, String> labels = K8sNameUtil.getLabelsMap(args.getAppName());
+            String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
             // 构建deployment的yaml对象
             V1Deployment deployment = new V1DeploymentBuilder()
                     .withNewMetadata()
                     .withName(deploymentName)
-                    .withNamespace(namespace)
-                    .withAnnotations(annotations)
+                    .withNamespace(args.getNamespace())
+                    .withAnnotations(args.getAnnotations())
                     .endMetadata()
                     .withNewSpec()
-                    .withReplicas(replicas)
+                    .withReplicas(args.getReplicas())
                     .withSelector(new V1LabelSelector().matchLabels(labels))
                     .withNewTemplate()
                     .withNewMetadata()
@@ -67,17 +58,17 @@ public class K8sDeploymentRepository {
                     .endMetadata()
                     .withNewSpec()
                     .withContainers(new V1Container()
-                            .name(K8sResourceTool.getPodName(appName))
-                            .image(image)
-                            .ports(CollUtil.newArrayList(new V1ContainerPort().containerPort(port)))
+                            .name(K8sNameUtil.getPodName(args.getAppName()))
+                            .image(args.getImage())
+                            .ports(CollUtil.newArrayList(new V1ContainerPort().containerPort(args.getPort())))
                     )
                     .endSpec()
                     .endTemplate()
                     .endSpec()
                     .build();
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            return appsV1Api.createNamespacedDeployment(namespace, deployment, null, null, null);
+            return appsV1Api.createNamespacedDeployment(args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("创建Deployment失败: {}", responseBody, e);
@@ -95,25 +86,20 @@ public class K8sDeploymentRepository {
     /**
      * 变更Deployment副本数量
      *
-     * @param namespace   命名空间
-     * @param appName     应用名称
-     * @param newReplicas 新副本数量
-     * @return /
+     * @param args /
      */
-    public V1Deployment changeReplicas(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, @NotNull Integer newReplicas) {
+    public V1Deployment changeDeploymentReplicas(K8sDeployment.ChangeReplicasArgs args) {
         try {
-            if (newReplicas == null || newReplicas < 0) {
-                newReplicas = 0;
-            }
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String deploymentName = K8sResourceTool.getDeploymentName(appName);
-            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, namespace, null, null, null);
+            String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
+            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getNamespace(), "false", null, null);
             if (deployment == null || deployment.getSpec() == null) {
                 throw new BadRequestException(deploymentName + " 不存在");
             }
-            deployment.getSpec().setReplicas(newReplicas);
-            return appsV1Api.replaceNamespacedDeployment(deploymentName, namespace, deployment, null, null, null);
+            deployment.getSpec().setReplicas(args.getNewReplicas());
+            return appsV1Api.replaceNamespacedDeployment(deploymentName, args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("变更Deployment副本数量失败: {}", responseBody, e);
@@ -131,20 +117,15 @@ public class K8sDeploymentRepository {
     /**
      * 变更所有Deployment镜像地址
      *
-     * @param namespace 命名空间
-     * @param appName   应用名称
-     * @param newImage  新镜像地址
-     * @return /
+     * @param args /
      */
-    public V1Deployment changeImage(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, @NotNull String newImage) {
+    public V1Deployment changeDeploymentImage(K8sDeployment.ChangeImageArgs args) {
         try {
-            if (StrUtil.isBlank(newImage)) {
-                throw new BadRequestException("镜像地址必填");
-            }
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String deploymentName = K8sResourceTool.getDeploymentName(appName);
-            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, namespace, null, null, null);
+            String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
+            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getNamespace(), "false", null, null);
             if (deployment == null || deployment.getSpec() == null) {
                 throw new BadRequestException(deploymentName + " 不存在");
             }
@@ -154,16 +135,20 @@ public class K8sDeploymentRepository {
                 if (containers.isEmpty()) {
                     throw new BadRequestException("Pod中不包含任何容器");
                 }
-                containers.get(0).setImage(newImage);
+                containers.get(0).setImage(args.getNewImage());
             }
-            V1Deployment v1Deployment = appsV1Api.replaceNamespacedDeployment(deploymentName, namespace, deployment, null, null, null);
+            V1Deployment v1Deployment = appsV1Api.replaceNamespacedDeployment(deploymentName, args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
             // 手动删除Pod, 触发重新调度, 最佳实践是分批删除
             /// 这里手动删除的原因是：改变image路径并没有触发statefulset重建, 那只能出此下策
             /// 事实表明, 处于Pending状态的Pod, 就算添加了新的annotation, 或者label, 也不会直接生效, 从而触发pod重建
-            List<K8sResource.Pod> pods = k8sPodRepository.queryByAppName(envEnum, namespace, appName);
+            List<K8sResource.Pod> pods = k8sPodRepository.listPods(args.getClusterCode(), args.getNamespace(), args.getAppName());
             for (K8sResource.Pod pod : pods) {
-                if (PodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
-                    k8sPodRepository.rebuildPod(envEnum, namespace, pod.getName());
+                if (K8sPodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
+                    K8sPod.RebuildArgs rebuildArgs = new K8sPod.RebuildArgs();
+                    rebuildArgs.setClusterCode(args.getClusterCode());
+                    rebuildArgs.setNamespace(args.getNamespace());
+                    rebuildArgs.setPodName(pod.getName());
+                    k8sPodRepository.rebuildPod(rebuildArgs);
                 }
             }
             return v1Deployment;
@@ -182,27 +167,17 @@ public class K8sDeploymentRepository {
     }
 
     /**
-     * 变更statefulset规格
+     * 变更Deployment规格
      *
-     * @param namespace 命名空间
-     * @param appName   应用名称
-     * @param cpuNum    Cpu数值
-     * @param memoryNum Memory数值
-     * @return /
+     * @param args /
      */
-    public V1Deployment changePodSpecs(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, @NotNull Integer cpuNum,
-                                       @NotNull Integer memoryNum) {
-        if (cpuNum == null || cpuNum < 0) {
-            cpuNum = 1;
-        }
-        if (memoryNum == null || memoryNum < 0) {
-            memoryNum = 1;
-        }
+    public V1Deployment changeDeploymentSpecs(K8sDeployment.ChangePodSpecsArgs args) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String deploymentName = K8sResourceTool.getDeploymentName(appName);
-            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, namespace, null, null, null);
+            String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
+            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getNamespace(), "false", null, null);
             if (deployment == null || deployment.getSpec() == null) {
                 throw new BadRequestException(deploymentName + " 不存在");
             }
@@ -213,7 +188,7 @@ public class K8sDeploymentRepository {
                     throw new BadRequestException("Pod中不包含任何容器");
                 }
                 for (V1Container container : containers) {
-                    if (container.getName().contains(appName)) {
+                    if (container.getName().contains(args.getAppName())) {
                         V1ResourceRequirements resources = container.getResources();
                         if (resources == null) {
                             resources = new V1ResourceRequirements();
@@ -221,17 +196,21 @@ public class K8sDeploymentRepository {
                         resources
                                 .putRequestsItem("cpu", new Quantity("10m"))
                                 .putRequestsItem("memory", new Quantity("1G"))
-                                .putLimitsItem("cpu", new Quantity(String.valueOf(cpuNum)))
-                                .putLimitsItem("memory", new Quantity(memoryNum + "G"));
+                                .putLimitsItem("cpu", new Quantity(String.valueOf(args.getCpuNum())))
+                                .putLimitsItem("memory", new Quantity(args.getMemoryNum() + "G"));
                         break;
                     }
                 }
             }
-            V1Deployment v1Deployment = appsV1Api.replaceNamespacedDeployment(deploymentName, namespace, deployment, null, null, null);
-            List<K8sResource.Pod> pods = k8sPodRepository.queryByAppName(envEnum, namespace, appName);
+            V1Deployment v1Deployment = appsV1Api.replaceNamespacedDeployment(deploymentName, args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            List<K8sResource.Pod> pods = k8sPodRepository.listPods(args.getClusterCode(), args.getNamespace(), args.getAppName());
             for (K8sResource.Pod pod : pods) {
-                if (PodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
-                    k8sPodRepository.rebuildPod(envEnum, namespace, pod.getName());
+                if (K8sPodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
+                    K8sPod.RebuildArgs rebuildArgs = new K8sPod.RebuildArgs();
+                    rebuildArgs.setClusterCode(args.getClusterCode());
+                    rebuildArgs.setNamespace(args.getNamespace());
+                    rebuildArgs.setPodName(pod.getName());
+                    k8sPodRepository.rebuildPod(rebuildArgs);
                 }
             }
             return v1Deployment;
@@ -252,15 +231,14 @@ public class K8sDeploymentRepository {
     /**
      * 删除Deployment
      *
-     * @param namespace      命名空间
-     * @param deploymentName deployment名称
-     * @return /
+     * @param args /
      */
-    public V1Status remove(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String deploymentName) {
+    public V1Status deleteDeployment(K8sDeployment.DeleteArgs args) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            return appsV1Api.deleteNamespacedDeployment(deploymentName, namespace, null, null, null, null, null, null);
+            return appsV1Api.deleteNamespacedDeployment(args.getDeploymentName(), args.getNamespace(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("删除Deployment失败: {}", responseBody, e);
@@ -275,8 +253,8 @@ public class K8sDeploymentRepository {
         }
     }
 
-    public V1Deployment getDeploymentByName(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String deploymentName) {
-        ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+    public V1Deployment getDeploymentByName(@NotNull String clusterCode, @NotNull String namespace, @NotNull String deploymentName) {
+        ApiClient apiClient = k8SClientAdmin.getEnv(clusterCode);
         AppsV1Api appsV1Api = new AppsV1Api(apiClient);
         try {
             return appsV1Api.readNamespacedDeployment(deploymentName, namespace, "false", null, null);
@@ -294,14 +272,14 @@ public class K8sDeploymentRepository {
         }
     }
 
-    public V1Deployment loadFromYml(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotBlank String ymlContent) {
+    public V1Deployment loadDeploymentFromYaml(K8sDeployment.LoadFromYamlArgs args) {
         try {
-            V1Deployment deployment = Yaml.loadAs(ymlContent, V1Deployment.class);
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            V1Deployment deployment = Yaml.loadAs(args.getYamlContent(), V1Deployment.class);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String deploymentName = deployment.getMetadata().getName();
-            // 执行验收测试
-            appsV1Api.replaceNamespacedDeployment(deploymentName, namespace, deployment, "false", "All", null);
+            appsV1Api.replaceNamespacedDeployment(deploymentName, args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
             return deployment;
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();

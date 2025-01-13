@@ -23,9 +23,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.domain.SysLog;
 import me.zhengjie.mapper.SysLogMapper;
+import me.zhengjie.model.PageResult;
 import me.zhengjie.service.SysLogService;
 import me.zhengjie.domain.vo.SysLogQueryCriteria;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Service;
@@ -80,12 +82,12 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
         sysLog.setDescription(aopLog.value());
         
         sysLog.setRequestIp(ip);
-        sysLog.setAddress(StringUtils.getCityInfo(sysLog.getRequestIp()));
+        sysLog.setAddress(StringUtil.getCityInfo(sysLog.getRequestIp()));
         sysLog.setMethod(methodName);
         sysLog.setUsername(username);
         sysLog.setParams(getParameter(method, joinPoint.getArgs()));
         // 记录登录用户，隐藏密码信息
-        if(signature.getName().equals("login") && StringUtils.isNotEmpty(sysLog.getParams())){
+        if(signature.getName().equals("login") && StringUtil.isNotEmpty(sysLog.getParams())){
             JSONObject obj = JSON.parseObject(sysLog.getParams());
             sysLog.setUsername(obj.getString("username"));
             sysLog.setParams(JSON.toJSONString(Dict.create().set("username", sysLog.getUsername())));
@@ -116,7 +118,7 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
             if (requestParam != null) {
                 Map<String, Object> map = new HashMap<>(2);
                 String key = parameters[i].getName();
-                if (!StringUtils.isEmpty(requestParam.value())) {
+                if (!StringUtil.isEmpty(requestParam.value())) {
                     key = requestParam.value();
                 }
                 map.put(key, args[i]);

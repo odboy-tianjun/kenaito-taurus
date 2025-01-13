@@ -26,7 +26,7 @@ import me.zhengjie.domain.QiniuContent;
 import me.zhengjie.service.QiNiuConfigService;
 import me.zhengjie.domain.vo.QiniuQueryCriteria;
 import me.zhengjie.service.QiniuContentService;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

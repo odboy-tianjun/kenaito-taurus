@@ -20,8 +20,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.dto.OnlineUserDto;
-import me.zhengjie.utils.EncryptUtils;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.util.EncryptUtil;
+import me.zhengjie.model.PageResult;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +62,7 @@ public class OnlineController {
     public ResponseEntity<Object> deleteOnlineUser(@RequestBody Set<String> keys) throws Exception {
         for (String token : keys) {
             // 解密Key
-            token = EncryptUtils.desDecrypt(token);
+            token = EncryptUtil.desDecrypt(token);
             onlineUserService.logout(token);
         }
         return new ResponseEntity<>(HttpStatus.OK);

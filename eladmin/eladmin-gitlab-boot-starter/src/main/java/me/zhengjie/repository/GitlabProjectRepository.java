@@ -7,6 +7,7 @@ import me.zhengjie.constant.GitlabConst;
 import me.zhengjie.context.GitlabAuthRepository;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.model.GitlabProject;
+import me.zhengjie.util.ValidationUtil;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.ProjectApi;
 import org.gitlab4j.api.models.AccessLevel;
@@ -41,11 +42,9 @@ public class GitlabProjectRepository {
      * @param args /
      * @return /
      */
-    public GitlabProject.CreateResp create(GitlabProject.CreateArgs args) {
+    public GitlabProject.CreateResp createProject(GitlabProject.CreateArgs args) {
+        ValidationUtil.validate(args);
         String appName = args.getAppName();
-        if (StrUtil.isBlank(appName)) {
-            throw new BadRequestException("应用名称必填");
-        }
         String newAppName = appName.trim();
 //        字符串必须以小写字母开头。
 //        字符串中间可以包含小写字母和数字。
@@ -98,7 +97,7 @@ public class GitlabProjectRepository {
      * @param userId      用户id
      * @param accessLevel 访问级别
      */
-    public void addMember(Long projectId, Long userId, AccessLevel accessLevel) {
+    public void addProjectMember(Long projectId, Long userId, AccessLevel accessLevel) {
         try (GitLabApi client = repository.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             projectApi.addMember(projectId, userId, accessLevel);
@@ -115,11 +114,11 @@ public class GitlabProjectRepository {
      * @param userIds     用户id列表
      * @param accessLevel 访问级别
      */
-    public void batchAddMembers(Long projectId, List<Long> userIds, AccessLevel accessLevel) {
+    public void AddProjectMembers(Long projectId, List<Long> userIds, AccessLevel accessLevel) {
         if (CollUtil.isNotEmpty(userIds)) {
             for (Long userId : userIds.stream().filter(Objects::nonNull).distinct().collect(Collectors.toList())) {
                 try {
-                    this.addMember(projectId, userId, accessLevel);
+                    this.addProjectMember(projectId, userId, accessLevel);
                 } catch (Exception e) {
                     log.error("新增应用成员失败", e);
                 }
@@ -133,7 +132,7 @@ public class GitlabProjectRepository {
      * @param projectId 项目id
      * @param userId    用户id
      */
-    public void removeMember(Long projectId, Long userId) {
+    public void deleteProjectMember(Long projectId, Long userId) {
         try (GitLabApi client = repository.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             projectApi.removeMember(projectId, userId);
@@ -149,11 +148,11 @@ public class GitlabProjectRepository {
      * @param projectId 项目id
      * @param userIds   用户id列表
      */
-    public void batchRemoveMembers(Long projectId, List<Long> userIds) {
+    public void deleteProjectMembers(Long projectId, List<Long> userIds) {
         if (CollUtil.isNotEmpty(userIds)) {
             for (Long userId : userIds.stream().filter(Objects::nonNull).distinct().collect(Collectors.toList())) {
                 try {
-                    this.removeMember(projectId, userId);
+                    deleteProjectMember(projectId, userId);
                 } catch (Exception e) {
                     log.error("移除应用成员失败", e);
                 }
@@ -167,7 +166,7 @@ public class GitlabProjectRepository {
      * @param projectId /
      * @return /
      */
-    public Project getByProjectId(Long projectId) {
+    public Project getProjectById(Long projectId) {
         try (GitLabApi client = repository.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             return projectApi.getProjectsStream().filter(f -> f.getId().equals(projectId)).findFirst().orElse(null);
@@ -183,7 +182,7 @@ public class GitlabProjectRepository {
      * @param appName /
      * @return /
      */
-    public Project getByAppName(String appName) {
+    public Project getProjectByAppName(String appName) {
         try (GitLabApi client = repository.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             return projectApi.getProjectsStream().filter(f -> f.getPath().equals(appName)).findFirst().orElse(null);
@@ -199,7 +198,7 @@ public class GitlabProjectRepository {
      * @param page 当前页
      * @return /
      */
-    public List<Project> queryPageProjects(int page) {
+    public List<Project> listProjects(int page) {
         int newPage = page <= 0 ? 1 : page;
         List<Project> list = new ArrayList<>();
         try (GitLabApi client = repository.auth()) {
@@ -216,7 +215,7 @@ public class GitlabProjectRepository {
      *
      * @param projectId /
      */
-    public void deleteByProjectId(Long projectId) {
+    public void deleteById(Long projectId) {
         try (GitLabApi client = repository.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             projectApi.deleteProject(projectId);
@@ -226,11 +225,11 @@ public class GitlabProjectRepository {
         }
     }
 
-    public void batchDeleteByProjectId(List<Long> projectIds) {
+    public void deleteProjectsById(List<Long> projectIds) {
         if (CollUtil.isNotEmpty(projectIds)) {
             for (Long projectId : projectIds) {
                 try {
-                    this.deleteByProjectId(projectId);
+                    deleteById(projectId);
                 } catch (Exception e) {
                     log.error("根据projectId删除应用失败", e);
                 }
@@ -243,9 +242,9 @@ public class GitlabProjectRepository {
      *
      * @param appName /
      */
-    public void deleteByAppName(String appName) {
+    public void deleteProjectByAppName(String appName) {
         try (GitLabApi client = repository.auth()) {
-            Project localProject = this.getByAppName(appName);
+            Project localProject = getProjectByAppName(appName);
             if (localProject == null) {
                 throw new BadRequestException("应用不存在");
             }
@@ -257,11 +256,11 @@ public class GitlabProjectRepository {
         }
     }
 
-    public void batchDeleteByAppName(List<String> appNames) {
+    public void deleteProjectsByAppName(List<String> appNames) {
         if (CollUtil.isNotEmpty(appNames)) {
             for (String appName : appNames) {
                 try {
-                    this.deleteByAppName(appName);
+                    deleteProjectByAppName(appName);
                 } catch (Exception e) {
                     log.error("根据appName删除应用失败", e);
                 }
@@ -275,7 +274,7 @@ public class GitlabProjectRepository {
      * @param key 关键字
      * @return /
      */
-    public List<Project> queryPageProjectsByKey(String key) {
+    public List<Project> searchProject(String key) {
         List<Project> list = new ArrayList<>();
         try (GitLabApi client = repository.auth()) {
             ProjectApi projectApi = client.getProjectApi();

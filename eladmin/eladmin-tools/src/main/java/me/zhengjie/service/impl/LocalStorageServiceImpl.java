@@ -24,7 +24,9 @@ import me.zhengjie.domain.LocalStorage;
 import me.zhengjie.domain.vo.LocalStorageQueryCriteria;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.mapper.LocalStorageMapper;
-import me.zhengjie.utils.*;
+import me.zhengjie.model.PageResult;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import me.zhengjie.service.LocalStorageService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +71,7 @@ public class LocalStorageServiceImpl extends ServiceImpl<LocalStorageMapper, Loc
             throw new BadRequestException("上传失败");
         }
         try {
-            name = StringUtils.isBlank(name) ? FileUtil.getFileNameNoEx(multipartFile.getOriginalFilename()) : name;
+            name = StringUtil.isBlank(name) ? FileUtil.getFileNameNoEx(multipartFile.getOriginalFilename()) : name;
             LocalStorage localStorage = new LocalStorage(
                     file.getName(),
                     name,

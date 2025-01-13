@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import me.zhengjie.modules.system.domain.Job;
 import me.zhengjie.modules.system.domain.vo.JobQueryCriteria;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

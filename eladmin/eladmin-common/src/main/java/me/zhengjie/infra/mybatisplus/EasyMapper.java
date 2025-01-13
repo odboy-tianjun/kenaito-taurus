@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWra
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.domain.Pageable;
 

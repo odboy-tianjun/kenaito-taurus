@@ -23,8 +23,8 @@ import me.zhengjie.annotation.Log;
 import me.zhengjie.domain.SysLog;
 import me.zhengjie.service.SysLogService;
 import me.zhengjie.domain.vo.SysLogQueryCriteria;
-import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.SecurityUtils;
+import me.zhengjie.model.PageResult;
+import me.zhengjie.util.SecurityUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -73,7 +73,7 @@ public class SysLogController {
     @ApiOperation("用户日志查询")
     public ResponseEntity<PageResult<SysLog>> queryUserLog(SysLogQueryCriteria criteria, Page<SysLog> page){
         criteria.setLogType("INFO");
-        criteria.setUsername(SecurityUtils.getCurrentUsername());
+        criteria.setUsername(SecurityUtil.getCurrentUsername());
         return new ResponseEntity<>(sysLogService.queryAllByUser(criteria,page), HttpStatus.OK);
     }
 

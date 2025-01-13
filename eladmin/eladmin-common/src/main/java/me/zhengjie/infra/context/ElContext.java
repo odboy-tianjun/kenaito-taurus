@@ -3,7 +3,6 @@ package me.zhengjie.infra.context;
 import cn.hutool.core.util.StrUtil;
 import lombok.Data;
 import me.zhengjie.constant.ElConstant;
-import me.zhengjie.utils.SpringBeanHolder;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

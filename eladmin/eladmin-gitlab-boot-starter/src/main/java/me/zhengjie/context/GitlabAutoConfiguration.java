@@ -5,6 +5,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * gitlab支持
+ *
+ * @author odboy
+ * @date 2025-01-13
+ */
 @Configuration
 @EnableConfigurationProperties(GitlabProperties.class)
 @ConditionalOnClass(GitlabAuthRepository.class)

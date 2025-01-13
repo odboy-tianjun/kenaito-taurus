@@ -24,7 +24,7 @@ import me.zhengjie.domain.vo.EmailVo;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.mapper.EmailConfigMapper;
 import me.zhengjie.service.EmailService;
-import me.zhengjie.utils.EncryptUtils;
+import me.zhengjie.util.EncryptUtil;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -47,7 +47,7 @@ public class EmailServiceImpl extends ServiceImpl<EmailConfigMapper, EmailConfig
         emailConfig.setId(1L);
         if(!emailConfig.getPass().equals(old.getPass())){
             // 对称加密
-            emailConfig.setPass(EncryptUtils.desEncrypt(emailConfig.getPass()));
+            emailConfig.setPass(EncryptUtil.desEncrypt(emailConfig.getPass()));
         }
         saveOrUpdate(emailConfig);
         return emailConfig;
@@ -76,7 +76,7 @@ public class EmailServiceImpl extends ServiceImpl<EmailConfigMapper, EmailConfig
         account.setAuth(true);
         try {
             // 对称解密
-            account.setPass(EncryptUtils.desDecrypt(emailConfig.getPass()));
+            account.setPass(EncryptUtil.desDecrypt(emailConfig.getPass()));
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }

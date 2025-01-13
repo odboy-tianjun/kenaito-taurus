@@ -19,7 +19,7 @@ import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.infra.mybatisplus.common.MpDataScope;
 import me.zhengjie.infra.mybatisplus.common.MpFilterUser;
 import me.zhengjie.infra.mybatisplus.common.MpQuery;
-import me.zhengjie.utils.SecurityUtils;
+import me.zhengjie.util.SecurityUtil;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -48,10 +48,10 @@ public class MybatisHelper {
         MpDataScope mds = clazz.getAnnotation(MpDataScope.class);
         if (mds != null) {
             // 管理员放行
-            if (!ElConstant.ADMIN.equals(SecurityUtils.getCurrentUsername())) {
-                // List<Long> dataScopes = dataService.getDeptIds(userService.findByName(SecurityUtils.getCurrentUsername()));
+            if (!ElConstant.ADMIN.equals(SecurityUtil.getCurrentUsername())) {
+                // List<Long> dataScopes = dataService.getDeptIds(userService.findByName(SecurityUtil.getCurrentUsername()));
                 // 获取数据权限
-                List<Long> dataScopes = SecurityUtils.getCurrentUserDataScope();
+                List<Long> dataScopes = SecurityUtil.getCurrentUserDataScope();
                 if (CollUtil.isEmpty(dataScopes)) {
                     // 无权限
                     dataScopes.add(-100L);
@@ -85,7 +85,7 @@ public class MybatisHelper {
                     if (filterUser != null) {
                         String currentUsername;
                         try {
-                            currentUsername = SecurityUtils.getCurrentUsername();
+                            currentUsername = SecurityUtil.getCurrentUsername();
                             if (ElConstant.ADMIN.equals(currentUsername)) {
                                 continue;
                             }

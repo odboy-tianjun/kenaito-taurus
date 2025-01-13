@@ -21,14 +21,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.infra.exception.BadRequestException;
+import me.zhengjie.model.PageResult;
 import me.zhengjie.modules.quartz.domain.QuartzJob;
 import me.zhengjie.modules.quartz.domain.QuartzLog;
 import me.zhengjie.modules.quartz.mapper.QuartzJobMapper;
 import me.zhengjie.modules.quartz.mapper.QuartzLogMapper;
 import me.zhengjie.modules.quartz.service.QuartzJobService;
 import me.zhengjie.modules.quartz.domain.vo.QuartzJobQueryCriteria;
-import me.zhengjie.modules.quartz.utils.QuartzManage;
-import me.zhengjie.utils.*;
+import me.zhengjie.modules.quartz.util.QuartzManage;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import org.quartz.CronExpression;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -48,7 +50,7 @@ public class QuartzJobServiceImpl extends ServiceImpl<QuartzJobMapper, QuartzJob
     private final QuartzJobMapper quartzJobMapper;
     private final QuartzLogMapper quartzLogMapper;
     private final QuartzManage quartzManage;
-    private final RedisUtils redisUtils;
+    private final RedisUtil redisUtil;
 
     @Override
     public PageResult<QuartzJob> queryAll(QuartzJobQueryCriteria criteria, Page<Object> page){
@@ -86,7 +88,7 @@ public class QuartzJobServiceImpl extends ServiceImpl<QuartzJobMapper, QuartzJob
         if (!CronExpression.isValidExpression(resources.getCronExpression())){
             throw new BadRequestException("cron表达式格式错误");
         }
-        if(StringUtils.isNotBlank(resources.getSubTask())){
+        if(StringUtil.isNotBlank(resources.getSubTask())){
             List<String> tasks = Arrays.asList(resources.getSubTask().split("[,，]"));
             if (tasks.contains(resources.getId().toString())) {
                 throw new BadRequestException("子任务中不能添加当前任务ID");
@@ -140,14 +142,14 @@ public class QuartzJobServiceImpl extends ServiceImpl<QuartzJobMapper, QuartzJob
             // 执行任务
             execution(quartzJob);
             // 获取执行状态，如果执行失败则停止后面的子任务执行
-            Boolean result = redisUtils.get(uuid, Boolean.class);
+            Boolean result = redisUtil.get(uuid, Boolean.class);
             while (result == null) {
                 // 休眠5秒，再次获取子任务执行情况
                 Thread.sleep(5000);
-                result = redisUtils.get(uuid, Boolean.class);
+                result = redisUtil.get(uuid, Boolean.class);
             }
             if(!result){
-                redisUtils.del(uuid);
+                redisUtil.del(uuid);
                 break;
             }
         }

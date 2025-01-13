@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.infra.security.RsaProperties;
+import me.zhengjie.model.PageResult;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.service.DataService;
@@ -32,7 +33,8 @@ import me.zhengjie.modules.system.service.DeptService;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.domain.vo.UserQueryCriteria;
 import me.zhengjie.modules.system.service.VerifyService;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import me.zhengjie.modules.system.service.UserService;
 import me.zhengjie.constant.CodeEnum;
 import org.springframework.http.HttpStatus;
@@ -85,7 +87,7 @@ public class UserController {
             criteria.getDeptIds().addAll(deptService.getDeptChildren(data));
         }
         // 数据权限
-        List<Long> dataScopes = dataService.getDeptIds(userService.findByName(SecurityUtils.getCurrentUsername()));
+        List<Long> dataScopes = dataService.getDeptIds(userService.findByName(SecurityUtil.getCurrentUsername()));
         // criteria.getDeptIds() 不为空并且数据权限不为空则取交集
         if (!CollectionUtils.isEmpty(criteria.getDeptIds()) && !CollectionUtils.isEmpty(dataScopes)){
             // 取交集
@@ -127,7 +129,7 @@ public class UserController {
     @ApiOperation("修改用户：个人中心")
     @PutMapping(value = "center")
     public ResponseEntity<Object> centerUser(@Validated(User.Update.class) @RequestBody User resources){
-        if(!resources.getId().equals(SecurityUtils.getCurrentUserId())){
+        if(!resources.getId().equals(SecurityUtil.getCurrentUserId())){
             throw new BadRequestException("不能修改他人资料");
         }
         userService.updateCenter(resources);
@@ -140,7 +142,7 @@ public class UserController {
     @PreAuthorize("@el.check('user:del')")
     public ResponseEntity<Object> deleteUser(@RequestBody Set<Long> ids){
         for (Long id : ids) {
-            Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(Role::getLevel).collect(Collectors.toList()));
+            Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtil.getCurrentUserId()).stream().map(Role::getLevel).collect(Collectors.toList()));
             Integer optLevel =  Collections.min(roleService.findByUsersId(id).stream().map(Role::getLevel).collect(Collectors.toList()));
             if (currentLevel > optLevel) {
                 throw new BadRequestException("角色权限不足，不能删除：" + userService.findById(id).getUsername());
@@ -153,9 +155,9 @@ public class UserController {
     @ApiOperation("修改密码")
     @PostMapping(value = "/updatePass")
     public ResponseEntity<Object> updateUserPass(@RequestBody UserPassVo passVo) throws Exception {
-        String oldPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getOldPass());
-        String newPass = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,passVo.getNewPass());
-        User user = userService.findByName(SecurityUtils.getCurrentUsername());
+        String oldPass = RsaUtil.decryptByPrivateKey(RsaProperties.privateKey,passVo.getOldPass());
+        String newPass = RsaUtil.decryptByPrivateKey(RsaProperties.privateKey,passVo.getNewPass());
+        User user = userService.findByName(SecurityUtil.getCurrentUsername());
         if(!passwordEncoder.matches(oldPass, user.getPassword())){
             throw new BadRequestException("修改失败，旧密码错误");
         }
@@ -184,8 +186,8 @@ public class UserController {
     @ApiOperation("修改邮箱")
     @PostMapping(value = "/updateEmail/{code}")
     public ResponseEntity<Object> updateUserEmail(@PathVariable String code, @RequestBody User resources) throws Exception {
-        String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey,resources.getPassword());
-        User user = userService.findByName(SecurityUtils.getCurrentUsername());
+        String password = RsaUtil.decryptByPrivateKey(RsaProperties.privateKey,resources.getPassword());
+        User user = userService.findByName(SecurityUtil.getCurrentUsername());
         if(!passwordEncoder.matches(password, user.getPassword())){
             throw new BadRequestException("密码错误");
         }
@@ -199,7 +201,7 @@ public class UserController {
      * @param resources /
      */
     private void checkLevel(User resources) {
-        Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(Role::getLevel).collect(Collectors.toList()));
+        Integer currentLevel =  Collections.min(roleService.findByUsersId(SecurityUtil.getCurrentUserId()).stream().map(Role::getLevel).collect(Collectors.toList()));
         Integer optLevel = roleService.findByRoles(resources.getRoles());
         if (currentLevel > optLevel) {
             throw new BadRequestException("角色权限不足");

@@ -23,7 +23,7 @@ import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.mnt.domain.App;
 import me.zhengjie.modules.mnt.service.AppService;
 import me.zhengjie.modules.mnt.domain.vo.AppQueryCriteria;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

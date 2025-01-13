@@ -19,7 +19,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.utils.CloseUtil;
+import me.zhengjie.util.CloseUtil;
 import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.File;

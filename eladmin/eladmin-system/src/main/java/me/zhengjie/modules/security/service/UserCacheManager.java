@@ -16,10 +16,10 @@
 package me.zhengjie.modules.security.service;
 
 import cn.hutool.core.util.RandomUtil;
-import me.zhengjie.modules.security.config.bean.LoginProperties;
+import me.zhengjie.modules.security.config.LoginProperties;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
-import me.zhengjie.utils.RedisUtils;
-import me.zhengjie.utils.StringUtils;
+import me.zhengjie.util.RedisUtil;
+import me.zhengjie.util.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ import javax.annotation.Resource;
 public class UserCacheManager {
 
     @Resource
-    private RedisUtils redisUtils;
+    private RedisUtil redisUtil;
     @Value("${login.user-cache.idle-time}")
     private long idleTime;
 
@@ -44,9 +44,9 @@ public class UserCacheManager {
      * @return JwtUserDto
      */
     public JwtUserDto getUserCache(String userName) {
-        if (StringUtils.isNotEmpty(userName)) {
+        if (StringUtil.isNotEmpty(userName)) {
             // 获取数据
-            return redisUtils.get(LoginProperties.cacheKey + userName, JwtUserDto.class);
+            return redisUtil.get(LoginProperties.cacheKey + userName, JwtUserDto.class);
         }
         return null;
     }
@@ -57,10 +57,10 @@ public class UserCacheManager {
      */
     @Async
     public void addUserCache(String userName, JwtUserDto user) {
-        if (StringUtils.isNotEmpty(userName)) {
+        if (StringUtil.isNotEmpty(userName)) {
             // 添加数据, 避免数据同时过期
             long time = idleTime + RandomUtil.randomInt(900, 1800);
-            redisUtils.set(LoginProperties.cacheKey + userName, user, time);
+            redisUtil.set(LoginProperties.cacheKey + userName, user, time);
         }
     }
 
@@ -71,9 +71,9 @@ public class UserCacheManager {
      */
     @Async
     public void cleanUserCache(String userName) {
-        if (StringUtils.isNotEmpty(userName)) {
+        if (StringUtil.isNotEmpty(userName)) {
             // 清除数据
-            redisUtils.del(LoginProperties.cacheKey + userName);
+            redisUtil.del(LoginProperties.cacheKey + userName);
         }
     }
 }

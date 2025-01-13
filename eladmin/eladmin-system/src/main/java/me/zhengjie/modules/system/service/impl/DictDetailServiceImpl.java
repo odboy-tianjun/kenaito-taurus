@@ -18,11 +18,14 @@ package me.zhengjie.modules.system.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.infra.context.CacheKey;
+import me.zhengjie.model.PageResult;
 import me.zhengjie.modules.system.domain.Dict;
 import me.zhengjie.modules.system.domain.DictDetail;
 import me.zhengjie.modules.system.mapper.DictMapper;
 import me.zhengjie.modules.system.domain.vo.DictDetailQueryCriteria;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import me.zhengjie.modules.system.mapper.DictDetailMapper;
 import me.zhengjie.modules.system.service.DictDetailService;
 import org.springframework.cache.annotation.CacheConfig;
@@ -42,7 +45,7 @@ public class DictDetailServiceImpl extends ServiceImpl<DictDetailMapper, DictDet
 
     private final DictMapper dictMapper;
     private final DictDetailMapper dictDetailMapper;
-    private final RedisUtils redisUtils;
+    private final RedisUtil redisUtil;
 
     @Override
     public PageResult<DictDetail> queryAll(DictDetailQueryCriteria criteria, Page<Object> page) {
@@ -86,6 +89,6 @@ public class DictDetailServiceImpl extends ServiceImpl<DictDetailMapper, DictDet
 
     public void delCaches(DictDetail dictDetail){
         Dict dict = dictMapper.selectById(dictDetail.getDictId());
-        redisUtils.del(CacheKey.DICT_NAME + dict.getName());
+        redisUtil.del(CacheKey.DICT_NAME + dict.getName());
     }
 }

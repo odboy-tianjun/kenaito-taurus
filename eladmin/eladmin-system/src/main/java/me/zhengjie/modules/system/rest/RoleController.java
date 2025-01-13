@@ -25,8 +25,8 @@ import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.domain.vo.RoleQueryCriteria;
-import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.SecurityUtils;
+import me.zhengjie.model.PageResult;
+import me.zhengjie.util.SecurityUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -141,7 +141,7 @@ public class RoleController {
      * @return /
      */
     private int getLevels(Integer level){
-        List<Integer> levels = roleService.findByUsersId(SecurityUtils.getCurrentUserId()).stream().map(Role::getLevel).collect(Collectors.toList());
+        List<Integer> levels = roleService.findByUsersId(SecurityUtil.getCurrentUserId()).stream().map(Role::getLevel).collect(Collectors.toList());
         int min = Collections.min(levels);
         if(level != null){
             if(level < min){

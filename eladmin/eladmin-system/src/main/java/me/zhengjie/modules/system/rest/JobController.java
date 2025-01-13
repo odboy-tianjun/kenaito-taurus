@@ -24,7 +24,7 @@ import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Job;
 import me.zhengjie.modules.system.service.JobService;
 import me.zhengjie.modules.system.domain.vo.JobQueryCriteria;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

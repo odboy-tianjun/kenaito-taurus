@@ -10,16 +10,14 @@ import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Yaml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.constant.EnvEnum;
 import me.zhengjie.context.K8sClientAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
+import me.zhengjie.model.K8sIngress;
 import me.zhengjie.model.K8sResource;
-import me.zhengjie.util.K8sResourceTool;
+import me.zhengjie.util.K8sDryRunUtil;
+import me.zhengjie.util.K8sNameUtil;
+import me.zhengjie.util.ValidationUtil;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.Map;
 
 /**
  * Kubernetes Ingress Repository
@@ -36,44 +34,36 @@ public class K8sIngressRepository {
     /**
      * 创建k8s V1Ingress
      *
-     * @param namespace   命名空间
-     * @param appName     应用名称
-     * @param annotations ingress注解
-     * @param path        匹配的路径
-     * @param hostname    绑定的域名
-     * @param serviceName 路由到的服务名称
-     * @param servicePort 路由到的服务端口
-     * @return /
+     * @param args /
      */
-    public V1Ingress create(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, Map<String, String> annotations,
-                            @NotNull String path, String hostname, @NotNull String serviceName,
-                            @NotNull Integer servicePort) {
-        String ingressName = K8sResourceTool.getIngressName(appName);
-        // 构建ingress的yaml对象
-        V1Ingress ingress = new V1IngressBuilder()
-                .withNewMetadata()
-                .withName(ingressName)
-                .withNewNamespace(namespace)
-                .withAnnotations(annotations)
-                .endMetadata()
-                .withNewSpec()
-                .addNewRule()
-                .withHost(hostname)
-                .withHttp(new V1HTTPIngressRuleValueBuilder().addToPaths(new V1HTTPIngressPathBuilder()
-                        .withPath(path)
-                        .withPathType("ImplementationSpecific")
-                        .withBackend(new V1IngressBackendBuilder()
-                                .withService(new V1IngressServiceBackendBuilder()
-                                        .withName(serviceName)
-                                        .withPort(new V1ServiceBackendPortBuilder()
-                                                .withNumber(servicePort).build()).build()).build()).build()).build())
-                .endRule()
-                .endSpec()
-                .build();
-        ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
-        NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
+    public V1Ingress createIngress(K8sIngress.CreateArgs args) {
         try {
-            return networkingV1Api.createNamespacedIngress(namespace, ingress, null, null, null);
+            ValidationUtil.validate(args);
+            String ingressName = K8sNameUtil.getIngressName(args.getAppName());
+            // 构建ingress的yaml对象
+            V1Ingress ingress = new V1IngressBuilder()
+                    .withNewMetadata()
+                    .withName(ingressName)
+                    .withNewNamespace(args.getNamespace())
+                    .withAnnotations(args.getAnnotations())
+                    .endMetadata()
+                    .withNewSpec()
+                    .addNewRule()
+                    .withHost(args.getHostname())
+                    .withHttp(new V1HTTPIngressRuleValueBuilder().addToPaths(new V1HTTPIngressPathBuilder()
+                            .withPath(args.getPath())
+                            .withPathType("ImplementationSpecific")
+                            .withBackend(new V1IngressBackendBuilder()
+                                    .withService(new V1IngressServiceBackendBuilder()
+                                            .withName(args.getServiceName())
+                                            .withPort(new V1ServiceBackendPortBuilder()
+                                                    .withNumber(args.getServicePort()).build()).build()).build()).build()).build())
+                    .endRule()
+                    .endSpec()
+                    .build();
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
+            return networkingV1Api.createNamespacedIngress(args.getNamespace(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("创建Ingress失败: {}", responseBody, e);
@@ -91,39 +81,33 @@ public class K8sIngressRepository {
     /**
      * 创建k8s ExtensionIngress
      *
-     * @param namespace   命名空间
-     * @param appName     应用名称
-     * @param annotations ingress注解
-     * @param path        匹配的路径
-     * @param serviceName 路由到的服务名称
-     * @param servicePort 路由到的服务端口
-     * @return /
+     * @param args /
      */
-    public ExtensionsV1beta1Ingress createExtension(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName,
-                                                    Map<String, String> annotations, @NotNull String path,
-                                                    @NotNull String serviceName, @NotNull Integer servicePort) {
-        String ingressName = "inge-" + appName;
-        // 构建ingress的yaml对象
-        ExtensionsV1beta1Ingress ingress = new ExtensionsV1beta1IngressBuilder()
-                .withNewMetadata()
-                .withName(ingressName)
-                .withNamespace(namespace)
-                .withAnnotations(annotations)
-                .endMetadata()
-                .withNewSpec()
-                .addNewRule()
-                .withHttp(new ExtensionsV1beta1HTTPIngressRuleValueBuilder().addToPaths(new ExtensionsV1beta1HTTPIngressPathBuilder()
-                        .withPath(path)
-                        .withBackend(new ExtensionsV1beta1IngressBackendBuilder()
-                                .withServiceName(serviceName)
-                                .withServicePort(new IntOrString(servicePort)).build()).build()).build())
-                .endRule()
-                .endSpec()
-                .build();
-        ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
-        ExtensionsV1beta1Api networkingV1Api = new ExtensionsV1beta1Api(apiClient);
+    public ExtensionsV1beta1Ingress createIngressExtension(K8sIngress.CreateArgs args) {
         try {
-            return networkingV1Api.createNamespacedIngress(namespace, ingress, null, null, null);
+            ValidationUtil.validate(args);
+            String ingressName = "inge-" + args.getAppName();
+            // 构建ingress的yaml对象
+            ExtensionsV1beta1Ingress ingress = new ExtensionsV1beta1IngressBuilder()
+                    .withNewMetadata()
+                    .withName(ingressName)
+                    .withNamespace(args.getNamespace())
+                    .withAnnotations(args.getAnnotations())
+                    .endMetadata()
+                    .withNewSpec()
+                    .addNewRule()
+                    .withHost(args.getHostname())
+                    .withHttp(new ExtensionsV1beta1HTTPIngressRuleValueBuilder().addToPaths(new ExtensionsV1beta1HTTPIngressPathBuilder()
+                            .withPath(args.getPath())
+                            .withBackend(new ExtensionsV1beta1IngressBackendBuilder()
+                                    .withServiceName(args.getServiceName())
+                                    .withServicePort(new IntOrString(args.getServicePort())).build()).build()).build())
+                    .endRule()
+                    .endSpec()
+                    .build();
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ExtensionsV1beta1Api networkingV1Api = new ExtensionsV1beta1Api(apiClient);
+            return networkingV1Api.createNamespacedIngress(args.getNamespace(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("创建Ingress失败: {}", responseBody, e);
@@ -141,14 +125,14 @@ public class K8sIngressRepository {
     /**
      * 删除Ingress
      *
-     * @param namespace 命名空间
-     * @param appName   应用名称
+     * @param args /
      */
-    public void remove(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName) {
-        ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
-        NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
+    public void deleteIngress(K8sIngress.DeleteArgs args) {
         try {
-            networkingV1Api.deleteNamespacedIngress(K8sResourceTool.getIngressName(appName), namespace, null, null, null, null, null, null);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
+            networkingV1Api.deleteNamespacedIngress(K8sNameUtil.getIngressName(args.getAppName()), args.getNamespace(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("删除Ingress失败: {}", responseBody, e);
@@ -163,14 +147,19 @@ public class K8sIngressRepository {
         }
     }
 
-    public V1Ingress loadFromYml(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotBlank String ymlContent) {
+    /**
+     * 从yaml文件内容加载Ingress
+     *
+     * @param args /
+     */
+    public V1Ingress loadIngressFromYaml(K8sIngress.LoadFromYamlArgs args) {
         try {
-            V1Ingress ingress = Yaml.loadAs(ymlContent, V1Ingress.class);
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            V1Ingress ingress = Yaml.loadAs(args.getYamlContent(), V1Ingress.class);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
             String ingressName = ingress.getMetadata().getName();
-            // 执行验收测试
-            networkingV1Api.replaceNamespacedIngress(ingressName, namespace, ingress, "false", "All", null);
+            networkingV1Api.replaceNamespacedIngress(ingressName, args.getNamespace(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
             return ingress;
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();

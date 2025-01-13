@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import me.zhengjie.modules.quartz.domain.QuartzJob;
 import me.zhengjie.modules.quartz.domain.QuartzLog;
 import me.zhengjie.modules.quartz.domain.vo.QuartzJobQueryCriteria;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

@@ -18,13 +18,13 @@ package me.zhengjie.modules.security.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.security.security.TokenProvider;
-import me.zhengjie.utils.PageResult;
-import me.zhengjie.modules.security.config.bean.SecurityProperties;
+import me.zhengjie.model.PageResult;
+import me.zhengjie.modules.security.config.SecurityProperties;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.security.service.dto.OnlineUserDto;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +43,7 @@ public class OnlineUserService {
 
     private final SecurityProperties properties;
     private final TokenProvider tokenProvider;
-    private final RedisUtils redisUtils;
+    private final RedisUtil redisUtil;
 
     /**
      * 保存在线用户信息
@@ -53,17 +53,17 @@ public class OnlineUserService {
      */
     public void save(JwtUserDto jwtUserDto, String token, HttpServletRequest request){
         String dept = jwtUserDto.getUser().getDept().getName();
-        String ip = StringUtils.getIp(request);
-        String browser = StringUtils.getBrowser(request);
-        String address = StringUtils.getCityInfo(ip);
+        String ip = StringUtil.getIp(request);
+        String browser = StringUtil.getBrowser(request);
+        String address = StringUtil.getCityInfo(ip);
         OnlineUserDto onlineUserDto = null;
         try {
-            onlineUserDto = new OnlineUserDto(jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(), dept, browser , ip, address, EncryptUtils.desEncrypt(token), new Date());
+            onlineUserDto = new OnlineUserDto(jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(), dept, browser , ip, address, EncryptUtil.desEncrypt(token), new Date());
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }
         String loginKey = tokenProvider.loginKey(token);
-        redisUtils.set(loginKey, onlineUserDto, properties.getTokenValidityInSeconds(), TimeUnit.MILLISECONDS);
+        redisUtil.set(loginKey, onlineUserDto, properties.getTokenValidityInSeconds(), TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -87,12 +87,12 @@ public class OnlineUserService {
      */
     public List<OnlineUserDto> getAll(String username){
         String loginKey = properties.getOnlineKey() +
-                (StringUtils.isBlank(username) ? "" : "*" + username);
-        List<String> keys = redisUtils.scan(loginKey + "*");
+                (StringUtil.isBlank(username) ? "" : "*" + username);
+        List<String> keys = redisUtil.scan(loginKey + "*");
         Collections.reverse(keys);
         List<OnlineUserDto> onlineUserDtos = new ArrayList<>();
         for (String key : keys) {
-            onlineUserDtos.add(redisUtils.get(key, OnlineUserDto.class));
+            onlineUserDtos.add(redisUtil.get(key, OnlineUserDto.class));
         }
         onlineUserDtos.sort((o1, o2) -> o2.getLoginTime().compareTo(o1.getLoginTime()));
         return onlineUserDtos;
@@ -104,7 +104,7 @@ public class OnlineUserService {
      */
     public void logout(String token) {
         String loginKey = tokenProvider.loginKey(token);
-        redisUtils.del(loginKey);
+        redisUtil.del(loginKey);
     }
 
     /**
@@ -134,7 +134,7 @@ public class OnlineUserService {
      * @return /
      */
     public OnlineUserDto getOne(String key) {
-        return redisUtils.get(key, OnlineUserDto.class);
+        return redisUtil.get(key, OnlineUserDto.class);
     }
 
     /**
@@ -143,6 +143,6 @@ public class OnlineUserService {
      */
     public void kickOutForUsername(String username) {
         String loginKey = properties.getOnlineKey() + username + "*";
-        redisUtils.scanDel(loginKey);
+        redisUtil.scanDel(loginKey);
     }
 }

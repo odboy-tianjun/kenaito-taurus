@@ -41,8 +41,8 @@ public class GitlabRepoRepository {
      * @param ref        从什么分支创建
      * @return /
      */
-    public Branch createBranchByProjectId(Long projectId, String branchName, String ref) {
-        Project project = projectRepository.getByProjectId(projectId);
+    public Branch createRepoBranchByProjectId(Long projectId, String branchName, String ref) {
+        Project project = projectRepository.getProjectById(projectId);
         if (project == null) {
             throw new BadRequestException("创建分支失败, 项目不存在");
         }
@@ -66,8 +66,8 @@ public class GitlabRepoRepository {
      * @param ref        从什么分支创建
      * @return /
      */
-    public Branch createBranchByAppName(String appName, String branchName, String ref) {
-        Project project = projectRepository.getByAppName(appName);
+    public Branch createRepoBranchByAppName(String appName, String branchName, String ref) {
+        Project project = projectRepository.getProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("创建分支失败, 项目不存在");
         }
@@ -84,7 +84,7 @@ public class GitlabRepoRepository {
         }
     }
 
-    public Branch getBranchByProjectId(Long projectId, String branchName) {
+    public Branch getRepoBranchByProjectId(Long projectId, String branchName) {
         try (GitLabApi client = repository.auth()) {
             return client.getRepositoryApi().getBranch(projectId, branchName);
         } catch (Exception e) {
@@ -93,8 +93,8 @@ public class GitlabRepoRepository {
         }
     }
 
-    public Branch getBranchByAppName(String appName, String branchName) {
-        Project project = projectRepository.getByAppName(appName);
+    public Branch getRepoBranchByAppName(String appName, String branchName) {
+        Project project = projectRepository.getProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据appName获取分支失败, 项目不存在");
         }
@@ -109,19 +109,19 @@ public class GitlabRepoRepository {
         }
     }
 
-    public List<Branch> queryBranchByProjectId(Long projectId, String search) {
-        return queryBrancheList(projectId, search);
+    public List<Branch> searchRepoBranchesByProjectId(Long projectId, String search) {
+        return searchRepoBranches(projectId, search);
     }
 
-    public List<Branch> queryBranchByAppName(String appName, String search) {
-        Project project = projectRepository.getByAppName(appName);
+    public List<Branch> searchRepoBranchesByAppName(String appName, String search) {
+        Project project = projectRepository.getProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据appName获取分支失败, 项目不存在");
         }
-        return queryBrancheList(project.getId(), search);
+        return searchRepoBranches(project.getId(), search);
     }
 
-    private List<Branch> queryBrancheList(Long projectId, String searchKey) {
+    private List<Branch> searchRepoBranches(Long projectId, String searchKey) {
         List<Branch> list = new ArrayList<>();
         try (GitLabApi client = repository.auth()) {
             Pager<Branch> pager = client.getRepositoryApi().getBranches(projectId, searchKey, 100);
@@ -134,7 +134,7 @@ public class GitlabRepoRepository {
         return list;
     }
 
-    public void deleteBranchByProjectId(Long projectId, String branchName) {
+    public void deleteRepoBranchByProjectId(Long projectId, String branchName) {
         try (GitLabApi client = repository.auth()) {
             client.getRepositoryApi().deleteBranch(projectId, branchName);
         } catch (Exception e) {
@@ -142,8 +142,8 @@ public class GitlabRepoRepository {
         }
     }
 
-    public void deleteBranchByAppName(String appName, String branchName) {
-        Project project = projectRepository.getByAppName(appName);
+    public void deleteRepoBranchByAppName(String appName, String branchName) {
+        Project project = projectRepository.getProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据appName删除分支失败, 项目不存在");
         }
@@ -162,7 +162,7 @@ public class GitlabRepoRepository {
      * @param toBranch   分支2
      * @return /
      */
-    public CompareResults compareByProjectId(Long projectId, String fromBranch, String toBranch) {
+    public CompareResults compareRepoBranchByProjectId(Long projectId, String fromBranch, String toBranch) {
         try (GitLabApi client = repository.auth()) {
             return client.getRepositoryApi().compare(projectId, fromBranch, toBranch);
         } catch (Exception e) {
@@ -179,8 +179,8 @@ public class GitlabRepoRepository {
      * @param targetBranch 目标分支
      * @return /
      */
-    public CompareResults compareByAppName(String appName, String sourceBranch, String targetBranch) {
-        Project project = projectRepository.getByAppName(appName);
+    public CompareResults compareRepoBranchByAppName(String appName, String sourceBranch, String targetBranch) {
+        Project project = projectRepository.getProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据projectId比较分支差异失败, 项目不存在");
         }
@@ -203,7 +203,7 @@ public class GitlabRepoRepository {
         }
     }
 
-    public MergeRequest createMergeRequest(Long projectId, String sourceBranch, String targetBranch, String title, String description) {
+    public MergeRequest createRepoMergeRequest(Long projectId, String sourceBranch, String targetBranch, String title, String description) {
         if (projectId == null) {
             throw new BadRequestException("参数 projectId 必填");
         }
@@ -232,7 +232,7 @@ public class GitlabRepoRepository {
     }
 
 
-    public MergeRequest getMergeRequestByProjectId(Long projectId, Long mergeRequestId) {
+    public MergeRequest getRepoMergeRequestByProjectId(Long projectId, Long mergeRequestId) {
         try (GitLabApi client = repository.auth()) {
             return client.getMergeRequestApi().getMergeRequest(projectId, mergeRequestId);
         } catch (Exception e) {
@@ -241,8 +241,8 @@ public class GitlabRepoRepository {
         }
     }
 
-    public MergeRequest getMergeRequestByAppName(String appName, Long mergeRequestId) {
-        Project project = projectRepository.getByAppName(appName);
+    public MergeRequest getRepoMergeRequestByAppName(String appName, Long mergeRequestId) {
+        Project project = projectRepository.getProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据appName获取分支详情失败, 项目不存在");
         }
@@ -254,7 +254,7 @@ public class GitlabRepoRepository {
         }
     }
 
-    public MergeRequest acceptMergeRequest(Long projectId, Long mergeRequestIid) {
+    public MergeRequest acceptRepoMergeRequest(Long projectId, Long mergeRequestIid) {
         try (GitLabApi client = repository.auth()) {
             MergeRequest mergeRequest = client.getMergeRequestApi().getMergeRequest(projectId, mergeRequestIid);
             AcceptMergeRequestParams params = new AcceptMergeRequestParams();

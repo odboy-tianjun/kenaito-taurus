@@ -19,13 +19,14 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.infra.context.CacheKey;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.Dept;
 import me.zhengjie.modules.system.domain.User;
 import me.zhengjie.modules.system.mapper.RoleMapper;
 import me.zhengjie.modules.system.mapper.UserMapper;
 import me.zhengjie.modules.system.domain.vo.DeptQueryCriteria;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.*;
 import me.zhengjie.modules.system.mapper.DeptMapper;
 import me.zhengjie.modules.system.service.DeptService;
 import me.zhengjie.constant.DataScopeEnum;
@@ -50,17 +51,17 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     private final DeptMapper deptMapper;
     private final UserMapper userMapper;
-    private final RedisUtils redisUtils;
+    private final RedisUtil redisUtil;
     private final RoleMapper roleMapper;
 
     @Override
     public List<Dept> queryAll(DeptQueryCriteria criteria, Boolean isQuery) throws Exception {
-        String dataScopeType = SecurityUtils.getDataScopeType();
+        String dataScopeType = SecurityUtil.getDataScopeType();
         if (isQuery) {
             if(dataScopeType.equals(DataScopeEnum.ALL.getValue())){
                 criteria.setPidIsNull(true);
             }
-            List<Field> fields = StringUtils.getAllFields(criteria.getClass(), new ArrayList<>());
+            List<Field> fields = StringUtil.getAllFields(criteria.getClass(), new ArrayList<>());
             List<String> fieldNames = new ArrayList<String>(){{ add("pidIsNull");add("enabled");}};
             for (Field field : fields) {
                 //设置对象的访问权限，保证对private的属性的访问
@@ -76,10 +77,10 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
             }
         }
         // 数据权限
-        criteria.setIds(SecurityUtils.getCurrentUserDataScope());
+        criteria.setIds(SecurityUtil.getCurrentUserDataScope());
         List<Dept> list = deptMapper.findAll(criteria);
         // 如果为空，就代表为自定义权限或者本级权限，就需要去重，不理解可以注释掉，看查询结果
-        if(StringUtils.isBlank(dataScopeType)){
+        if(StringUtil.isBlank(dataScopeType)){
             return deduplication(list);
         }
         return list;
@@ -270,7 +271,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     public void delCaches(Long id){
         List<User> users = userMapper.findByRoleDeptId(id);
         // 删除数据权限
-        redisUtils.delByKeys(CacheKey.DATA_USER, users.stream().map(User::getId).collect(Collectors.toSet()));
-        redisUtils.del(CacheKey.DEPT_ID + id);
+        redisUtil.delByKeys(CacheKey.DATA_USER, users.stream().map(User::getId).collect(Collectors.toSet()));
+        redisUtil.del(CacheKey.DEPT_ID + id);
     }
 }

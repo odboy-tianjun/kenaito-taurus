@@ -33,7 +33,7 @@ public class K8sConfigHelper {
      *
      * @return /
      */
-    protected ApiClient loadFormDefault() {
+    public ApiClient loadFormDefault() {
         try {
             ApiClient apiClient = Config.defaultClient();
             Configuration.setDefaultApiClient(apiClient);
@@ -51,7 +51,7 @@ public class K8sConfigHelper {
      * @param filePath 配置文件所在绝对路径
      * @return /
      */
-    protected ApiClient loadFormLocalPath(String filePath) {
+    public ApiClient loadFormLocalPath(String filePath) {
         try {
             ApiClient apiClient = Config.fromConfig(filePath);
             Configuration.setDefaultApiClient(apiClient);
@@ -69,7 +69,7 @@ public class K8sConfigHelper {
      * @param content 连接集群配置信息
      * @return /
      */
-    protected ApiClient loadFormContent(String content) {
+    public ApiClient loadFormContent(String content) {
         try {
             ApiClient apiClient = Config.fromConfig(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
             apiClient.setDebugging(debug);
@@ -86,7 +86,7 @@ public class K8sConfigHelper {
      * @param relativeFileName 相对文件路径名, 比如：resources/config/test.txt
      * @return /
      */
-    protected ApiClient loadFormResourceFile(String relativeFileName) {
+    public ApiClient loadFormResourceFile(String relativeFileName) {
         try {
             Resource resource = resourceLoader.getResource("classpath:" + relativeFileName);
             ApiClient apiClient = Config.fromConfig(resource.getInputStream());

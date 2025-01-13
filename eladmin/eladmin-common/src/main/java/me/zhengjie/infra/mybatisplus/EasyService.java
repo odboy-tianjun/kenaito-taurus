@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.IService;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 
 import java.io.Serializable;
 import java.util.Collection;

@@ -18,8 +18,8 @@ package me.zhengjie.infra.limit;
 import cn.hutool.core.util.ObjUtil;
 import com.google.common.collect.ImmutableList;
 import me.zhengjie.infra.exception.BadRequestException;
-import me.zhengjie.utils.RequestHolder;
-import me.zhengjie.utils.StringUtils;
+import me.zhengjie.infra.context.RequestHolder;
+import me.zhengjie.util.StringUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -60,15 +60,15 @@ public class LimitAspect {
         Limit limit = signatureMethod.getAnnotation(Limit.class);
         LimitType limitType = limit.limitType();
         String key = limit.key();
-        if (StringUtils.isEmpty(key)) {
+        if (StringUtil.isEmpty(key)) {
             if (limitType == LimitType.IP) {
-                key = StringUtils.getIp(request);
+                key = StringUtil.getIp(request);
             } else {
                 key = signatureMethod.getName();
             }
         }
 
-        ImmutableList<Object> keys = ImmutableList.of(StringUtils.join(limit.prefix(), "_", key, "_", request.getRequestURI().replace("/","_")));
+        ImmutableList<Object> keys = ImmutableList.of(StringUtil.join(limit.prefix(), "_", key, "_", request.getRequestURI().replace("/","_")));
 
         String luaScript = buildLuaScript();
         RedisScript<Long> redisScript = new DefaultRedisScript<>(luaScript, Long.class);

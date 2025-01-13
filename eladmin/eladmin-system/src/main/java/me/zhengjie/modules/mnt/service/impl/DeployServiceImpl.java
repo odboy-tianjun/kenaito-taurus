@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.infra.exception.BadRequestException;
+import me.zhengjie.model.PageResult;
 import me.zhengjie.modules.mnt.domain.App;
 import me.zhengjie.modules.mnt.domain.Deploy;
 import me.zhengjie.modules.mnt.domain.DeployHistory;
@@ -37,7 +38,8 @@ import me.zhengjie.modules.mnt.util.ScpClientUtil;
 import me.zhengjie.infra.websocket.MsgType;
 import me.zhengjie.infra.websocket.SocketMsg;
 import me.zhengjie.infra.websocket.WebSocketServer;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
@@ -198,7 +200,7 @@ public class DeployServiceImpl extends ServiceImpl<DeployMapper, Deploy> impleme
 		//还原信息入库
 		DeployHistory deployHistory = new DeployHistory();
 		deployHistory.setAppName(appName);
-		deployHistory.setDeployUser(SecurityUtils.getCurrentUsername());
+		deployHistory.setDeployUser(SecurityUtil.getCurrentUsername());
 		deployHistory.setIp(ip);
 		deployHistory.setDeployId(id);
 		deployHistoryService.create(deployHistory);

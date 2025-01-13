@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.infra.mybatisplus.EasyMapper;
 import me.zhengjie.infra.mybatisplus.MybatisHelper;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 import org.apache.ibatis.binding.MapperMethod;
 
 import java.io.Serializable;

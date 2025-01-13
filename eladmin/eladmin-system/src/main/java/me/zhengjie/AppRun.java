@@ -44,7 +44,6 @@ public class AppRun {
         springApplication.addListeners(new ApplicationPidFileWriter());
         springApplication.run(args);
         log.info("---------------------------------------------");
-        log.info("Backend service started successfully");
         log.info("Local: {}", "http://localhost:8000");
         log.info("Swagger: {}", "http://localhost:8000/doc.html");
         log.info("---------------------------------------------");

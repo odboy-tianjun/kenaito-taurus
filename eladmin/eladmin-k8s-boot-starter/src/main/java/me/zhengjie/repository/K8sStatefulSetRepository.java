@@ -1,7 +1,6 @@
 package me.zhengjie.repository;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.custom.Quantity;
@@ -13,16 +12,17 @@ import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Yaml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.constant.EnvEnum;
-import me.zhengjie.constant.PodStatusEnum;
+import me.zhengjie.constant.K8sPodStatusEnum;
 import me.zhengjie.context.K8sClientAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
+import me.zhengjie.model.K8sPod;
 import me.zhengjie.model.K8sResource;
-import me.zhengjie.util.K8sResourceTool;
+import me.zhengjie.model.K8sStatefulSet;
+import me.zhengjie.util.K8sDryRunUtil;
+import me.zhengjie.util.K8sNameUtil;
+import me.zhengjie.util.ValidationUtil;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -42,126 +42,37 @@ public class K8sStatefulSetRepository {
     /**
      * 创建statefulset控制器
      *
-     * @param envEnum     环境编码
-     * @param namespace   命名空间
-     * @param appName     应用名称
-     * @param annotations statefulset注解
-     * @param replicas    副本数量
-     * @param image       镜像地址
-     * @param port        容器服务端口号
-     * @return /
+     * @param args /
      */
-    public V1StatefulSet create(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, Map<String, String> annotations,
-                                @NotNull Integer replicas, @NotNull String image, @NotNull Integer port) {
-        if (replicas == null || replicas < 0) {
-            replicas = 1;
-        }
-
-        String statefulSetName = K8sResourceTool.getStatefulSetName(appName);
-        String podName = K8sResourceTool.getPodName(appName);
-        Map<String, String> labels = K8sResourceTool.getLabelsMap(appName);
-
+    public V1StatefulSet createStatefulSet(K8sStatefulSet.CreateArgs args) {
+        ValidationUtil.validate(args);
+        String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
+        String podName = K8sNameUtil.getPodName(args.getAppName());
+        Map<String, String> labels = K8sNameUtil.getLabelsMap(args.getAppName());
         V1Container v1Container = new V1Container();
         v1Container.setName(podName);
-        v1Container.setImage(image);
-        v1Container.setPorts(CollUtil.newArrayList(new V1ContainerPort().containerPort(port)));
-        v1Container.setLivenessProbe(new V1Probe().tcpSocket(new V1TCPSocketAction().port(new IntOrString(port))));
-        v1Container.setReadinessProbe(new V1Probe().tcpSocket(new V1TCPSocketAction().port(new IntOrString(port))));
-
-        // 构建statefulset的yaml对象
-        V1StatefulSet statefulSet = new V1StatefulSetBuilder()
-                .withNewMetadata()
-                .withName(statefulSetName)
-                .withNamespace(namespace)
-                .withAnnotations(annotations)
-                .endMetadata()
-                .withNewSpec()
-                .withServiceName(statefulSetName)
-                .withReplicas(replicas)
-                .withNewSelector()
-                .withMatchLabels(labels)
-                .endSelector()
-                .withNewTemplate()
-                .withNewMetadata()
-                .withLabels(labels)
-                .endMetadata()
-                .withNewSpec()
-                .withContainers(v1Container)
-                .endSpec()
-                .endTemplate()
-                .endSpec()
-                .build();
-        ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
-        AppsV1Api api = new AppsV1Api(apiClient);
-        try {
-            return api.createNamespacedStatefulSet(namespace, statefulSet, null, null, null);
-        } catch (ApiException e) {
-            String responseBody = e.getResponseBody();
-            log.error("创建StatefulSet失败: {}", responseBody, e);
-            K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
-            if (actionExceptionBody != null) {
-                throw new BadRequestException("创建StatefulSet失败, 原因：" + actionExceptionBody.getReason());
-            }
-            throw new BadRequestException("创建StatefulSet失败");
-        } catch (Exception e) {
-            log.error("创建StatefulSet失败:", e);
-            throw new BadRequestException("创建StatefulSet失败");
-        }
-    }
-
-    /**
-     * 创建statefulset控制器
-     *
-     * @param namespace   命名空间
-     * @param appName     应用名称
-     * @param annotations statefulset注解
-     * @param replicas    副本数量
-     * @param image       镜像地址
-     * @param port        容器服务端口号
-     * @param cpuNum      Cpu数值
-     * @param memoryNum   Memory数值
-     * @return /
-     */
-    public V1StatefulSet create(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, Map<String, String> annotations,
-                                @NotNull Integer replicas, @NotNull String image, @NotNull Integer port, @NotNull Integer cpuNum,
-                                @NotNull Integer memoryNum) {
-        if (replicas == null || replicas < 0) {
-            replicas = 1;
-        }
-        if (cpuNum == null || cpuNum < 0) {
-            cpuNum = 1;
-        }
-        if (memoryNum == null || memoryNum < 0) {
-            memoryNum = 1;
-        }
-
-        String statefulSetName = K8sResourceTool.getStatefulSetName(appName);
-        String podName = K8sResourceTool.getPodName(appName);
-        Map<String, String> labels = K8sResourceTool.getLabelsMap(appName);
-
-        V1Container v1Container = new V1Container();
-        v1Container.setName(podName);
-        v1Container.setImage(image);
-        v1Container.setPorts(CollUtil.newArrayList(new V1ContainerPort().containerPort(port)));
-        v1Container.setLivenessProbe(new V1Probe().tcpSocket(new V1TCPSocketAction().port(new IntOrString(port))));
-        v1Container.setReadinessProbe(new V1Probe().tcpSocket(new V1TCPSocketAction().port(new IntOrString(port))));
+        v1Container.setImage(args.getImage());
+        v1Container.setPorts(CollUtil.newArrayList(new V1ContainerPort().containerPort(args.getPort())));
+        // 存活检测
+        v1Container.setLivenessProbe(new V1Probe().tcpSocket(new V1TCPSocketAction().port(new IntOrString(args.getPort()))));
+        // 就绪检测
+        v1Container.setReadinessProbe(new V1Probe().tcpSocket(new V1TCPSocketAction().port(new IntOrString(args.getPort()))));
         v1Container.setResources(new V1ResourceRequirements()
-                .putRequestsItem("cpu", new Quantity("10m"))
-                .putRequestsItem("memory", new Quantity("1G"))
-                .putLimitsItem("cpu", new Quantity(String.valueOf(cpuNum)))
-                .putLimitsItem("memory", new Quantity(memoryNum + "G"))
+                .putRequestsItem("cpu", new Quantity(String.valueOf(args.getRequestCpuNum())))
+                .putRequestsItem("memory", new Quantity(args.getRequestMemNum() + "Gi"))
+                .putLimitsItem("cpu", new Quantity(String.valueOf(args.getLimitsCpuNum())))
+                .putLimitsItem("memory", new Quantity(args.getLimitsMemNum() + "Gi"))
         );
-
         // 构建statefulset的yaml对象
         V1StatefulSet statefulSet = new V1StatefulSetBuilder()
                 .withNewMetadata()
                 .withName(statefulSetName)
-                .withNamespace(namespace)
-                .withAnnotations(annotations)
+                .withNamespace(args.getNamespace())
+                .withAnnotations(args.getAnnotations())
                 .endMetadata()
                 .withNewSpec()
                 .withServiceName(statefulSetName)
-                .withReplicas(replicas)
+                .withReplicas(args.getReplicas())
                 .withNewSelector()
                 .withMatchLabels(labels)
                 .endSelector()
@@ -175,10 +86,10 @@ public class K8sStatefulSetRepository {
                 .endTemplate()
                 .endSpec()
                 .build();
-        ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+        ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
         AppsV1Api api = new AppsV1Api(apiClient);
         try {
-            return api.createNamespacedStatefulSet(namespace, statefulSet, null, null, null);
+            return api.createNamespacedStatefulSet(args.getNamespace(), statefulSet, null, K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("创建StatefulSet失败: {}", responseBody, e);
@@ -196,25 +107,20 @@ public class K8sStatefulSetRepository {
     /**
      * 变更StatefulSet副本数量
      *
-     * @param namespace   命名空间
-     * @param appName     应用名称
-     * @param newReplicas 新副本数量
-     * @return /
+     * @param args /
      */
-    public V1StatefulSet changeReplicas(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, @NotNull Integer newReplicas) {
+    public V1StatefulSet changeStatefulSetReplicas(K8sStatefulSet.ChangeReplicasArgs args) {
         try {
-            if (newReplicas == null || newReplicas < 0) {
-                newReplicas = 0;
-            }
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String statefulSetName = K8sResourceTool.getStatefulSetName(appName);
-            V1StatefulSet statefulSet = appsV1Api.readNamespacedStatefulSet(statefulSetName, namespace, null, null, null);
+            String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
+            V1StatefulSet statefulSet = appsV1Api.readNamespacedStatefulSet(statefulSetName, args.getNamespace(), null, null, null);
             if (statefulSet == null || statefulSet.getSpec() == null) {
                 throw new BadRequestException(statefulSetName + " 不存在");
             }
-            statefulSet.getSpec().setReplicas(newReplicas);
-            return appsV1Api.replaceNamespacedStatefulSet(statefulSetName, namespace, statefulSet, null, null, null);
+            statefulSet.getSpec().setReplicas(args.getNewReplicas());
+            return appsV1Api.replaceNamespacedStatefulSet(statefulSetName, args.getNamespace(), statefulSet, null, K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("变更StatefulSet副本数量失败: {}", responseBody, e);
@@ -232,20 +138,15 @@ public class K8sStatefulSetRepository {
     /**
      * 变更statefulset镜像地址
      *
-     * @param namespace 命名空间
-     * @param appName   应用名称
-     * @param newImage  新镜像地址
-     * @return /
+     * @param args /
      */
-    public V1StatefulSet changeImage(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, @NotNull String newImage) {
-        if (StrUtil.isBlank(newImage)) {
-            throw new BadRequestException("镜像地址必填");
-        }
+    public V1StatefulSet changeStatefulSetImage(K8sStatefulSet.ChangeImageArgs args) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String statefulSetName = K8sResourceTool.getStatefulSetName(appName);
-            V1StatefulSet statefulSet = appsV1Api.readNamespacedStatefulSet(statefulSetName, namespace, null, null, null);
+            String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
+            V1StatefulSet statefulSet = appsV1Api.readNamespacedStatefulSet(statefulSetName, args.getNamespace(), null, null, null);
             if (statefulSet == null || statefulSet.getSpec() == null) {
                 throw new BadRequestException(statefulSetName + " 不存在");
             }
@@ -256,21 +157,25 @@ public class K8sStatefulSetRepository {
                     throw new BadRequestException("Pod中不包含任何容器");
                 }
                 for (V1Container container : containers) {
-                    if (container.getName().contains(appName)) {
-                        container.setImage(newImage);
+                    if (container.getName().contains(args.getAppName())) {
+                        container.setImage(args.getNewImage());
                         break;
                     }
                 }
             }
-            V1StatefulSet v1StatefulSet = appsV1Api.replaceNamespacedStatefulSet(statefulSetName, namespace, statefulSet, null, null, null);
+            V1StatefulSet v1StatefulSet = appsV1Api.replaceNamespacedStatefulSet(statefulSetName, args.getNamespace(), statefulSet, null, K8sDryRunUtil.transferState(args.getDryRun()), null);
             // 手动删除Pod, 触发重新调度, 最佳实践是分批删除
             /// 这里手动删除的原因是：改变image路径并没有触发statefulset重建, 那只能出此下策
             /// 事实表明, 处于Pending状态的Pod, 就算添加了新的annotation, 或者label, 也不会生效
             /// 事实表明, 只有处于running中的Pod才会正常的重建
-            List<K8sResource.Pod> podList = k8sPodRepository.queryByAppName(envEnum, namespace, appName);
+            List<K8sResource.Pod> podList = k8sPodRepository.listPods(args.getClusterCode(), args.getNamespace(), args.getAppName());
             for (K8sResource.Pod pod : podList) {
-                if (PodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
-                    k8sPodRepository.rebuildPod(envEnum, namespace, pod.getName());
+                if (K8sPodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
+                    K8sPod.RebuildArgs rebuildArgs = new K8sPod.RebuildArgs();
+                    rebuildArgs.setClusterCode(args.getClusterCode());
+                    rebuildArgs.setNamespace(args.getNamespace());
+                    rebuildArgs.setPodName(pod.getName());
+                    k8sPodRepository.rebuildPod(rebuildArgs);
                 }
             }
             return v1StatefulSet;
@@ -291,25 +196,16 @@ public class K8sStatefulSetRepository {
     /**
      * 变更statefulset规格
      *
-     * @param namespace 命名空间
-     * @param appName   应用名称
-     * @param cpuNum    Cpu数值
-     * @param memoryNum Memory数值
+     * @param args /
      * @return /
      */
-    public V1StatefulSet changePodSpecs(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, @NotNull Integer cpuNum,
-                                        @NotNull Integer memoryNum) {
-        if (cpuNum == null || cpuNum < 0) {
-            cpuNum = 1;
-        }
-        if (memoryNum == null || memoryNum < 0) {
-            memoryNum = 1;
-        }
+    public V1StatefulSet changeStatefulSetSpecs(K8sStatefulSet.ChangeSpecsArgs args) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String statefulSetName = K8sResourceTool.getStatefulSetName(appName);
-            V1StatefulSet statefulSet = appsV1Api.readNamespacedStatefulSet(statefulSetName, namespace, null, null, null);
+            String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
+            V1StatefulSet statefulSet = appsV1Api.readNamespacedStatefulSet(statefulSetName, args.getNamespace(), null, null, null);
             if (statefulSet == null || statefulSet.getSpec() == null) {
                 throw new BadRequestException(statefulSetName + " 不存在");
             }
@@ -320,29 +216,33 @@ public class K8sStatefulSetRepository {
                     throw new BadRequestException("Pod中不包含任何容器");
                 }
                 for (V1Container container : containers) {
-                    if (container.getName().contains(appName)) {
+                    if (container.getName().contains(args.getAppName())) {
                         V1ResourceRequirements resources = container.getResources();
                         if (resources == null) {
                             resources = new V1ResourceRequirements();
                         }
                         resources
-                                .putRequestsItem("cpu", new Quantity("10m"))
-                                .putRequestsItem("memory", new Quantity("1G"))
-                                .putLimitsItem("cpu", new Quantity(String.valueOf(cpuNum)))
-                                .putLimitsItem("memory", new Quantity(memoryNum + "G"));
+                                .putRequestsItem("cpu", new Quantity(String.valueOf(args.getRequestCpuNum())))
+                                .putRequestsItem("memory", new Quantity(args.getRequestMemNum() + "Gi"))
+                                .putLimitsItem("cpu", new Quantity(String.valueOf(args.getLimitsCpuNum())))
+                                .putLimitsItem("memory", new Quantity(args.getLimitsMemNum() + "Gi"));
                         break;
                     }
                 }
             }
-            V1StatefulSet v1StatefulSet = appsV1Api.replaceNamespacedStatefulSet(statefulSetName, namespace, statefulSet, null, null, null);
+            V1StatefulSet v1StatefulSet = appsV1Api.replaceNamespacedStatefulSet(statefulSetName, args.getNamespace(), statefulSet, null, K8sDryRunUtil.transferState(args.getDryRun()), null);
             // 手动删除Pod, 触发重新调度, 最佳实践是分批删除
             /// 这里手动删除的原因是：改变image路径并没有触发statefulset重建, 那只能出此下策
             /// 事实表明, 处于Pending状态的Pod, 就算添加了新的annotation, 或者label, 也不会生效
             /// 事实表明, 只有处于running中的Pod才会正常的重建
-            List<K8sResource.Pod> podList = k8sPodRepository.queryByAppName(envEnum, namespace, appName);
+            List<K8sResource.Pod> podList = k8sPodRepository.listPods(args.getClusterCode(), args.getNamespace(), args.getAppName());
             for (K8sResource.Pod pod : podList) {
-                if (PodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
-                    k8sPodRepository.rebuildPod(envEnum, namespace, pod.getName());
+                if (K8sPodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
+                    K8sPod.RebuildArgs rebuildArgs = new K8sPod.RebuildArgs();
+                    rebuildArgs.setClusterCode(args.getClusterCode());
+                    rebuildArgs.setNamespace(args.getNamespace());
+                    rebuildArgs.setPodName(pod.getName());
+                    k8sPodRepository.rebuildPod(rebuildArgs);
                 }
             }
             return v1StatefulSet;
@@ -363,23 +263,18 @@ public class K8sStatefulSetRepository {
     /**
      * 变更statefulset镜像地址
      *
-     * @param namespace 命名空间
-     * @param appName   应用名称
-     * @param newImage  新镜像地址
-     * @return /
+     * @param args /
      */
-    public V1StatefulSet changeImageV2(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName, @NotNull String newImage) {
-        if (StrUtil.isBlank(newImage)) {
-            throw new BadRequestException("镜像地址必填");
-        }
-        ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
-        AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-        String statefulSetName = K8sResourceTool.getStatefulSetName(appName);
+    public V1StatefulSet changeStatefulSetImageV2(K8sStatefulSet.ChangeImageArgs args) {
         try {
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            AppsV1Api appsV1Api = new AppsV1Api(apiClient);
+            String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
             // 这种方式也不能使非Running中的容器重建
-            String jsonPatch = "[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"" + newImage + "\"}]";
+            String jsonPatch = "[{\"op\": \"replace\", \"path\": \"/spec/template/spec/containers/0/image\", \"value\": \"" + args.getNewImage() + "\"}]";
             V1Patch patch = new V1Patch(jsonPatch);
-            return appsV1Api.patchNamespacedStatefulSet(statefulSetName, namespace, patch, null, null, null, null);
+            return appsV1Api.patchNamespacedStatefulSet(statefulSetName, args.getNamespace(), patch, null, K8sDryRunUtil.transferState(args.getDryRun()), null, null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("变更StatefulSet镜像规格失败: {}", responseBody, e);
@@ -397,16 +292,15 @@ public class K8sStatefulSetRepository {
     /**
      * 删除StatefulSet
      *
-     * @param namespace 命名空间
-     * @param appName   应用名称
-     * @return /
+     * @param args /
      */
-    public V1Status remove(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName) {
+    public V1Status deleteStatefulSet(K8sStatefulSet.DeleteArgs args) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String statefulSetName = K8sResourceTool.getStatefulSetName(appName);
-            return appsV1Api.deleteNamespacedStatefulSet(statefulSetName, namespace, null, null, null, null, null, null);
+            String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
+            return appsV1Api.deleteNamespacedStatefulSet(statefulSetName, args.getNamespace(), null, K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("删除StatefulSet失败: {}", responseBody, e);
@@ -421,14 +315,18 @@ public class K8sStatefulSetRepository {
         }
     }
 
-    public V1StatefulSet loadFromYml(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotBlank String ymlContent) {
+    /**
+     * 从yaml文件内容加载StatefulSet
+     *
+     * @param args /
+     */
+    public V1StatefulSet loadStatefulSetFromYaml(K8sStatefulSet.LoadFromYamlArgs args) {
         try {
-            V1StatefulSet statefulSet = Yaml.loadAs(ymlContent, V1StatefulSet.class);
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            V1StatefulSet statefulSet = Yaml.loadAs(args.getYamlContent(), V1StatefulSet.class);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String statefulSetName = statefulSet.getMetadata().getName();
-            // 执行验收测试
-            appsV1Api.replaceNamespacedStatefulSet(statefulSetName, namespace, statefulSet, "false", "All", null);
+            appsV1Api.replaceNamespacedStatefulSet(statefulSetName, args.getNamespace(), statefulSet, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
             return statefulSet;
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();

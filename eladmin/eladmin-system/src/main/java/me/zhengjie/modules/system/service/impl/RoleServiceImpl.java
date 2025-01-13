@@ -20,7 +20,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.infra.context.CacheKey;
 import me.zhengjie.infra.exception.BadRequestException;
+import me.zhengjie.model.PageResult;
 import me.zhengjie.modules.security.service.UserCacheManager;
 import me.zhengjie.modules.security.service.dto.AuthorityDto;
 import me.zhengjie.modules.system.domain.Menu;
@@ -33,7 +35,8 @@ import me.zhengjie.modules.system.mapper.RoleMenuMapper;
 import me.zhengjie.modules.system.mapper.UserMapper;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.domain.vo.RoleQueryCriteria;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -55,7 +58,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     private final RoleMapper roleMapper;
     private final RoleDeptMapper roleDeptMapper;
     private final RoleMenuMapper roleMenuMapper;
-    private final RedisUtils redisUtils;
+    private final RedisUtil redisUtil;
     private final UserMapper userMapper;
     private final UserCacheManager userCacheManager;
 
@@ -177,7 +180,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         List<Role> roles = roleMapper.findByUserId(user.getId());
         permissions = roles.stream().flatMap(role -> role.getMenus().stream())
                 .map(Menu::getPermission)
-                .filter(StringUtils::isNotBlank).collect(Collectors.toSet());
+                .filter(StringUtil::isNotBlank).collect(Collectors.toSet());
         return permissions.stream().map(AuthorityDto::new)
                 .collect(Collectors.toList());
     }
@@ -217,10 +220,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         if (CollectionUtil.isNotEmpty(users)) {
             users.forEach(item -> userCacheManager.cleanUserCache(item.getUsername()));
             Set<Long> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
-            redisUtils.delByKeys(CacheKey.DATA_USER, userIds);
-            redisUtils.delByKeys(CacheKey.MENU_USER, userIds);
-            redisUtils.delByKeys(CacheKey.ROLE_AUTH, userIds);
+            redisUtil.delByKeys(CacheKey.DATA_USER, userIds);
+            redisUtil.delByKeys(CacheKey.MENU_USER, userIds);
+            redisUtil.delByKeys(CacheKey.ROLE_AUTH, userIds);
         }
-        redisUtils.del(CacheKey.ROLE_ID + id);
+        redisUtil.del(CacheKey.ROLE_ID + id);
     }
 }

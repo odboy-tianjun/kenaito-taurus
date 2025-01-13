@@ -25,9 +25,9 @@ import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.modules.system.domain.vo.MenuVo;
 import me.zhengjie.modules.system.service.MenuService;
 import me.zhengjie.modules.system.domain.vo.MenuQueryCriteria;
-import me.zhengjie.utils.PageResult;
-import me.zhengjie.utils.PageUtil;
-import me.zhengjie.utils.SecurityUtils;
+import me.zhengjie.model.PageResult;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.SecurityUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -60,7 +60,7 @@ public class MenuController {
     @GetMapping(value = "/build")
     @ApiOperation("获取前端所需菜单")
     public ResponseEntity<List<MenuVo>> buildMenus(){
-        List<Menu> menuList = menuService.findByUser(SecurityUtils.getCurrentUserId());
+        List<Menu> menuList = menuService.findByUser(SecurityUtil.getCurrentUserId());
         List<Menu> menus = menuService.buildTree(menuList);
         return new ResponseEntity<>(menuService.buildMenus(menus),HttpStatus.OK);
     }

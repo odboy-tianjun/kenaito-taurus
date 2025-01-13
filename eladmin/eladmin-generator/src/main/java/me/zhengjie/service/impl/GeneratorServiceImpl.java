@@ -26,8 +26,10 @@ import me.zhengjie.domain.ColumnInfo;
 import me.zhengjie.domain.vo.TableInfo;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.mapper.ColumnInfoMapper;
+import me.zhengjie.model.PageResult;
 import me.zhengjie.service.GeneratorService;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -96,7 +98,7 @@ public class GeneratorServiceImpl extends ServiceImpl<ColumnInfoMapper, ColumnIn
                 column.setColumnType(columnInfo.getColumnType());
                 column.setExtra(columnInfo.getExtra());
                 column.setKeyType(columnInfo.getKeyType());
-                if (StringUtils.isBlank(column.getRemark())) {
+                if (StringUtil.isBlank(column.getRemark())) {
                     column.setRemark(columnInfo.getRemark());
                 }
                 saveOrUpdate(column);

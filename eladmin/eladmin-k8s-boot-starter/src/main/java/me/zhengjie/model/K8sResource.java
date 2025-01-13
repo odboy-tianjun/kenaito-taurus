@@ -29,6 +29,7 @@ public class K8sResource {
             private String kind;
         }
     }
+
     @Data
     public static class Namespace {
         private V1NamespaceSpec spec;

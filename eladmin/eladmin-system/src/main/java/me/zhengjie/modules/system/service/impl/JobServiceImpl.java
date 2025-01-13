@@ -18,12 +18,15 @@ package me.zhengjie.modules.system.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.infra.context.CacheKey;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.infra.exception.EntityExistException;
+import me.zhengjie.model.PageResult;
 import me.zhengjie.modules.system.domain.Job;
 import me.zhengjie.modules.system.mapper.UserMapper;
 import me.zhengjie.modules.system.domain.vo.JobQueryCriteria;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import me.zhengjie.modules.system.mapper.JobMapper;
 import me.zhengjie.modules.system.service.JobService;
 import org.springframework.cache.annotation.CacheConfig;
@@ -45,7 +48,7 @@ import java.util.*;
 public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobService {
 
     private final JobMapper jobMapper;
-    private final RedisUtils redisUtils;
+    private final RedisUtil redisUtil;
     private final UserMapper userMapper;
 
     @Override
@@ -92,7 +95,7 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     public void delete(Set<Long> ids) {
         removeBatchByIds(ids);
         // 删除缓存
-        redisUtils.delByKeys(CacheKey.JOB_ID, ids);
+        redisUtil.delByKeys(CacheKey.JOB_ID, ids);
     }
 
     @Override

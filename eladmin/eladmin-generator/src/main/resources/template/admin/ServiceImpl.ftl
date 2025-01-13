@@ -25,7 +25,7 @@ import me.zhengjie.exception.EntityExistException;
         </#if>
     </#list>
 </#if>
-import me.zhengjie.utils.FileUtil;
+import me.zhengjie.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -34,14 +34,14 @@ import ${package}.domain.vo.${className}QueryCriteria;
 import ${package}.mapper.${className}Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import me.zhengjie.utils.PageUtil;
+import me.zhengjie.util.PageUtil;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import me.zhengjie.utils.PageResult;
+import me.zhengjie.model.PageResult;
 
 /**
 * @description 服务实现

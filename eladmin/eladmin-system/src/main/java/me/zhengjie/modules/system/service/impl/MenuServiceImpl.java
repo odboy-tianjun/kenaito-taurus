@@ -19,6 +19,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.infra.context.CacheKey;
 import me.zhengjie.modules.system.domain.Menu;
 import me.zhengjie.modules.system.domain.Role;
 import me.zhengjie.modules.system.domain.User;
@@ -32,7 +33,7 @@ import me.zhengjie.modules.system.mapper.UserMapper;
 import me.zhengjie.modules.system.service.MenuService;
 import me.zhengjie.modules.system.service.RoleService;
 import me.zhengjie.modules.system.domain.vo.MenuQueryCriteria;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.*;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     private final RoleMenuMapper roleMenuMapper;
     private final UserMapper userMapper;
     private final RoleService roleService;
-    private final RedisUtils redisUtils;
+    private final RedisUtil redisUtil;
 
     private static final String HTTP_PRE = "http://";
     private static final String HTTPS_PRE = "https://";
@@ -67,7 +68,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public List<Menu> queryAll(MenuQueryCriteria criteria, Boolean isQuery) throws Exception {
         if(Boolean.TRUE.equals(isQuery)){
             criteria.setPidIsNull(true);
-            List<Field> fields = StringUtils.getAllFields(criteria.getClass(), new ArrayList<>());
+            List<Field> fields = StringUtil.getAllFields(criteria.getClass(), new ArrayList<>());
             for (Field field : fields) {
                 //设置对象的访问权限，保证对private的属性的访问
                 field.setAccessible(true);
@@ -111,7 +112,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         if(menuMapper.findByTitle(resources.getTitle()) != null){
             throw new EntityExistException(Menu.class,"title",resources.getTitle());
         }
-        if(StringUtils.isNotBlank(resources.getComponentName())){
+        if(StringUtil.isNotBlank(resources.getComponentName())){
             if(menuMapper.findByComponentName(resources.getComponentName()) != null){
                 throw new EntityExistException(Menu.class,"componentName",resources.getComponentName());
             }
@@ -157,7 +158,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         Long oldPid = menu.getPid();
         Long newPid = resources.getPid();
 
-        if(StringUtils.isNotBlank(resources.getComponentName())){
+        if(StringUtil.isNotBlank(resources.getComponentName())){
             menu1 = menuMapper.findByComponentName(resources.getComponentName());
             if(menu1 != null && !menu1.getId().equals(menu.getId())){
                 throw new EntityExistException(Menu.class,"componentName",resources.getComponentName());
@@ -266,11 +267,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                         // 如果不是外链
                         if(!menu.getIFrame()){
                             if(menu.getPid() == null){
-                                menuVo.setComponent(StringUtils.isEmpty(menu.getComponent())?"Layout":menu.getComponent());
+                                menuVo.setComponent(StringUtil.isEmpty(menu.getComponent())?"Layout":menu.getComponent());
                                 // 如果不是一级菜单，并且菜单类型为目录，则代表是多级菜单
                             }else if(menu.getType() == 0){
-                                menuVo.setComponent(StringUtils.isEmpty(menu.getComponent())?"ParentView":menu.getComponent());
-                            }else if(StringUtils.isNoneBlank(menu.getComponent())){
+                                menuVo.setComponent(StringUtil.isEmpty(menu.getComponent())?"ParentView":menu.getComponent());
+                            }else if(StringUtil.isNoneBlank(menu.getComponent())){
                                 menuVo.setComponent(menu.getComponent());
                             }
                         }
@@ -335,10 +336,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
      */
     public void delCaches(Long id){
         List<User> users = userMapper.findByMenuId(id);
-        redisUtils.del(CacheKey.MENU_ID + id);
-        redisUtils.delByKeys(CacheKey.MENU_USER, users.stream().map(User::getId).collect(Collectors.toSet()));
+        redisUtil.del(CacheKey.MENU_ID + id);
+        redisUtil.delByKeys(CacheKey.MENU_USER, users.stream().map(User::getId).collect(Collectors.toSet()));
         // 清除 Role 缓存
         List<Role> roles = roleService.findByMenuId(id);
-        redisUtils.delByKeys(CacheKey.ROLE_ID, roles.stream().map(Role::getId).collect(Collectors.toSet()));
+        redisUtil.delByKeys(CacheKey.ROLE_ID, roles.stream().map(Role::getId).collect(Collectors.toSet()));
     }
 }

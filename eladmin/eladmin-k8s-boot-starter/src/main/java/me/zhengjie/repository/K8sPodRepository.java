@@ -10,11 +10,13 @@ import io.kubernetes.client.openapi.models.V1PodSpec;
 import io.kubernetes.client.openapi.models.V1PodStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.constant.EnvEnum;
 import me.zhengjie.context.K8sClientAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
+import me.zhengjie.model.K8sPod;
 import me.zhengjie.model.K8sResource;
-import me.zhengjie.util.K8sResourceTool;
+import me.zhengjie.util.K8sDryRunUtil;
+import me.zhengjie.util.K8sNameUtil;
+import me.zhengjie.util.ValidationUtil;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
@@ -36,12 +38,12 @@ import java.util.stream.Collectors;
 public class K8sPodRepository {
     private final K8sClientAdmin k8SClientAdmin;
 
-    public List<K8sResource.Pod> queryList(@NotNull EnvEnum envEnum, Map<String, String> fieldSelector, Map<String, String> labelSelector) {
+    public List<K8sResource.Pod> listPods(@NotNull String clusterCode, Map<String, String> fieldSelector, Map<String, String> labelSelector) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ApiClient apiClient = k8SClientAdmin.getEnv(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
-            String fieldSelectorStr = K8sResourceTool.genLabelSelectorExpression(fieldSelector);
-            String labelSelectorStr = K8sResourceTool.genLabelSelectorExpression(labelSelector);
+            String fieldSelectorStr = K8sNameUtil.genLabelSelectorExpression(fieldSelector);
+            String labelSelectorStr = K8sNameUtil.genLabelSelectorExpression(labelSelector);
             V1PodList podList = coreV1Api.listPodForAllNamespaces(null, null, fieldSelectorStr, labelSelectorStr, null, "false", null, null, null, null);
             return podList.getItems().stream().map(pod -> {
                 K8sResource.Pod server = new K8sResource.Pod();
@@ -92,11 +94,11 @@ public class K8sPodRepository {
      * @param labelSelector pod标签键值对
      * @return /
      */
-    public List<K8sResource.Pod> queryNamespaceList(@NotNull EnvEnum envEnum, @NotNull String namespace, Map<String, String> labelSelector) {
+    public List<K8sResource.Pod> listPods(@NotNull String clusterCode, @NotNull String namespace, Map<String, String> labelSelector) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ApiClient apiClient = k8SClientAdmin.getEnv(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
-            String labelSelectorStr = K8sResourceTool.genLabelSelectorExpression(labelSelector);
+            String labelSelectorStr = K8sNameUtil.genLabelSelectorExpression(labelSelector);
             V1PodList podList = coreV1Api.listNamespacedPod(namespace, "false", null, null, null, labelSelectorStr, null, null, null, null, null);
             return podList.getItems().stream().map(pod -> {
                 K8sResource.Pod server = new K8sResource.Pod();
@@ -147,21 +149,21 @@ public class K8sPodRepository {
      * @param appName   应用名称
      * @return /
      */
-    public List<K8sResource.Pod> queryByAppName(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String appName) {
-        return queryNamespaceList(envEnum, namespace, K8sResourceTool.getLabelsMap(appName));
+    public List<K8sResource.Pod> listPods(@NotNull String clusterCode, @NotNull String namespace, @NotNull String appName) {
+        return listPods(clusterCode, namespace, K8sNameUtil.getLabelsMap(appName));
     }
 
     /**
      * 重建/重启Pod, 通过删除Pod重建
      *
-     * @param namespace 命名空间
-     * @param podName   pod名称
+     * @param args /
      */
-    public void rebuildPod(@NotNull EnvEnum envEnum, @NotNull String namespace, @NotNull String podName) {
+    public void rebuildPod(K8sPod.RebuildArgs args) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(envEnum);
+            ValidationUtil.validate(args);
+            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
-            coreV1Api.deleteNamespacedPod(podName, namespace, null, null, null, null, null, null);
+            coreV1Api.deleteNamespacedPod(args.getPodName(), args.getNamespace(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("重建Pod失败: {}", responseBody, e);

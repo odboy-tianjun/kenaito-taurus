@@ -17,10 +17,11 @@ package me.zhengjie.infra.mybatisplus;
 
 import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import me.zhengjie.utils.SecurityUtils;
+import me.zhengjie.util.SecurityUtil;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
-import java.sql.Timestamp;
+
+import java.util.Date;
 
 /**
  * @author Zheng Jie
@@ -32,24 +33,36 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
 
     @Override
     public void insertFill(MetaObject metaObject) {
-        /* 创建时间 */
-        this.strictInsertFill(metaObject, "createTime", Timestamp.class, DateTime.now().toTimestamp());
-        this.strictInsertFill(metaObject, "updateTime", Timestamp.class, DateTime.now().toTimestamp());
+        Date now = DateTime.now();
         /* 操作人 */
         String username = "System";
-        try {username = SecurityUtils.getCurrentUsername();}catch (Exception ignored){}
+        try {
+            username = SecurityUtil.getCurrentUsername();
+        } catch (Exception ignored) {
+        }
+        /* 创建时间 */
+        this.strictInsertFill(metaObject, "createTime", Date.class, now);
+        this.strictInsertFill(metaObject, "updateTime", Date.class, now);
+        /* 更新时间 */
         this.strictInsertFill(metaObject, "createBy", String.class, username);
         this.strictInsertFill(metaObject, "updateBy", String.class, username);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        /* 更新时间 */
-        this.strictUpdateFill(metaObject, "updateTime", Timestamp.class, DateTime.now().toTimestamp());
+        Date now = DateTime.now();
         /* 操作人 */
         String username = "System";
-        try {username = SecurityUtils.getCurrentUsername();}catch (Exception ignored){}
-        this.strictUpdateFill(metaObject, "updateBy", String.class, username);
+        try {
+            username = SecurityUtil.getCurrentUsername();
+        } catch (Exception ignored) {
+        }
+        /* 创建时间 */
+        this.strictInsertFill(metaObject, "createTime", Date.class, now);
+        this.strictInsertFill(metaObject, "updateTime", Date.class, now);
+        /* 更新时间 */
+        this.strictInsertFill(metaObject, "createBy", String.class, username);
+        this.strictInsertFill(metaObject, "updateBy", String.class, username);
     }
 }
 

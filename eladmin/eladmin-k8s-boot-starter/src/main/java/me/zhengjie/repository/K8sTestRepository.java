@@ -28,7 +28,7 @@ public class K8sTestRepository {
      *
      * @return /
      */
-    public List<K8sResource.Namespace> queryList(ApiClient apiClient) {
+    public List<K8sResource.Namespace> listNamespaces(ApiClient apiClient) {
         try {
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             V1NamespaceList namespaceList = coreV1Api.listNamespace("false", true, null, null, null, 1, null, null, null, false);

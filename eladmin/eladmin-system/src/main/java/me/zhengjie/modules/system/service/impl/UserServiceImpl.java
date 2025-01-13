@@ -18,8 +18,10 @@ package me.zhengjie.modules.system.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import me.zhengjie.infra.context.CacheKey;
 import me.zhengjie.infra.upload.FileProperties;
 import me.zhengjie.infra.exception.BadRequestException;
+import me.zhengjie.model.PageResult;
 import me.zhengjie.modules.security.service.OnlineUserService;
 import me.zhengjie.modules.security.service.UserCacheManager;
 import me.zhengjie.modules.system.domain.Job;
@@ -32,7 +34,8 @@ import me.zhengjie.modules.system.mapper.UserJobMapper;
 import me.zhengjie.modules.system.mapper.UserMapper;
 import me.zhengjie.modules.system.mapper.UserRoleMapper;
 import me.zhengjie.modules.system.service.UserService;
-import me.zhengjie.utils.*;
+import me.zhengjie.util.PageUtil;
+import me.zhengjie.util.*;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -58,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final UserJobMapper userJobMapper;
     private final UserRoleMapper userRoleMapper;
     private final FileProperties properties;
-    private final RedisUtils redisUtils;
+    private final RedisUtil redisUtil;
     private final UserCacheManager userCacheManager;
     private final OnlineUserService onlineUserService;
 
@@ -120,13 +123,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 如果用户的角色改变
         if (!resources.getRoles().equals(user.getRoles())) {
-            redisUtils.del(CacheKey.DATA_USER + resources.getId());
-            redisUtils.del(CacheKey.MENU_USER + resources.getId());
-            redisUtils.del(CacheKey.ROLE_AUTH + resources.getId());
+            redisUtil.del(CacheKey.DATA_USER + resources.getId());
+            redisUtil.del(CacheKey.MENU_USER + resources.getId());
+            redisUtil.del(CacheKey.ROLE_AUTH + resources.getId());
         }
         // 修改部门会影响 数据权限
         if (!Objects.equals(resources.getDept(),user.getDept())) {
-            redisUtils.del(CacheKey.DATA_USER + resources.getId());
+            redisUtil.del(CacheKey.DATA_USER + resources.getId());
         }
         // 如果用户被禁用，则清除用户登录信息
         if(!resources.getEnabled()){
@@ -223,13 +226,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(fileType != null && !image.contains(fileType)){
             throw new BadRequestException("文件格式错误！, 仅支持 " + image +" 格式");
         }
-        User user = userMapper.findByUsername(SecurityUtils.getCurrentUsername());
+        User user = userMapper.findByUsername(SecurityUtil.getCurrentUsername());
         String oldPath = user.getAvatarPath();
         File file = FileUtil.upload(multipartFile, properties.getPath().getAvatar());
         user.setAvatarPath(Objects.requireNonNull(file).getPath());
         user.setAvatarName(file.getName());
         saveOrUpdate(user);
-        if (StringUtils.isNotBlank(oldPath)) {
+        if (StringUtil.isNotBlank(oldPath)) {
             FileUtil.del(oldPath);
         }
         @NotBlank String username = user.getUsername();
@@ -272,7 +275,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param id /
      */
     public void delCaches(Long id, String username) {
-        redisUtils.del(CacheKey.USER_ID + id);
+        redisUtil.del(CacheKey.USER_ID + id);
         flushCache(username);
     }
 
