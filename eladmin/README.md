@@ -12,7 +12,7 @@
 
 #### 项目源码
 
-|        | 后端源码                                        | 前端源码                                        |
+|        | 后端源码(eladmin)                               | 前端源码(eladmin-web)                           |
 |--------|---------------------------------------------|---------------------------------------------|
 | github | https://github.com/odboy-tianjun/eladmin-mp | https://github.com/odboy-tianjun/eladmin-mp |
 
