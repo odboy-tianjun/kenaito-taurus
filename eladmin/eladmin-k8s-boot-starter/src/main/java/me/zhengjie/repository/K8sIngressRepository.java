@@ -61,7 +61,7 @@ public class K8sIngressRepository {
                     .endRule()
                     .endSpec()
                     .build();
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
             return networkingV1Api.createNamespacedIngress(args.getNamespace(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
@@ -105,7 +105,7 @@ public class K8sIngressRepository {
                     .endRule()
                     .endSpec()
                     .build();
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             ExtensionsV1beta1Api networkingV1Api = new ExtensionsV1beta1Api(apiClient);
             return networkingV1Api.createNamespacedIngress(args.getNamespace(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
@@ -130,7 +130,7 @@ public class K8sIngressRepository {
     public void deleteIngress(K8sIngress.DeleteArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
             networkingV1Api.deleteNamespacedIngress(K8sNameUtil.getIngressName(args.getAppName()), args.getNamespace(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {
@@ -156,7 +156,7 @@ public class K8sIngressRepository {
         try {
             ValidationUtil.validate(args);
             V1Ingress ingress = Yaml.loadAs(args.getYamlContent(), V1Ingress.class);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
             String ingressName = ingress.getMetadata().getName();
             networkingV1Api.replaceNamespacedIngress(ingressName, args.getNamespace(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);

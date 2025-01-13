@@ -1,7 +1,7 @@
 package me.zhengjie.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.context.GitlabAuthRepository;
+import me.zhengjie.context.GitlabAuthAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
 import org.gitlab4j.api.GitLabApi;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GitlabDemoRepository {
     @Autowired
-    private GitlabAuthRepository repository;
+    private GitlabAuthAdmin repository;
 
     public void test() {
         try (GitLabApi client = repository.auth()) {

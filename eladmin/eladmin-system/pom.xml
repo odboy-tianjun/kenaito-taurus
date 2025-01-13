@@ -51,6 +51,12 @@
             <version>1.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>me.zhengjie</groupId>
+            <artifactId>eladmin-dingtalk-boot-starter</artifactId>
+            <version>1.1</version>
+        </dependency>
+
         <!-- Spring boot websocket -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

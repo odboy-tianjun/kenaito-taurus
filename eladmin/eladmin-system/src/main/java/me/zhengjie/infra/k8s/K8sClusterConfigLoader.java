@@ -37,7 +37,7 @@ public class K8sClusterConfigLoader implements InitializingBean {
             try {
                 String content = new String(k8sClusterConfig.getConfigContent(), StandardCharsets.UTF_8);
                 ApiClient apiClient = k8sConfigHelper.loadFormContent(content);
-                k8sClientAdmin.putEnv(k8sClusterConfig.getClusterCode(), apiClient);
+                k8sClientAdmin.putClientEnv(k8sClusterConfig.getClusterCode(), apiClient);
                 updateStatusById(k8sClusterConfig, K8sClusterStatusEnum.HEALTH);
                 log.info("K8s集群 {} 服务端健康，已加入k8sClientAdmin", k8sClusterConfig.getClusterName());
             } catch (Exception e) {

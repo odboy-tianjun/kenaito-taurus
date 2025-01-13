@@ -66,7 +66,7 @@ public class K8sDeploymentRepository {
                     .endTemplate()
                     .endSpec()
                     .build();
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             return appsV1Api.createNamespacedDeployment(args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
@@ -91,7 +91,7 @@ public class K8sDeploymentRepository {
     public V1Deployment changeDeploymentReplicas(K8sDeployment.ChangeReplicasArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
             V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getNamespace(), "false", null, null);
@@ -122,7 +122,7 @@ public class K8sDeploymentRepository {
     public V1Deployment changeDeploymentImage(K8sDeployment.ChangeImageArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
             V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getNamespace(), "false", null, null);
@@ -174,7 +174,7 @@ public class K8sDeploymentRepository {
     public V1Deployment changeDeploymentSpecs(K8sDeployment.ChangePodSpecsArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
             V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getNamespace(), "false", null, null);
@@ -236,7 +236,7 @@ public class K8sDeploymentRepository {
     public V1Status deleteDeployment(K8sDeployment.DeleteArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             return appsV1Api.deleteNamespacedDeployment(args.getDeploymentName(), args.getNamespace(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {
@@ -254,7 +254,7 @@ public class K8sDeploymentRepository {
     }
 
     public V1Deployment getDeploymentByName(@NotNull String clusterCode, @NotNull String namespace, @NotNull String deploymentName) {
-        ApiClient apiClient = k8SClientAdmin.getEnv(clusterCode);
+        ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
         AppsV1Api appsV1Api = new AppsV1Api(apiClient);
         try {
             return appsV1Api.readNamespacedDeployment(deploymentName, namespace, "false", null, null);
@@ -276,7 +276,7 @@ public class K8sDeploymentRepository {
         try {
             ValidationUtil.validate(args);
             V1Deployment deployment = Yaml.loadAs(args.getYamlContent(), V1Deployment.class);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String deploymentName = deployment.getMetadata().getName();
             appsV1Api.replaceNamespacedDeployment(deploymentName, args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);

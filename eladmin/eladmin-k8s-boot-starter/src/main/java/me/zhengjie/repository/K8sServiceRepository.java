@@ -57,7 +57,7 @@ public class K8sServiceRepository {
                     .withSelector(args.getLabelSelector())
                     .endSpec()
                     .build();
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             // Deployment and StatefulSet is defined in apps/v1, so you should use AppsV1Api instead of CoreV1API
             CoreV1Api api = new CoreV1Api(apiClient);
             return api.createNamespacedService(args.getNamespace(), service, null, K8sDryRunUtil.transferState(args.getDryRun()), null);
@@ -83,7 +83,7 @@ public class K8sServiceRepository {
     public void deleteService(K8sService.DeleteArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             CoreV1Api api = new CoreV1Api(apiClient);
             api.deleteNamespacedService(K8sNameUtil.getServiceName(args.getAppName()), args.getNamespace(), null, K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {
@@ -103,7 +103,7 @@ public class K8sServiceRepository {
     public V1Service loadServiceFromYaml(K8sService.LoadFromYamlArgs args) {
         try {
             V1Service service = Yaml.loadAs(args.getYamlContent(), V1Service.class);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             String serviceName = Objects.requireNonNull(service.getMetadata()).getName();
             // 执行验收测试, dryRun="All"

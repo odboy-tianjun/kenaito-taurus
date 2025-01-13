@@ -232,3 +232,9 @@ gitlab:
 # k8s
 k8s:
   debug: false
+
+# dingtalk
+dingtalk:
+  agent-id: 3286687600
+  app-key: dingcsmyubzwqib8hk6v
+  app-secret: pT19iIMhYHQuSC9EcJ10hb42ab0F21pMlZ3rfHMOvdOtFmN3j8NB_k4Cno2HRiC4

@@ -29,7 +29,7 @@ public class K8sNodeRepository {
             throw new BadRequestException("集群编码不能为空");
         }
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(clusterCode);
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             return coreV1Api.listNode("false", null, null, null, null, null, null, null, null, null);
         } catch (ApiException e) {

@@ -6,17 +6,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * gitlab支持
+ * dingtalk支持
  *
  * @author odboy
  * @date 2025-01-13
  */
 @Configuration
-@EnableConfigurationProperties(GitlabProperties.class)
-@ConditionalOnClass(GitlabAuthAdmin.class)
-public class GitlabAutoConfiguration {
+@EnableConfigurationProperties(DingtalkProperties.class)
+@ConditionalOnClass(DingtalkAuthAdmin.class)
+public class DingtalkAutoConfiguration {
     @Bean
-    public GitlabAuthAdmin gitlabAuthRepository() {
-        return new GitlabAuthAdmin();
+    public DingtalkAuthAdmin dingtalkAuthAdmin() {
+        return new DingtalkAuthAdmin();
     }
 }

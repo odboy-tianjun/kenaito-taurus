@@ -40,7 +40,7 @@ public class K8sPodRepository {
 
     public List<K8sResource.Pod> listPods(@NotNull String clusterCode, Map<String, String> fieldSelector, Map<String, String> labelSelector) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(clusterCode);
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             String fieldSelectorStr = K8sNameUtil.genLabelSelectorExpression(fieldSelector);
             String labelSelectorStr = K8sNameUtil.genLabelSelectorExpression(labelSelector);
@@ -96,7 +96,7 @@ public class K8sPodRepository {
      */
     public List<K8sResource.Pod> listPods(@NotNull String clusterCode, @NotNull String namespace, Map<String, String> labelSelector) {
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(clusterCode);
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             String labelSelectorStr = K8sNameUtil.genLabelSelectorExpression(labelSelector);
             V1PodList podList = coreV1Api.listNamespacedPod(namespace, "false", null, null, null, labelSelectorStr, null, null, null, null, null);
@@ -161,7 +161,7 @@ public class K8sPodRepository {
     public void rebuildPod(K8sPod.RebuildArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             coreV1Api.deleteNamespacedPod(args.getPodName(), args.getNamespace(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {

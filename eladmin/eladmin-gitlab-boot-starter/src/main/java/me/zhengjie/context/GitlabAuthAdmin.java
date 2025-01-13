@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author odboy
  * @date 2025-01-12
  */
-public class GitlabAuthRepository {
+public class GitlabAuthAdmin {
     @Autowired
     private GitlabProperties properties;
 

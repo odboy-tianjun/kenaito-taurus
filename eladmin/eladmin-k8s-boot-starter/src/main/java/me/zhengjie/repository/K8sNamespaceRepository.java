@@ -43,7 +43,7 @@ public class K8sNamespaceRepository {
             throw new BadRequestException("参数clusterCode不能为空");
         }
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(clusterCode);
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             V1NamespaceList namespaceList = coreV1Api.listNamespace("false", true, null, null, null, null, null, null, null, false);
             return namespaceList.getItems().stream().map(m -> {
@@ -81,7 +81,7 @@ public class K8sNamespaceRepository {
             throw new BadRequestException("应用编码不能为空");
         }
         try {
-            ApiClient apiClient = k8SClientAdmin.getEnv(clusterCode);
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             V1Namespace v1Namespace = coreV1Api.readNamespace(appName, "false", null, null);
             if (v1Namespace == null) {
@@ -115,7 +115,7 @@ public class K8sNamespaceRepository {
     public K8sResource.Namespace createNamespace(K8sNamespace.CreateArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             V1Namespace newNamespace = new V1Namespace();
             newNamespace.setApiVersion("v1");

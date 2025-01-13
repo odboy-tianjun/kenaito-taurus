@@ -23,11 +23,11 @@ public class K8sClientAdmin {
     @Autowired
     private K8sHealthChecker k8sHealthChecker;
 
-    public void remove(String clusterCode) {
+    public void deleteClient(String clusterCode) {
         CLIENT_MAP.remove(clusterCode);
     }
 
-    public void putEnv(String clusterCode, ApiClient apiClient) {
+    public void putClientEnv(String clusterCode, ApiClient apiClient) {
         if (StrUtil.isBlank(clusterCode)) {
             throw new BadRequestException("参数clusterCode必填");
         }
@@ -40,7 +40,7 @@ public class K8sClientAdmin {
         }
     }
 
-    public ApiClient getEnv(String clusterCode) {
+    public ApiClient getClientEnv(String clusterCode) {
         if (StrUtil.isBlank(clusterCode)) {
             throw new BadRequestException("参数clusterCode必填");
         }

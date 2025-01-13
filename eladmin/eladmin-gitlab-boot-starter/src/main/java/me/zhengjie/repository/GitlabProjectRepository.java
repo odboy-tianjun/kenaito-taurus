@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.github.xiaoymin.knife4j.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.constant.GitlabConst;
-import me.zhengjie.context.GitlabAuthRepository;
+import me.zhengjie.context.GitlabAuthAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.model.GitlabProject;
 import me.zhengjie.util.ValidationUtil;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Component
 public class GitlabProjectRepository {
     @Autowired
-    private GitlabAuthRepository repository;
+    private GitlabAuthAdmin repository;
 
     /**
      * 创建项目 -> ok

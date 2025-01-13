@@ -3,7 +3,7 @@ package me.zhengjie.repository;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.constant.EnvEnum;
-import me.zhengjie.context.GitlabAuthRepository;
+import me.zhengjie.context.GitlabAuthAdmin;
 import me.zhengjie.context.GitlabCIFileAdmin;
 import me.zhengjie.context.GitlabIgnoreFileAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
@@ -25,7 +25,7 @@ import java.util.List;
 @Component
 public class GitlabRepoRepository {
     @Autowired
-    private GitlabAuthRepository repository;
+    private GitlabAuthAdmin repository;
     @Autowired
     private GitlabProjectRepository projectRepository;
     @Autowired

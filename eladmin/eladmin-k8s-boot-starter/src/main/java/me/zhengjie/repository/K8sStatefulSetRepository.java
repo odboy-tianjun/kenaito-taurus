@@ -86,7 +86,7 @@ public class K8sStatefulSetRepository {
                 .endTemplate()
                 .endSpec()
                 .build();
-        ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+        ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
         AppsV1Api api = new AppsV1Api(apiClient);
         try {
             return api.createNamespacedStatefulSet(args.getNamespace(), statefulSet, null, K8sDryRunUtil.transferState(args.getDryRun()), null);
@@ -112,7 +112,7 @@ public class K8sStatefulSetRepository {
     public V1StatefulSet changeStatefulSetReplicas(K8sStatefulSet.ChangeReplicasArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
             V1StatefulSet statefulSet = appsV1Api.readNamespacedStatefulSet(statefulSetName, args.getNamespace(), null, null, null);
@@ -143,7 +143,7 @@ public class K8sStatefulSetRepository {
     public V1StatefulSet changeStatefulSetImage(K8sStatefulSet.ChangeImageArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
             V1StatefulSet statefulSet = appsV1Api.readNamespacedStatefulSet(statefulSetName, args.getNamespace(), null, null, null);
@@ -202,7 +202,7 @@ public class K8sStatefulSetRepository {
     public V1StatefulSet changeStatefulSetSpecs(K8sStatefulSet.ChangeSpecsArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
             V1StatefulSet statefulSet = appsV1Api.readNamespacedStatefulSet(statefulSetName, args.getNamespace(), null, null, null);
@@ -268,7 +268,7 @@ public class K8sStatefulSetRepository {
     public V1StatefulSet changeStatefulSetImageV2(K8sStatefulSet.ChangeImageArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
             // 这种方式也不能使非Running中的容器重建
@@ -297,7 +297,7 @@ public class K8sStatefulSetRepository {
     public V1Status deleteStatefulSet(K8sStatefulSet.DeleteArgs args) {
         try {
             ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String statefulSetName = K8sNameUtil.getStatefulSetName(args.getAppName());
             return appsV1Api.deleteNamespacedStatefulSet(statefulSetName, args.getNamespace(), null, K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
@@ -323,7 +323,7 @@ public class K8sStatefulSetRepository {
     public V1StatefulSet loadStatefulSetFromYaml(K8sStatefulSet.LoadFromYamlArgs args) {
         try {
             V1StatefulSet statefulSet = Yaml.loadAs(args.getYamlContent(), V1StatefulSet.class);
-            ApiClient apiClient = k8SClientAdmin.getEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
             String statefulSetName = statefulSet.getMetadata().getName();
             appsV1Api.replaceNamespacedStatefulSet(statefulSetName, args.getNamespace(), statefulSet, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
