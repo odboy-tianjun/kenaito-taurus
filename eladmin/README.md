@@ -1,6 +1,7 @@
 <h1 style="text-align: center">ELADMIN 后台管理系统</h1>
 
 #### 项目简介
+
 一个基于 Spring Boot 2.7.18 、 Mybatis-Plus、 JWT、Spring Security、Redis、Vue的前后端分离的后台管理系统
 
 **开发文档：**  [https://eladmin.vip](https://eladmin.vip)
@@ -11,19 +12,12 @@
 
 #### 项目源码
 
-|     | 后端源码                                 |   前端源码  |
-|---  |--------------------------------------| --- |
-|  github   | https://github.com/elunez/eladmin-mp |  https://github.com/elunez/eladmin-web-mp   |
-|  码云   | https://gitee.com/elunez/eladmin-mp     |  https://gitee.com/elunez/eladmin-web-mp   |
-
-#### VPS推荐
-<a href="https://bwh81.net/aff.php?aff=70876" target="_blank">
-<img src="https://eladmin.vip/images/banner/side.jpeg" style="width: 435px;border-radius: 2px;">
-</a>
-
-使用优惠码: `BWHCCNCXVV`，可获得 6.81% 的折扣 [查看介绍](https://bwhstock.in/)
+|        | 后端源码                                        | 前端源码                                        |
+|--------|---------------------------------------------|---------------------------------------------|
+| github | https://github.com/odboy-tianjun/eladmin-mp | https://github.com/odboy-tianjun/eladmin-mp |
 
 #### 主要特性
+
 - 使用最新技术栈，社区资源丰富。
 - 高效率开发，代码生成器可一键生成前后端代码
 - 支持数据字典，可方便地对一些状态进行管理
@@ -35,7 +29,8 @@
 - 支持在线用户管理与服务器性能监控，支持限制单用户登录
 - 支持运维管理，可方便地对远程服务器的应用进行部署与管理
 
-####  系统功能
+#### 系统功能
+
 - 用户管理：提供用户的相关配置，新增用户后，默认密码为123456
 - 角色管理：对权限与菜单进行分配，可根据部门设置角色的数据权限
 - 菜单管理：已实现菜单动态路由，后端可配置化，支持多级菜单
@@ -53,7 +48,12 @@
 - 运维管理：一键部署你的应用
 
 #### 项目结构
+
 项目采用按功能分模块的开发方式，结构如下
+
+- `eladmin-infra-base` 为系统的基础依赖模块
+
+- `eladmin-infra-exception` 为系统的异常处理模块
 
 - `eladmin-common` 为系统的公共模块，各种工具类，公共配置存在该模块
 
@@ -65,23 +65,49 @@
 
 - `eladmin-generator` 为系统的代码生成模块，支持生成前后端CRUD代码
 
+- `eladmin-gitlab-boot-starter` 为系统支持Gitlab功能的模块
+
+- `eladmin-k8s-boot-starter` 为系统支持Kubernetes功能的模块
+
 #### 详细结构
 
 ```
+- eladmin-infra-base 基础模型、常量、工具类
+- eladmin-infra-exception 全局异常处理模块
 - eladmin-common 公共模块
-    - annotation 为系统自定义注解
-    - aspect 自定义注解的切面
     - base 提供了 Entity 基类
-    - config 自定义权限实现、redis配置、swagger配置、Rsa配置等
-    - exception 项目统一异常的处理
-    - utils 系统通用工具类
-- eladmin-system 系统核心模块（系统启动入口）
-	- config 配置跨域与静态资源，与数据权限
-	    - thread 线程池相关
-	- modules 系统相关模块(登录授权、系统监控、定时任务、运维管理等)
+    - infra 基础设施层
+        - cache redis配置
+        - context 系统上下文
+        - doc swagger配置
+        - druid 数据源中间件配置
+        - limit 接口限流切面
+        - monitor 系统监控、健康检查等
+        - mybatisplus mybatis-plus配置
+        - security 安全类的系统自定义注解
+        - upload 文件上传
+    - util 系统通用工具类
 - eladmin-logging 系统日志模块
 - eladmin-tools 系统第三方工具模块
 - eladmin-generator 系统代码生成模块
+- eladmin-gitlab-boot-starter 支持管控Gitlab
+    - constant 常量
+    - contenxt 自动装配，连接初始化
+    - model 模型
+    - repository gitlab控制类
+- eladmin-k8s-boot-starter 支持管控Kubernetes
+    - constant 常量
+    - contenxt 自动装配，连接初始化
+    - model 模型
+    - repository k8s控制类
+    - util 工具/帮助类
+- eladmin-system 系统核心模块（系统启动入口）
+    - infra 基础设施层
+        - k8s k8s相关
+        - server 配置跨域与静态资源，与数据权限
+        - thread 线程池相关
+        - websocket WebSocket相关
+	- modules 系统相关模块(登录授权、系统监控、定时任务、运维管理等)
 ```
 
 #### 特别鸣谢
@@ -93,9 +119,3 @@
 - 感谢 [zhy6599](https://gitee.com/zhy6599) 大佬提供的后端运维管理相关功能
 
 - 感谢 [j.yao.SUSE](https://github.com/everhopingandwaiting) 大佬提供的匿名接口与Redis限流等功能
-
-#### 项目捐赠
-项目的发展离不开你的支持，请作者喝杯咖啡吧☕  [Donate](https://eladmin.vip/pages/030101/)
-
-#### 反馈交流
-- QQ交流群：891137268 、947578238、659622532
