@@ -1,4 +1,4 @@
-/*
+package me.zhengjie.infra.doc;/*
  *  Copyright 2019-2020 Zheng Jie
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,39 +13,45 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package me.zhengjie.infra.doc;
-
+import lombok.RequiredArgsConstructor;
+import me.zhengjie.util.AnonTagUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.SecurityReference;
-import springfox.documentation.service.SecurityScheme;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * api页面 /doc.html
+ *
  * @author Zheng Jie
  * @date 2018-11-23
  */
 @Configuration
 @EnableSwagger2
+@RequiredArgsConstructor
 public class SwaggerConfig {
 
+    @Value("${server.servlet.context-path:}")
+    private String apiPath;
     @Value("${jwt.header}")
     private String tokenHeader;
 
     @Value("${swagger.enabled}")
     private Boolean enabled;
+
+    private final ApplicationContext applicationContext;
 
     @Bean
     @SuppressWarnings("all")
@@ -87,10 +93,14 @@ public class SwaggerConfig {
     }
 
     private SecurityContext getContextByPath() {
+        Set<String> urls = AnonTagUtils.getAllAnonymousUrl(applicationContext);
+        urls = urls.stream().filter(url -> !url.equals("/")).collect(Collectors.toSet());
+        String regExp = "^(?!" + apiPath + String.join("|" + apiPath, urls) + ").*$";
         return SecurityContext.builder()
                 .securityReferences(defaultAuth())
-                // 表示 /auth/code、/auth/login 接口不需要使用securitySchemes即不需要带token
-                .operationSelector(o->o.requestMappingPattern().matches("^(?!/auth/code|/auth/login).*$"))
+                .operationSelector(o -> o.requestMappingPattern()
+                        // 排除不需要认证的接口
+                        .matches(regExp))
                 .build();
     }
 
