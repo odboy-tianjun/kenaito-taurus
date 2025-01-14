@@ -1,4 +1,4 @@
-package me.zhengjie.model;
+package me.zhengjie.model.response;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import io.kubernetes.client.openapi.models.V1NamespaceSpec;

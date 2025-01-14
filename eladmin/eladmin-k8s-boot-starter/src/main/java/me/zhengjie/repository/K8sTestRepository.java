@@ -6,7 +6,7 @@ import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.zhengjie.model.K8sResource;
+import me.zhengjie.model.response.K8sResource;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

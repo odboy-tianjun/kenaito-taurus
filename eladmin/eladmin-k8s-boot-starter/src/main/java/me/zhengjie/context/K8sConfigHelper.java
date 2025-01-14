@@ -83,7 +83,7 @@ public class K8sConfigHelper {
     /**
      * 从Resources文件夹读取配置文件连接 Kubernetes 集群
      *
-     * @param relativeFileName 相对文件路径名, 比如：resources/config/test.txt
+     * @param relativeFileName 相对文件路径名, 比如：resources/config/ingress_demo.txt
      * @return /
      */
     public ApiClient loadFormResourceFile(String relativeFileName) {

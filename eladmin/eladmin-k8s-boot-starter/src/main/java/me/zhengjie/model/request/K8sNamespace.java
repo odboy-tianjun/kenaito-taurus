@@ -1,17 +1,24 @@
-package me.zhengjie.model;
+package me.zhengjie.model.request;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import me.zhengjie.model.MyObject;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 public class K8sNamespace {
     @Data
     @EqualsAndHashCode(callSuper = false)
     public static class CreateArgs extends MyObject {
-        @NotNull
+        /**
+         * 集群编码
+         */
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        @NotNull
+        /**
+         * 应用名称
+         */
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * 是否运行测试
@@ -22,11 +29,15 @@ public class K8sNamespace {
     @Data
     @EqualsAndHashCode(callSuper = false)
     public static class LoadFromYamlArgs extends MyObject {
-        @NotNull
+        /**
+         * 集群编码
+         */
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        @NotNull
-        private String appName;
-        @NotNull
+        /**
+         * yaml文件内容
+         */
+        @NotBlank(message = "yaml文件内容不能为空")
         private String yamlContent;
         /**
          * 是否运行测试

@@ -7,26 +7,32 @@ import me.zhengjie.constant.K8sAppLabelEnum;
 import java.util.HashMap;
 import java.util.Map;
 
-public class K8sNameUtil {
+/**
+ * k8s资源命名 工具
+ *
+ * @author odboy
+ * @date 2025-01-14
+ */
+public class K8sResourceNameUtil {
 
-    public static String getStatefulSetName(String appName) {
-        return "sts-" + appName;
+    public static String getStatefulSetName(String appName, String envCode) {
+        return String.format("%s-%s-sts", appName, envCode);
     }
 
-    public static String getDeploymentName(String appName) {
-        return "dep-" + appName;
+    public static String getDeploymentName(String appName, String envCode) {
+        return String.format("%s-%s-dep", appName, envCode);
     }
 
-    public static String getServiceName(String appName) {
-        return "svc-" + appName;
+    public static String getServiceName(String appName, String envCode) {
+        return String.format("%s-%s-svc", appName, envCode);
     }
 
-    public static String getIngressName(String appName) {
-        return "ing-" + appName;
+    public static String getIngressName(String appName, String envCode) {
+        return String.format("%s-%s-ing", appName, envCode);
     }
 
-    public static String getPodName(String appName) {
-        return "pod-" + appName;
+    public static String getPodName(String appName, String envCode) {
+        return String.format("%s-%s-pod", appName, envCode);
     }
 
     public static String genLabelSelectorExpression(Map<String, String> labelSelector) {

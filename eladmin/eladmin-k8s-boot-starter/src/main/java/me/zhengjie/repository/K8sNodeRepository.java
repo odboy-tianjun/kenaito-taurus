@@ -1,5 +1,6 @@
 package me.zhengjie.repository;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import io.kubernetes.client.openapi.ApiClient;
@@ -10,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.context.K8sClientAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
-import me.zhengjie.model.K8sResource;
+import me.zhengjie.model.response.K8sResource;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -24,12 +25,10 @@ public class K8sNodeRepository {
      *
      * @return /
      */
-    public V1NodeList listNode(String clusterCode) {
-        if (StrUtil.isEmpty(clusterCode)) {
-            throw new BadRequestException("集群编码不能为空");
-        }
+    public V1NodeList listNodes(String clusterCode) {
+        Assert.notEmpty(clusterCode, "集群编码不能为空");
         try {
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
+            ApiClient apiClient = k8SClientAdmin.getClient(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             return coreV1Api.listNode("false", null, null, null, null, null, null, null, null, null);
         } catch (ApiException e) {

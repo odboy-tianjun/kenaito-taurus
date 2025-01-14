@@ -1,8 +1,11 @@
-package me.zhengjie.model;
+package me.zhengjie.model.request;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import me.zhengjie.model.MyObject;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
@@ -13,17 +16,12 @@ public class K8sStatefulSet {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * statefulset注解
@@ -32,37 +30,40 @@ public class K8sStatefulSet {
         /**
          * 副本数量
          */
-        @NotNull
+        @NotNull(message = "副本数量不能为空")
+        @Min(value = 0, message = "副本数量不能小于0")
         private Integer replicas;
         /**
          * 镜像地址
          */
-        @NotNull
+        @NotBlank(message = "镜像地址不能为空")
         private String image;
         /**
          * 容器服务端口号
          */
-        @NotNull
+        @NotNull(message = "容器服务端口号不能为空")
         private Integer port;
         /**
-         * 需求cpu
+         * 需求cpu数
          */
-        @NotNull
+        @NotNull(message = "需求cpu数不能为空")
+        @Min(value = 1, message = "需求cpu数不能小于1")
         private Integer requestCpuNum;
         /**
          * 需求memory数
          */
-        @NotNull
+        @NotNull(message = "需求memory数不能为空")
+        @Min(value = 1, message = "需求memory数不能小于1")
         private Integer requestMemNum;
         /**
          * cpu上限
          */
-        @NotNull
+        @NotNull(message = "cpu上限不能为空")
         private Integer limitsCpuNum;
         /**
          * memory上限
          */
-        @NotNull
+        @NotNull(message = "memory上限不能为空")
         private Integer limitsMemNum;
 
         /**
@@ -77,22 +78,18 @@ public class K8sStatefulSet {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * 新副本数量
          */
-        @NotNull
+        @NotNull(message = "新副本数量不能为空")
+        @Min(value = 0, message = "新副本数量不能小于0")
         private Integer newReplicas;
         /**
          * 是否运行测试
@@ -106,22 +103,17 @@ public class K8sStatefulSet {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * 新镜像地址
          */
-        @NotNull
+        @NotBlank(message = "镜像地址不能为空")
         private String newImage;
         /**
          * 是否运行测试
@@ -135,37 +127,34 @@ public class K8sStatefulSet {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
-         * 需求cpu
+         * 需求cpu数
          */
-        @NotNull
+        @NotNull(message = "需求cpu数不能为空")
+        @Min(value = 1, message = "需求cpu数不能小于1")
         private Integer requestCpuNum;
         /**
          * 需求memory数
          */
-        @NotNull
+        @NotNull(message = "需求memory数不能为空")
+        @Min(value = 1, message = "需求memory数不能小于1")
         private Integer requestMemNum;
         /**
          * cpu上限
          */
-        @NotNull
+        @NotNull(message = "cpu上限不能为空")
         private Integer limitsCpuNum;
         /**
          * memory上限
          */
-        @NotNull
+        @NotNull(message = "memory上限不能为空")
         private Integer limitsMemNum;
         /**
          * 是否运行测试
@@ -179,17 +168,12 @@ public class K8sStatefulSet {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * 是否运行测试
@@ -203,17 +187,12 @@ public class K8sStatefulSet {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
         /**
-         * 命名空间
+         * yaml文件内容
          */
-        @NotNull
-        private String namespace;
-        /**
-         * 应用名称
-         */
-        @NotNull
+        @NotBlank(message = "yaml文件内容不能为空")
         private String yamlContent;
         /**
          * 是否运行测试

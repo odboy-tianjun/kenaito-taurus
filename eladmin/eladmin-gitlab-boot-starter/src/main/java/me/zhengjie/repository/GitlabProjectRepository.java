@@ -114,7 +114,7 @@ public class GitlabProjectRepository {
      * @param userIds     用户id列表
      * @param accessLevel 访问级别
      */
-    public void AddProjectMembers(Long projectId, List<Long> userIds, AccessLevel accessLevel) {
+    public void addProjectMembers(Long projectId, List<Long> userIds, AccessLevel accessLevel) {
         if (CollUtil.isNotEmpty(userIds)) {
             for (Long userId : userIds.stream().filter(Objects::nonNull).distinct().collect(Collectors.toList())) {
                 try {
@@ -166,7 +166,7 @@ public class GitlabProjectRepository {
      * @param projectId /
      * @return /
      */
-    public Project getProjectById(Long projectId) {
+    public Project describeProjectById(Long projectId) {
         try (GitLabApi client = repository.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             return projectApi.getProjectsStream().filter(f -> f.getId().equals(projectId)).findFirst().orElse(null);
@@ -182,7 +182,7 @@ public class GitlabProjectRepository {
      * @param appName /
      * @return /
      */
-    public Project getProjectByAppName(String appName) {
+    public Project describeProjectByAppName(String appName) {
         try (GitLabApi client = repository.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             return projectApi.getProjectsStream().filter(f -> f.getPath().equals(appName)).findFirst().orElse(null);
@@ -215,7 +215,7 @@ public class GitlabProjectRepository {
      *
      * @param projectId /
      */
-    public void deleteById(Long projectId) {
+    public void deleteProjectById(Long projectId) {
         try (GitLabApi client = repository.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             projectApi.deleteProject(projectId);
@@ -229,7 +229,7 @@ public class GitlabProjectRepository {
         if (CollUtil.isNotEmpty(projectIds)) {
             for (Long projectId : projectIds) {
                 try {
-                    deleteById(projectId);
+                    deleteProjectById(projectId);
                 } catch (Exception e) {
                     log.error("根据projectId删除应用失败", e);
                 }
@@ -244,7 +244,7 @@ public class GitlabProjectRepository {
      */
     public void deleteProjectByAppName(String appName) {
         try (GitLabApi client = repository.auth()) {
-            Project localProject = getProjectByAppName(appName);
+            Project localProject = describeProjectByAppName(appName);
             if (localProject == null) {
                 throw new BadRequestException("应用不存在");
             }

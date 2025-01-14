@@ -1,23 +1,26 @@
 package me.zhengjie.repository;
 
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
-import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.apis.ExtensionsV1beta1Api;
 import io.kubernetes.client.openapi.apis.NetworkingV1Api;
 import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Yaml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.constant.K8sActionReasonCodeEnum;
 import me.zhengjie.context.K8sClientAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
-import me.zhengjie.model.K8sIngress;
-import me.zhengjie.model.K8sResource;
+import me.zhengjie.model.request.K8sIngress;
+import me.zhengjie.model.response.K8sResource;
 import me.zhengjie.util.K8sDryRunUtil;
-import me.zhengjie.util.K8sNameUtil;
+import me.zhengjie.util.K8sResourceNameUtil;
 import me.zhengjie.util.ValidationUtil;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * Kubernetes Ingress Repository
@@ -37,14 +40,13 @@ public class K8sIngressRepository {
      * @param args /
      */
     public V1Ingress createIngress(K8sIngress.CreateArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
-            String ingressName = K8sNameUtil.getIngressName(args.getAppName());
             // 构建ingress的yaml对象
             V1Ingress ingress = new V1IngressBuilder()
                     .withNewMetadata()
-                    .withName(ingressName)
-                    .withNewNamespace(args.getNamespace())
+                    .withName(K8sResourceNameUtil.getIngressName(args.getAppName(), k8SClientAdmin.getEnvCode(args.getClusterCode())))
+                    .withNewNamespace(args.getAppName())
                     .withAnnotations(args.getAnnotations())
                     .endMetadata()
                     .withNewSpec()
@@ -61,53 +63,9 @@ public class K8sIngressRepository {
                     .endRule()
                     .endSpec()
                     .build();
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
-            return networkingV1Api.createNamespacedIngress(args.getNamespace(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
-        } catch (ApiException e) {
-            String responseBody = e.getResponseBody();
-            log.error("创建Ingress失败: {}", responseBody, e);
-            K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
-            if (actionExceptionBody != null) {
-                throw new BadRequestException("创建Ingress失败, 原因：" + actionExceptionBody.getReason());
-            }
-            throw new BadRequestException("创建Ingress失败");
-        } catch (Exception e) {
-            log.error("创建Ingress失败:", e);
-            throw new BadRequestException("创建Ingress失败");
-        }
-    }
-
-    /**
-     * 创建k8s ExtensionIngress
-     *
-     * @param args /
-     */
-    public ExtensionsV1beta1Ingress createIngressExtension(K8sIngress.CreateArgs args) {
-        try {
-            ValidationUtil.validate(args);
-            String ingressName = "inge-" + args.getAppName();
-            // 构建ingress的yaml对象
-            ExtensionsV1beta1Ingress ingress = new ExtensionsV1beta1IngressBuilder()
-                    .withNewMetadata()
-                    .withName(ingressName)
-                    .withNamespace(args.getNamespace())
-                    .withAnnotations(args.getAnnotations())
-                    .endMetadata()
-                    .withNewSpec()
-                    .addNewRule()
-                    .withHost(args.getHostname())
-                    .withHttp(new ExtensionsV1beta1HTTPIngressRuleValueBuilder().addToPaths(new ExtensionsV1beta1HTTPIngressPathBuilder()
-                            .withPath(args.getPath())
-                            .withBackend(new ExtensionsV1beta1IngressBackendBuilder()
-                                    .withServiceName(args.getServiceName())
-                                    .withServicePort(new IntOrString(args.getServicePort())).build()).build()).build())
-                    .endRule()
-                    .endSpec()
-                    .build();
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
-            ExtensionsV1beta1Api networkingV1Api = new ExtensionsV1beta1Api(apiClient);
-            return networkingV1Api.createNamespacedIngress(args.getNamespace(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            return networkingV1Api.createNamespacedIngress(args.getAppName(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("创建Ingress失败: {}", responseBody, e);
@@ -128,11 +86,11 @@ public class K8sIngressRepository {
      * @param args /
      */
     public void deleteIngress(K8sIngress.DeleteArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
-            networkingV1Api.deleteNamespacedIngress(K8sNameUtil.getIngressName(args.getAppName()), args.getNamespace(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
+            networkingV1Api.deleteNamespacedIngress(K8sResourceNameUtil.getIngressName(args.getAppName(), k8SClientAdmin.getEnvCode(args.getClusterCode())), args.getAppName(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("删除Ingress失败: {}", responseBody, e);
@@ -148,18 +106,86 @@ public class K8sIngressRepository {
     }
 
     /**
+     * 根据appName获取Ingress
+     *
+     * @return /
+     */
+    public V1Ingress describeIngressByAppName(String clusterCode, String appName) {
+        Assert.notEmpty(clusterCode, "集群编码不能为空");
+        Assert.notEmpty(appName, "应用名称不能为空");
+        try {
+            ApiClient apiClient = k8SClientAdmin.getClient(clusterCode);
+            NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
+            return networkingV1Api.readNamespacedIngress(K8sResourceNameUtil.getIngressName(appName, k8SClientAdmin.getEnvCode(clusterCode)), appName, "false", null, null);
+        } catch (ApiException e) {
+            String responseBody = e.getResponseBody();
+            K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
+            if (actionExceptionBody != null) {
+                if (actionExceptionBody.getReason().contains(K8sActionReasonCodeEnum.NotFound.getCode())) {
+                    return null;
+                }
+                log.error("根据appName获取Ingress失败: {}", responseBody, e);
+                throw new BadRequestException("根据appName获取Ingress失败, 原因：" + actionExceptionBody.getReason());
+            }
+            throw new BadRequestException("根据appName获取Ingress失败");
+        } catch (Exception e) {
+            log.error("根据appName获取Ingress失败:", e);
+            throw new BadRequestException("根据appName获取Ingress失败");
+        }
+    }
+
+    /**
+     * 根据ingress名称获取Ingress
+     *
+     * @param clusterCode 集群编码
+     * @param name        ingress名称
+     * @param namespace   命名空间
+     * @return /
+     */
+    public V1Ingress describeIngressByName(String clusterCode, String name, String namespace) {
+        Assert.notEmpty(clusterCode, "集群编码不能为空");
+        Assert.notEmpty(name, "名称不能为空");
+        Assert.notEmpty(namespace, "命名空间不能为空");
+        try {
+            ApiClient apiClient = k8SClientAdmin.getClient(clusterCode);
+            NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
+            return networkingV1Api.readNamespacedIngress(name, namespace, "false", null, null);
+        } catch (ApiException e) {
+            String responseBody = e.getResponseBody();
+            K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
+            if (actionExceptionBody != null) {
+                if (actionExceptionBody.getReason().contains(K8sActionReasonCodeEnum.NotFound.getCode())) {
+                    return null;
+                }
+                log.error("根据ingress名称获取Ingress失败: {}", responseBody, e);
+                throw new BadRequestException("根据ingress名称获取Ingress失败, 原因：" + actionExceptionBody.getReason());
+            }
+            throw new BadRequestException("根据ingress名称获取Ingress失败");
+        } catch (Exception e) {
+            log.error("根据ingress名称获取Ingress失败:", e);
+            throw new BadRequestException("根据ingress名称获取Ingress失败");
+        }
+    }
+
+    /**
      * 从yaml文件内容加载Ingress
      *
      * @param args /
      */
     public V1Ingress loadIngressFromYaml(K8sIngress.LoadFromYamlArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
             V1Ingress ingress = Yaml.loadAs(args.getYamlContent(), V1Ingress.class);
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             NetworkingV1Api networkingV1Api = new NetworkingV1Api(apiClient);
-            String ingressName = ingress.getMetadata().getName();
-            networkingV1Api.replaceNamespacedIngress(ingressName, args.getNamespace(), ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            String ingressName = Objects.requireNonNull(ingress.getMetadata()).getName();
+            String namespace = Objects.requireNonNull(ingress.getMetadata()).getNamespace();
+            V1Ingress v1Ingress = describeIngressByName(args.getClusterCode(), ingressName, namespace);
+            if (v1Ingress == null) {
+                networkingV1Api.createNamespacedIngress(namespace, ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            } else {
+                networkingV1Api.replaceNamespacedIngress(ingressName, namespace, ingress, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            }
             return ingress;
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();

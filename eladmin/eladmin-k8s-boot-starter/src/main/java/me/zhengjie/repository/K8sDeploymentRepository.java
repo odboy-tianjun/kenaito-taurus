@@ -1,6 +1,7 @@
 package me.zhengjie.repository;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Assert;
 import com.alibaba.fastjson.JSON;
 import io.kubernetes.client.custom.Quantity;
 import io.kubernetes.client.openapi.ApiClient;
@@ -10,20 +11,21 @@ import io.kubernetes.client.openapi.models.*;
 import io.kubernetes.client.util.Yaml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.constant.K8sActionReasonCodeEnum;
 import me.zhengjie.constant.K8sPodStatusEnum;
 import me.zhengjie.context.K8sClientAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
-import me.zhengjie.model.K8sDeployment;
-import me.zhengjie.model.K8sPod;
-import me.zhengjie.model.K8sResource;
+import me.zhengjie.model.request.K8sDeployment;
+import me.zhengjie.model.request.K8sPod;
+import me.zhengjie.model.response.K8sResource;
 import me.zhengjie.util.K8sDryRunUtil;
-import me.zhengjie.util.K8sNameUtil;
+import me.zhengjie.util.K8sResourceNameUtil;
 import me.zhengjie.util.ValidationUtil;
 import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Component
@@ -38,15 +40,15 @@ public class K8sDeploymentRepository {
      * @param args /
      */
     public V1Deployment createDeployment(K8sDeployment.CreateArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
-            Map<String, String> labels = K8sNameUtil.getLabelsMap(args.getAppName());
-            String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
+            Map<String, String> labels = K8sResourceNameUtil.getLabelsMap(args.getAppName());
+            String deploymentName = K8sResourceNameUtil.getDeploymentName(args.getAppName(), k8SClientAdmin.getEnvCode(args.getClusterCode()));
             // 构建deployment的yaml对象
             V1Deployment deployment = new V1DeploymentBuilder()
                     .withNewMetadata()
                     .withName(deploymentName)
-                    .withNamespace(args.getNamespace())
+                    .withNamespace(args.getAppName())
                     .withAnnotations(args.getAnnotations())
                     .endMetadata()
                     .withNewSpec()
@@ -58,7 +60,7 @@ public class K8sDeploymentRepository {
                     .endMetadata()
                     .withNewSpec()
                     .withContainers(new V1Container()
-                            .name(K8sNameUtil.getPodName(args.getAppName()))
+                            .name(K8sResourceNameUtil.getPodName(args.getAppName(), k8SClientAdmin.getEnvCode(args.getClusterCode())))
                             .image(args.getImage())
                             .ports(CollUtil.newArrayList(new V1ContainerPort().containerPort(args.getPort())))
                     )
@@ -66,9 +68,9 @@ public class K8sDeploymentRepository {
                     .endTemplate()
                     .endSpec()
                     .build();
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            return appsV1Api.createNamespacedDeployment(args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            return appsV1Api.createNamespacedDeployment(args.getAppName(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("创建Deployment失败: {}", responseBody, e);
@@ -89,17 +91,17 @@ public class K8sDeploymentRepository {
      * @param args /
      */
     public V1Deployment changeDeploymentReplicas(K8sDeployment.ChangeReplicasArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
-            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getNamespace(), "false", null, null);
+            String deploymentName = K8sResourceNameUtil.getDeploymentName(args.getAppName(), k8SClientAdmin.getEnvCode(args.getClusterCode()));
+            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getAppName(), "false", null, null);
             if (deployment == null || deployment.getSpec() == null) {
                 throw new BadRequestException(deploymentName + " 不存在");
             }
             deployment.getSpec().setReplicas(args.getNewReplicas());
-            return appsV1Api.replaceNamespacedDeployment(deploymentName, args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            return appsV1Api.replaceNamespacedDeployment(deploymentName, args.getAppName(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("变更Deployment副本数量失败: {}", responseBody, e);
@@ -120,12 +122,12 @@ public class K8sDeploymentRepository {
      * @param args /
      */
     public V1Deployment changeDeploymentImage(K8sDeployment.ChangeImageArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
-            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getNamespace(), "false", null, null);
+            String deploymentName = K8sResourceNameUtil.getDeploymentName(args.getAppName(), k8SClientAdmin.getEnvCode(args.getClusterCode()));
+            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getAppName(), "false", null, null);
             if (deployment == null || deployment.getSpec() == null) {
                 throw new BadRequestException(deploymentName + " 不存在");
             }
@@ -137,17 +139,18 @@ public class K8sDeploymentRepository {
                 }
                 containers.get(0).setImage(args.getNewImage());
             }
-            V1Deployment v1Deployment = appsV1Api.replaceNamespacedDeployment(deploymentName, args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            V1Deployment v1Deployment = appsV1Api.replaceNamespacedDeployment(deploymentName, args.getAppName(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
             // 手动删除Pod, 触发重新调度, 最佳实践是分批删除
-            /// 这里手动删除的原因是：改变image路径并没有触发statefulset重建, 那只能出此下策
-            /// 事实表明, 处于Pending状态的Pod, 就算添加了新的annotation, 或者label, 也不会直接生效, 从而触发pod重建
-            List<K8sResource.Pod> pods = k8sPodRepository.listPods(args.getClusterCode(), args.getNamespace(), args.getAppName());
-            for (K8sResource.Pod pod : pods) {
+            /// 这里手动删除的原因是：改变image路径并没有触发deployment重建, 那只能出此下策
+            /// 事实表明, 处于Pending状态的Pod, 就算添加了新的annotation, 或者label, 也不会生效
+            /// 事实表明, 只有处于running中的Pod才会正常的重建
+            List<K8sResource.Pod> podList = k8sPodRepository.listPods(args.getClusterCode(), args.getAppName(), deploymentName);
+            for (K8sResource.Pod pod : podList) {
                 if (K8sPodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
                     K8sPod.RebuildArgs rebuildArgs = new K8sPod.RebuildArgs();
                     rebuildArgs.setClusterCode(args.getClusterCode());
-                    rebuildArgs.setNamespace(args.getNamespace());
                     rebuildArgs.setPodName(pod.getName());
+                    rebuildArgs.setNamespace(pod.getNamespace());
                     k8sPodRepository.rebuildPod(rebuildArgs);
                 }
             }
@@ -172,12 +175,12 @@ public class K8sDeploymentRepository {
      * @param args /
      */
     public V1Deployment changeDeploymentSpecs(K8sDeployment.ChangePodSpecsArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String deploymentName = K8sNameUtil.getDeploymentName(args.getAppName());
-            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getNamespace(), "false", null, null);
+            String deploymentName = K8sResourceNameUtil.getDeploymentName(args.getAppName(), k8SClientAdmin.getEnvCode(args.getClusterCode()));
+            V1Deployment deployment = appsV1Api.readNamespacedDeployment(deploymentName, args.getAppName(), "false", null, null);
             if (deployment == null || deployment.getSpec() == null) {
                 throw new BadRequestException(deploymentName + " 不存在");
             }
@@ -202,13 +205,13 @@ public class K8sDeploymentRepository {
                     }
                 }
             }
-            V1Deployment v1Deployment = appsV1Api.replaceNamespacedDeployment(deploymentName, args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
-            List<K8sResource.Pod> pods = k8sPodRepository.listPods(args.getClusterCode(), args.getNamespace(), args.getAppName());
+            V1Deployment v1Deployment = appsV1Api.replaceNamespacedDeployment(deploymentName, args.getAppName(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            List<K8sResource.Pod> pods = k8sPodRepository.listPods(args.getClusterCode(), args.getAppName(), args.getAppName());
             for (K8sResource.Pod pod : pods) {
                 if (K8sPodStatusEnum.Pending.getCode().equals(pod.getStatus())) {
                     K8sPod.RebuildArgs rebuildArgs = new K8sPod.RebuildArgs();
                     rebuildArgs.setClusterCode(args.getClusterCode());
-                    rebuildArgs.setNamespace(args.getNamespace());
+                    rebuildArgs.setNamespace(pod.getNamespace());
                     rebuildArgs.setPodName(pod.getName());
                     k8sPodRepository.rebuildPod(rebuildArgs);
                 }
@@ -234,11 +237,12 @@ public class K8sDeploymentRepository {
      * @param args /
      */
     public V1Status deleteDeployment(K8sDeployment.DeleteArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            return appsV1Api.deleteNamespacedDeployment(args.getDeploymentName(), args.getNamespace(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
+            String deploymentName = K8sResourceNameUtil.getDeploymentName(args.getAppName(), k8SClientAdmin.getEnvCode(args.getClusterCode()));
+            return appsV1Api.deleteNamespacedDeployment(deploymentName, args.getAppName(), "false", K8sDryRunUtil.transferState(args.getDryRun()), null, null, null, null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
             log.error("删除Deployment失败: {}", responseBody, e);
@@ -253,16 +257,62 @@ public class K8sDeploymentRepository {
         }
     }
 
-    public V1Deployment getDeploymentByName(@NotNull String clusterCode, @NotNull String namespace, @NotNull String deploymentName) {
-        ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
-        AppsV1Api appsV1Api = new AppsV1Api(apiClient);
+    /**
+     * 通过appName查询deployment失败
+     *
+     * @param clusterCode 集群编码
+     * @param appName     应用名称
+     * @return /
+     */
+    public V1Deployment describeDeploymentByAppName(String clusterCode, String appName) {
+        Assert.notEmpty(clusterCode, "集群编码不能为空");
+        Assert.notEmpty(appName, "应用名称不能为空");
         try {
-            return appsV1Api.readNamespacedDeployment(deploymentName, namespace, "false", null, null);
+            ApiClient apiClient = k8SClientAdmin.getClient(clusterCode);
+            AppsV1Api appsV1Api = new AppsV1Api(apiClient);
+            String deploymentName = K8sResourceNameUtil.getDeploymentName(appName, clusterCode);
+            return appsV1Api.readNamespacedDeployment(deploymentName, appName, "false", null, null);
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
-            log.error("通过deployment名称查询deployment失败: {}", responseBody, e);
             K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
             if (actionExceptionBody != null) {
+                if (actionExceptionBody.getReason().contains(K8sActionReasonCodeEnum.NotFound.getCode())) {
+                    return null;
+                }
+                log.error("通过deployment名称查询deployment失败: {}", responseBody, e);
+                throw new BadRequestException("通过deployment名称查询deployment失败, 原因：" + actionExceptionBody.getReason());
+            }
+            throw new BadRequestException("通过deployment名称查询deployment失败");
+        } catch (Exception e) {
+            log.error("通过deployment名称查询deployment失败:", e);
+            throw new BadRequestException("通过deployment名称查询deployment失败");
+        }
+    }
+
+    /**
+     * 通过appName查询deployment失败
+     *
+     * @param clusterCode 集群编码
+     * @param name        deployment名称
+     * @param namespace   命名空间
+     * @return /
+     */
+    public V1Deployment describeDeploymentByName(String clusterCode, String name, String namespace) {
+        Assert.notEmpty(clusterCode, "集群编码不能为空");
+        Assert.notEmpty(name, "名称不能为空");
+        Assert.notEmpty(namespace, "命名空间不能为空");
+        try {
+            ApiClient apiClient = k8SClientAdmin.getClient(clusterCode);
+            AppsV1Api appsV1Api = new AppsV1Api(apiClient);
+            return appsV1Api.readNamespacedDeployment(name, namespace, "false", null, null);
+        } catch (ApiException e) {
+            String responseBody = e.getResponseBody();
+            K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
+            if (actionExceptionBody != null) {
+                if (actionExceptionBody.getReason().contains(K8sActionReasonCodeEnum.NotFound.getCode())) {
+                    return null;
+                }
+                log.error("通过deployment名称查询deployment失败: {}", responseBody, e);
                 throw new BadRequestException("通过deployment名称查询deployment失败, 原因：" + actionExceptionBody.getReason());
             }
             throw new BadRequestException("通过deployment名称查询deployment失败");
@@ -273,13 +323,19 @@ public class K8sDeploymentRepository {
     }
 
     public V1Deployment loadDeploymentFromYaml(K8sDeployment.LoadFromYamlArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
             V1Deployment deployment = Yaml.loadAs(args.getYamlContent(), V1Deployment.class);
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             AppsV1Api appsV1Api = new AppsV1Api(apiClient);
-            String deploymentName = deployment.getMetadata().getName();
-            appsV1Api.replaceNamespacedDeployment(deploymentName, args.getNamespace(), deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            String deploymentName = Objects.requireNonNull(deployment.getMetadata()).getName();
+            String namespace = Objects.requireNonNull(deployment.getMetadata()).getNamespace();
+            V1Deployment v1Deployment = describeDeploymentByName(args.getClusterCode(), deploymentName, namespace);
+            if (v1Deployment == null) {
+                appsV1Api.createNamespacedDeployment(namespace, deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            } else {
+                appsV1Api.replaceNamespacedDeployment(deploymentName, namespace, deployment, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+            }
             return deployment;
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();

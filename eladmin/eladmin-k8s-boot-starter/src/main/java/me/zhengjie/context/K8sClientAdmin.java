@@ -20,27 +20,30 @@ import java.util.Map;
 @Component
 public class K8sClientAdmin {
     private static final Map<String, ApiClient> CLIENT_MAP = new HashMap<>(1);
+    private static final Map<String, String> CLIENT_ENV = new HashMap<>(1);
     @Autowired
     private K8sHealthChecker k8sHealthChecker;
 
     public void deleteClient(String clusterCode) {
         CLIENT_MAP.remove(clusterCode);
+        CLIENT_ENV.remove(clusterCode);
     }
 
-    public void putClientEnv(String clusterCode, ApiClient apiClient) {
+    public void putClientEnv(String clusterCode, String envCode, ApiClient apiClient) {
         if (StrUtil.isBlank(clusterCode)) {
             throw new BadRequestException("参数clusterCode必填");
         }
         try {
             k8sHealthChecker.checkConfigContent(apiClient);
             CLIENT_MAP.put(clusterCode, apiClient);
+            CLIENT_ENV.put(clusterCode, envCode);
             log.info("{}集群config配置检测成功，并放入应用缓存中", clusterCode);
         } catch (Exception e) {
             log.error("{}集群config配置检测失败", clusterCode);
         }
     }
 
-    public ApiClient getClientEnv(String clusterCode) {
+    public ApiClient getClient(String clusterCode) {
         if (StrUtil.isBlank(clusterCode)) {
             throw new BadRequestException("参数clusterCode必填");
         }
@@ -49,5 +52,12 @@ public class K8sClientAdmin {
             throw new BadRequestException(String.format("没有找到集群 %s 配置", clusterCode));
         }
         return apiClient;
+    }
+
+    public String getEnvCode(String clusterCode) {
+        if (StrUtil.isBlank(clusterCode)) {
+            throw new BadRequestException("参数clusterCode必填");
+        }
+        return CLIENT_ENV.getOrDefault(clusterCode, null);
     }
 }

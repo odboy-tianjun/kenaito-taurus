@@ -1,49 +1,52 @@
-package me.zhengjie.model;
+package me.zhengjie.model.request;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import me.zhengjie.model.MyObject;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.HashMap;
 import java.util.Map;
 
-public class K8sService {
+public class K8sIngress {
+
     @Data
     @EqualsAndHashCode(callSuper = false)
     public static class CreateArgs extends MyObject {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
-         * service注解
+         * ingress注解
          */
         private Map<String, String> annotations;
         /**
-         * 外部访问的端口号
+         * 匹配的路径
          */
-        @NotNull
-        private Integer port;
+        @NotBlank(message = "匹配的路径不能为空")
+        private String path;
         /**
-         * 应用服务端口号
+         * 绑定的域名
          */
-        @NotNull
-        private Integer targetPort;
+        @NotBlank(message = "绑定的域名不能为空")
+        private String hostname;
         /**
-         * pod标签选择器
+         * 路由到的服务名称
          */
-        private Map<String, String> labelSelector = new HashMap<>(1);
+        @NotBlank(message = "路由到的服务名称不能为空")
+        private String serviceName;
+        /**
+         * 路由到的服务端口
+         */
+        @NotNull(message = "路由到的服务端口不能为空")
+        private Integer servicePort;
         /**
          * 是否运行测试
          */
@@ -56,17 +59,12 @@ public class K8sService {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * 是否运行测试
@@ -80,17 +78,12 @@ public class K8sService {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * yaml文件内容
          */
-        @NotNull
+        @NotBlank(message = "yaml文件内容不能为空")
         private String yamlContent;
         /**
          * 是否运行测试

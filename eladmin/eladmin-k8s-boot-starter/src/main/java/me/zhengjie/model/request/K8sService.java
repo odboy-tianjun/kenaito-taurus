@@ -1,54 +1,47 @@
-package me.zhengjie.model;
+package me.zhengjie.model.request;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import me.zhengjie.model.MyObject;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.HashMap;
 import java.util.Map;
 
-public class K8sIngress {
-
+public class K8sService {
     @Data
     @EqualsAndHashCode(callSuper = false)
     public static class CreateArgs extends MyObject {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
-         * ingress注解
+         * service注解
          */
         private Map<String, String> annotations;
         /**
-         * 匹配的路径
+         * 外部访问的端口号
          */
-        @NotNull
-        private String path;
+        @NotNull(message = "外部访问的端口号不能为空")
+        private Integer port;
         /**
-         * 绑定的域名
+         * 应用服务端口号
          */
-        private String hostname;
+        @NotNull(message = "应用服务端口号不能为空")
+        private Integer targetPort;
         /**
-         * 路由到的服务名称
+         * pod标签选择器
          */
-        @NotNull
-        private String serviceName;
-        /**
-         * 路由到的服务端口
-         */
-        @NotNull
-        private Integer servicePort;
+        private Map<String, String> labelSelector = new HashMap<>(1);
         /**
          * 是否运行测试
          */
@@ -61,17 +54,12 @@ public class K8sIngress {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * 是否运行测试
@@ -85,17 +73,12 @@ public class K8sIngress {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * yaml文件内容
          */
-        @NotNull
+        @NotBlank(message = "yaml文件内容不能为空")
         private String yamlContent;
         /**
          * 是否运行测试

@@ -1,9 +1,11 @@
-package me.zhengjie.model;
+package me.zhengjie.model.request;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import me.zhengjie.model.MyObject;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
@@ -24,17 +26,12 @@ public class K8sDeployment {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * deployment注解
@@ -43,17 +40,18 @@ public class K8sDeployment {
         /**
          * 镜像地址
          */
-        @NotNull
+        @NotBlank(message = "镜像地址不能为空")
         private String image;
         /**
          * 副本数量
          */
-        @NotNull
+        @NotNull(message = "副本数量不能为空")
+        @Min(value = 0, message = "副本数量不能小于0")
         private Integer replicas;
         /**
          * 容器服务端口号
          */
-        @NotNull
+        @NotNull(message = "容器服务端口号不能为空")
         private Integer port;
         /**
          * 是否运行测试
@@ -70,22 +68,18 @@ public class K8sDeployment {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * 新副本数量
          */
-        @NotNull
+        @NotNull(message = "新副本数量不能为空")
+        @Min(value = 0, message = "新副本数量不能小于0")
         private Integer newReplicas;
         /**
          * 是否运行测试
@@ -102,22 +96,17 @@ public class K8sDeployment {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * 新镜像地址
          */
-        @NotNull
+        @NotBlank(message = "新镜像地址不能为空")
         private String newImage;
         /**
          * 是否运行测试
@@ -134,29 +123,24 @@ public class K8sDeployment {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * 应用名称
          */
-        @NotNull
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * CPU数
          */
         @NotNull
-        @Min(value = 1)
+        @Min(value = 1, message = "CPU数不能小于0")
         private Integer cpuNum;
         /**
          * 内存数
          */
         @NotNull
-        @Min(value = 1)
+        @Min(value = 1, message = "内存数不能小于0")
         private Integer memoryNum;
         /**
          * 是否运行测试
@@ -173,18 +157,13 @@ public class K8sDeployment {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
         /**
-         * 命名空间
+         * 应用名称
          */
-        @NotNull
-        private String namespace;
-        /**
-         * deployment名称
-         */
-        @NotNull
-        private String deploymentName;
+        @NotBlank(message = "应用名称不能为空")
+        private String appName;
         /**
          * 是否运行测试
          */
@@ -200,17 +179,12 @@ public class K8sDeployment {
         /**
          * 集群编码
          */
-        @NotNull
+        @NotBlank(message = "集群编码不能为空")
         private String clusterCode;
-        /**
-         * 命名空间
-         */
-        @NotNull
-        private String namespace;
         /**
          * yaml文件内容
          */
-        @NotNull
+        @NotBlank(message = "yaml文件内容不能为空")
         private String yamlContent;
         /**
          * 是否运行测试

@@ -3,6 +3,7 @@ package me.zhengjie.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
@@ -21,6 +22,7 @@ public class GitlabProject {
         /**
          * 项目英文名称
          */
+        @NotBlank(message = "应用名称不能为空")
         private String appName;
         /**
          * 项目描述

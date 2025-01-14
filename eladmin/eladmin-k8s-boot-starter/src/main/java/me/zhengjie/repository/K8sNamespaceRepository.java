@@ -1,25 +1,28 @@
 package me.zhengjie.repository;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
 import io.kubernetes.client.openapi.models.V1Namespace;
+import io.kubernetes.client.openapi.models.V1NamespaceBuilder;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
-import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import io.kubernetes.client.util.Yaml;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.constant.K8sActionReasonCodeEnum;
 import me.zhengjie.context.K8sClientAdmin;
 import me.zhengjie.infra.exception.BadRequestException;
-import me.zhengjie.model.K8sNamespace;
-import me.zhengjie.model.K8sResource;
+import me.zhengjie.model.request.K8sNamespace;
+import me.zhengjie.model.response.K8sResource;
 import me.zhengjie.util.K8sDryRunUtil;
 import me.zhengjie.util.ValidationUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -40,11 +43,9 @@ public class K8sNamespaceRepository {
      * @return /
      */
     public List<K8sResource.Namespace> listNamespaces(String clusterCode) {
-        if (StrUtil.isEmpty(clusterCode)) {
-            throw new BadRequestException("参数clusterCode不能为空");
-        }
+        Assert.notEmpty(clusterCode, "集群编码不能为空");
         try {
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
+            ApiClient apiClient = k8SClientAdmin.getClient(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             V1NamespaceList namespaceList = coreV1Api.listNamespace("false", true, null, null, null, null, null, null, null, false);
             return namespaceList.getItems().stream().map(m -> {
@@ -74,15 +75,11 @@ public class K8sNamespaceRepository {
      *
      * @return /
      */
-    public K8sResource.Namespace getNamespaceByAppName(String clusterCode, String appName) {
-        if (StrUtil.isEmpty(clusterCode)) {
-            throw new BadRequestException("集群编码不能为空");
-        }
-        if (StrUtil.isEmpty(appName)) {
-            throw new BadRequestException("应用编码不能为空");
-        }
+    public K8sResource.Namespace describeNamespaceByAppName(String clusterCode, String appName) {
+        Assert.notEmpty(clusterCode, "集群编码不能为空");
+        Assert.notEmpty(appName, "应用名称不能为空");
         try {
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(clusterCode);
+            ApiClient apiClient = k8SClientAdmin.getClient(clusterCode);
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
             V1Namespace v1Namespace = coreV1Api.readNamespace(appName, "false", null, null);
             if (v1Namespace == null) {
@@ -96,18 +93,56 @@ public class K8sNamespaceRepository {
             return namespace;
         } catch (ApiException e) {
             String responseBody = e.getResponseBody();
-            log.error("根据appName获取Namespace: {}", responseBody, e);
             K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
             if (actionExceptionBody != null) {
-                if (actionExceptionBody.getReason().contains("NotFound")) {
+                if (actionExceptionBody.getReason().contains(K8sActionReasonCodeEnum.NotFound.getCode())) {
                     return null;
                 }
-                throw new BadRequestException("根据appName获取Namespace, 原因：" + actionExceptionBody.getReason());
+                log.error("根据appName获取Namespace失败: {}", responseBody, e);
+                throw new BadRequestException("根据appName获取Namespace失败, 原因：" + actionExceptionBody.getReason());
             }
-            throw new BadRequestException("根据appName获取Namespace");
+            throw new BadRequestException("根据appName获取Namespace失败");
         } catch (Exception e) {
-            log.error("根据appName获取Namespace:", e);
-            throw new BadRequestException("根据appName获取Namespace");
+            log.error("根据appName获取Namespace失败:", e);
+            throw new BadRequestException("根据appName获取Namespace失败");
+        }
+    }
+
+    /**
+     * 根据name获取Namespace
+     *
+     * @return /
+     */
+    public K8sResource.Namespace describeNamespaceByName(String clusterCode, String name) {
+        Assert.notEmpty(clusterCode, "集群编码不能为空");
+        Assert.notEmpty(name, "名称不能为空");
+        try {
+            ApiClient apiClient = k8SClientAdmin.getClient(clusterCode);
+            CoreV1Api coreV1Api = new CoreV1Api(apiClient);
+            V1Namespace v1Namespace = coreV1Api.readNamespace(name, "false", null, null);
+            if (v1Namespace == null) {
+                return null;
+            }
+            K8sResource.Namespace namespace = new K8sResource.Namespace();
+            namespace.setSpec(v1Namespace.getSpec());
+            namespace.setKind(v1Namespace.getKind());
+            namespace.setMetadata(v1Namespace.getMetadata());
+            namespace.setStatus(v1Namespace.getStatus());
+            return namespace;
+        } catch (ApiException e) {
+            String responseBody = e.getResponseBody();
+            K8sResource.ActionExceptionBody actionExceptionBody = JSON.parseObject(responseBody, K8sResource.ActionExceptionBody.class);
+            if (actionExceptionBody != null) {
+                if (actionExceptionBody.getReason().contains(K8sActionReasonCodeEnum.NotFound.getCode())) {
+                    return null;
+                }
+                log.error("根据name获取Namespace失败: {}", responseBody, e);
+                throw new BadRequestException("根据name获取Namespace失败, 原因：" + actionExceptionBody.getReason());
+            }
+            throw new BadRequestException("根据name获取Namespace失败");
+        } catch (Exception e) {
+            log.error("根据name获取Namespace失败:", e);
+            throw new BadRequestException("根据name获取Namespace失败");
         }
     }
 
@@ -117,16 +152,17 @@ public class K8sNamespaceRepository {
      * @param args /
      */
     public K8sResource.Namespace createNamespace(K8sNamespace.CreateArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
-            V1Namespace newNamespace = new V1Namespace();
-            newNamespace.setApiVersion("v1");
-            newNamespace.setKind("Namespace");
-            V1ObjectMeta metadata = new V1ObjectMeta();
-            metadata.setName(args.getAppName());
-            newNamespace.setMetadata(metadata);
+            V1Namespace newNamespace = new V1NamespaceBuilder()
+                    .withApiVersion("v1")
+                    .withKind("Namespace")
+                    .withNewMetadata()
+                    .withName(args.getAppName())
+                    .endMetadata()
+                    .build();
             V1Namespace v1Namespace = coreV1Api.createNamespace(newNamespace, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
             K8sResource.Namespace simpleNamespace = new K8sResource.Namespace();
             simpleNamespace.setSpec(v1Namespace.getSpec());
@@ -149,19 +185,18 @@ public class K8sNamespaceRepository {
     }
 
     public K8sResource.Namespace loadNamespaceFromYaml(K8sNamespace.LoadFromYamlArgs args) {
+        ValidationUtil.validate(args);
         try {
-            ValidationUtil.validate(args);
             V1Namespace v1Namespace = Yaml.loadAs(args.getYamlContent(), V1Namespace.class);
-            ApiClient apiClient = k8SClientAdmin.getClientEnv(args.getClusterCode());
+            ApiClient apiClient = k8SClientAdmin.getClient(args.getClusterCode());
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
-
-            K8sResource.Namespace localNamespace = getNamespaceByAppName(args.getClusterCode(), args.getAppName());
+            String namespaceName = Objects.requireNonNull(v1Namespace.getMetadata()).getName();
+            K8sResource.Namespace localNamespace = describeNamespaceByName(args.getClusterCode(), namespaceName);
             if (localNamespace == null) {
                 coreV1Api.createNamespace(v1Namespace, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
             } else {
-                coreV1Api.replaceNamespace(args.getAppName(), v1Namespace, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
+                coreV1Api.replaceNamespace(namespaceName, v1Namespace, "false", K8sDryRunUtil.transferState(args.getDryRun()), null);
             }
-
             K8sResource.Namespace simpleNamespace = new K8sResource.Namespace();
             simpleNamespace.setSpec(v1Namespace.getSpec());
             simpleNamespace.setKind(v1Namespace.getKind());

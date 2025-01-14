@@ -41,8 +41,8 @@ public class GitlabRepoRepository {
      * @param ref        从什么分支创建
      * @return /
      */
-    public Branch createRepoBranchByProjectId(Long projectId, String branchName, String ref) {
-        Project project = projectRepository.getProjectById(projectId);
+    public Branch createRepoBranch(Long projectId, String branchName, String ref) {
+        Project project = projectRepository.describeProjectById(projectId);
         if (project == null) {
             throw new BadRequestException("创建分支失败, 项目不存在");
         }
@@ -67,7 +67,7 @@ public class GitlabRepoRepository {
      * @return /
      */
     public Branch createRepoBranchByAppName(String appName, String branchName, String ref) {
-        Project project = projectRepository.getProjectByAppName(appName);
+        Project project = projectRepository.describeProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("创建分支失败, 项目不存在");
         }
@@ -84,7 +84,7 @@ public class GitlabRepoRepository {
         }
     }
 
-    public Branch getRepoBranchByProjectId(Long projectId, String branchName) {
+    public Branch describeRepoBranchByProjectId(Long projectId, String branchName) {
         try (GitLabApi client = repository.auth()) {
             return client.getRepositoryApi().getBranch(projectId, branchName);
         } catch (Exception e) {
@@ -93,8 +93,8 @@ public class GitlabRepoRepository {
         }
     }
 
-    public Branch getRepoBranchByAppName(String appName, String branchName) {
-        Project project = projectRepository.getProjectByAppName(appName);
+    public Branch describeRepoBranchByAppName(String appName, String branchName) {
+        Project project = projectRepository.describeProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据appName获取分支失败, 项目不存在");
         }
@@ -114,7 +114,7 @@ public class GitlabRepoRepository {
     }
 
     public List<Branch> searchRepoBranchesByAppName(String appName, String search) {
-        Project project = projectRepository.getProjectByAppName(appName);
+        Project project = projectRepository.describeProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据appName获取分支失败, 项目不存在");
         }
@@ -143,7 +143,7 @@ public class GitlabRepoRepository {
     }
 
     public void deleteRepoBranchByAppName(String appName, String branchName) {
-        Project project = projectRepository.getProjectByAppName(appName);
+        Project project = projectRepository.describeProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据appName删除分支失败, 项目不存在");
         }
@@ -180,7 +180,7 @@ public class GitlabRepoRepository {
      * @return /
      */
     public CompareResults compareRepoBranchByAppName(String appName, String sourceBranch, String targetBranch) {
-        Project project = projectRepository.getProjectByAppName(appName);
+        Project project = projectRepository.describeProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据projectId比较分支差异失败, 项目不存在");
         }
@@ -231,8 +231,7 @@ public class GitlabRepoRepository {
         }
     }
 
-
-    public MergeRequest getRepoMergeRequestByProjectId(Long projectId, Long mergeRequestId) {
+    public MergeRequest describeRepoMergeRequestByProjectId(Long projectId, Long mergeRequestId) {
         try (GitLabApi client = repository.auth()) {
             return client.getMergeRequestApi().getMergeRequest(projectId, mergeRequestId);
         } catch (Exception e) {
@@ -241,8 +240,8 @@ public class GitlabRepoRepository {
         }
     }
 
-    public MergeRequest getRepoMergeRequestByAppName(String appName, Long mergeRequestId) {
-        Project project = projectRepository.getProjectByAppName(appName);
+    public MergeRequest describeRepoMergeRequestByAppName(String appName, Long mergeRequestId) {
+        Project project = projectRepository.describeProjectByAppName(appName);
         if (project == null) {
             throw new BadRequestException("根据appName获取分支详情失败, 项目不存在");
         }
@@ -270,7 +269,7 @@ public class GitlabRepoRepository {
     public void initGitIgnoreFile(Long projectId, String defaultBranchName, String language) {
         String fileContent = ignoreFileAdmin.getContent(language);
         if (StrUtil.isBlank(language)) {
-            log.warn("不支持的语言, 跳过 .gitignore 文件初始化");
+            log.error("不支持的语言, 跳过 .gitignore 文件初始化");
             return;
         }
 
@@ -281,13 +280,13 @@ public class GitlabRepoRepository {
             client.getRepositoryFileApi().createFile(projectId, repositoryFile, defaultBranchName, "init .gitignore");
             log.info("初始化 .gitignore 文件成功");
         } catch (GitLabApiException e) {
-            log.warn("初始化 .gitignore 文件失败", e);
+            log.error("初始化 .gitignore 文件失败", e);
         }
     }
 
     public void initGitCiFile(Long projectId, String defaultBranch, String language, String appName) {
         if (StrUtil.isBlank(language)) {
-            log.warn("不支持的语言, 跳过 .gitlab-ci.yml 文件初始化");
+            log.error("不支持的语言, 跳过 .gitlab-ci.yml 文件初始化");
             return;
         }
 
@@ -299,7 +298,7 @@ public class GitlabRepoRepository {
             client.getRepositoryFileApi().createFile(projectId, repositoryFile, defaultBranch, "init ..gitlab-ci.yml");
             log.info("初始化 ..gitlab-ci.yml 文件成功");
         } catch (GitLabApiException e) {
-            log.warn("初始化 ..gitlab-ci.yml 文件失败", e);
+            log.error("初始化 ..gitlab-ci.yml 文件失败", e);
         }
 
         try (GitLabApi client = repository.auth()) {
@@ -314,9 +313,9 @@ public class GitlabRepoRepository {
                     repositoryFile.setFilePath(filePath);
                     repositoryFile.setContent(dockerfileContent);
                     client.getRepositoryFileApi().createFile(projectId, repositoryFile, defaultBranch, "init " + filePath);
-                    log.info("初始化 " + filePath + " 文件成功");
+                    log.info("初始化 {} 文件成功", filePath);
                 } catch (GitLabApiException e) {
-                    log.warn("初始化 {} 文件失败", filePath, e);
+                    log.error("初始化 {} 文件失败", filePath, e);
                 }
             }
         }
@@ -329,9 +328,9 @@ public class GitlabRepoRepository {
             repositoryFile.setFilePath(releaseFileName);
             repositoryFile.setContent(dockerfileContent);
             client.getRepositoryFileApi().createFile(projectId, repositoryFile, defaultBranch, "init release");
-            log.warn("初始化 release 文件成功");
+            log.info("初始化 release 文件成功");
         } catch (GitLabApiException e) {
-            log.warn("初始化 release 文件失败", e);
+            log.error("初始化 release 文件失败", e);
         }
     }
 }
