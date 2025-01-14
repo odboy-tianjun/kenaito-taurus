@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="me.zhengjie.modules.quartz.mapper.QuartzLogMapper">
+<mapper namespace="cn.odboy.modules.quartz.mapper.QuartzLogMapper">
 
-    <resultMap id="BaseResultMap" type="me.zhengjie.modules.quartz.domain.QuartzLog">
+    <resultMap id="BaseResultMap" type="cn.odboy.modules.quartz.domain.QuartzLog">
         <id column="log_id" property="id" jdbcType="BIGINT"/>
         <result column="job_name" property="jobName" jdbcType="VARCHAR"/>
         <result column="bean_name" property="beanName" jdbcType="VARCHAR"/>

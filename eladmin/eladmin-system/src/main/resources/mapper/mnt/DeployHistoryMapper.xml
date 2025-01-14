@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="me.zhengjie.modules.mnt.mapper.DeployHistoryMapper">
-    <resultMap id="BaseResultMap" type="me.zhengjie.modules.mnt.domain.DeployHistory">
+<mapper namespace="cn.odboy.modules.mnt.mapper.DeployHistoryMapper">
+    <resultMap id="BaseResultMap" type="cn.odboy.modules.mnt.domain.DeployHistory">
         <id column="history_id" property="id"/>
         <result column="app_name" property="appName"/>
         <result column="ip" property="ip"/>

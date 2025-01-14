@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>eladmin</artifactId>
-        <groupId>me.zhengjie</groupId>
+        <groupId>cn.odboy</groupId>
         <version>1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -21,12 +21,12 @@
     <dependencies>
         <!-- 代码生成模块 -->
         <dependency>
-            <groupId>me.zhengjie</groupId>
+            <groupId>cn.odboy</groupId>
             <artifactId>eladmin-generator</artifactId>
             <version>1.1</version>
             <exclusions>
                 <exclusion>
-                    <groupId>me.zhengjie</groupId>
+                    <groupId>cn.odboy</groupId>
                     <artifactId>eladmin-common</artifactId>
                 </exclusion>
             </exclusions>
@@ -34,25 +34,25 @@
 
         <!-- tools 模块包含了 common 和 logging 模块 -->
         <dependency>
-            <groupId>me.zhengjie</groupId>
+            <groupId>cn.odboy</groupId>
             <artifactId>eladmin-tools</artifactId>
             <version>1.1</version>
         </dependency>
 
         <dependency>
-            <groupId>me.zhengjie</groupId>
+            <groupId>cn.odboy</groupId>
             <artifactId>eladmin-gitlab-boot-starter</artifactId>
             <version>1.1</version>
         </dependency>
 
         <dependency>
-            <groupId>me.zhengjie</groupId>
+            <groupId>cn.odboy</groupId>
             <artifactId>eladmin-k8s-boot-starter</artifactId>
             <version>1.1</version>
         </dependency>
 
         <dependency>
-            <groupId>me.zhengjie</groupId>
+            <groupId>cn.odboy</groupId>
             <artifactId>eladmin-dingtalk-boot-starter</artifactId>
             <version>1.1</version>
         </dependency>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="me.zhengjie.modules.mnt.mapper.DeployServerMapper">
+<mapper namespace="cn.odboy.modules.mnt.mapper.DeployServerMapper">
 
     <insert id="insertData">
         insert into mnt_deploy_server (deploy_id, server_id)

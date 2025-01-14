@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis_deploy.org//DTD Mapper 3.0//EN" "http://mybatis_deploy.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="me.zhengjie.modules.mnt.mapper.DeployMapper">
-    <resultMap id="BaseResultMap" type="me.zhengjie.modules.mnt.domain.Deploy">
+<mapper namespace="cn.odboy.modules.mnt.mapper.DeployMapper">
+    <resultMap id="BaseResultMap" type="cn.odboy.modules.mnt.domain.Deploy">
         <id column="d_deploy_id" property="id"/>
         <result column="d_app_id" property="appId"/>
         <result column="d_create_by" property="createBy"/>
         <result column="d_update_by" property="updateBy"/>
         <result column="d_create_time" property="createTime"/>
         <result column="d_update_time" property="updateTime"/>
-        <association property="app" javaType="me.zhengjie.modules.mnt.domain.App">
+        <association property="app" javaType="cn.odboy.modules.mnt.domain.App">
             <id column="a_app_id" property="id"/>
             <result column="a_name" property="name"/>
             <result column="a_port" property="port"/>
@@ -18,7 +18,7 @@
             <result column="a_start_script" property="startScript"/>
             <result column="a_deploy_script" property="deployScript"/>
         </association>
-        <collection property="deploys" ofType="me.zhengjie.modules.mnt.domain.Server">
+        <collection property="deploys" ofType="cn.odboy.modules.mnt.domain.Server">
             <id column="s_server_id" property="id"/>
             <result column="s_name" property="name"/>
             <result column="s_ip" property="ip"/>

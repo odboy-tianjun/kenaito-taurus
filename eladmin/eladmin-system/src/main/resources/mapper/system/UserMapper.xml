@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="me.zhengjie.modules.system.mapper.UserMapper">
-    <resultMap id="BaseResultMap" type="me.zhengjie.modules.system.domain.User">
+<mapper namespace="cn.odboy.modules.system.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="cn.odboy.modules.system.domain.User">
         <id column="user_user_id" property="id"/>
         <result column="user_dept_id" property="deptId"/>
         <result column="user_username" property="username"/>
@@ -19,15 +19,15 @@
         <result column="user_update_by" property="updateBy"/>
         <result column="user_create_time" property="createTime"/>
         <result column="user_update_time" property="updateTime"/>
-        <association property="dept" javaType="me.zhengjie.modules.system.domain.Dept">
+        <association property="dept" javaType="cn.odboy.modules.system.domain.Dept">
             <id column="dept_id" property="id"/>
             <result column="dept_name" property="name"/>
         </association>
-        <collection property="jobs" ofType="me.zhengjie.modules.system.domain.Job">
+        <collection property="jobs" ofType="cn.odboy.modules.system.domain.Job">
             <id column="job_id" property="id"/>
             <result column="job_name" property="name"/>
         </collection>
-        <collection property="roles" ofType="me.zhengjie.modules.system.domain.Role">
+        <collection property="roles" ofType="cn.odboy.modules.system.domain.Role">
             <id column="role_id" property="id"/>
             <result column="role_name" property="name"/>
             <result column="role_level" property="level"/>
@@ -116,29 +116,29 @@
         where u.username = #{username}
     </select>
 
-    <select id="findByEmail" resultType="me.zhengjie.modules.system.domain.User">
+    <select id="findByEmail" resultType="cn.odboy.modules.system.domain.User">
         select user_id as id, username from sys_user
         where email = #{email}
     </select>
 
-    <select id="findByPhone" resultType="me.zhengjie.modules.system.domain.User">
+    <select id="findByPhone" resultType="cn.odboy.modules.system.domain.User">
         select user_id as id, username from sys_user
         where phone = #{phone}
     </select>
 
-    <select id="findByRoleId" resultType="me.zhengjie.modules.system.domain.User">
+    <select id="findByRoleId" resultType="cn.odboy.modules.system.domain.User">
         SELECT u.user_id as id, u.username FROM sys_user u, sys_users_roles r
         WHERE u.user_id = r.user_id AND r.role_id = #{roleId}
         group by u.user_id
     </select>
 
-    <select id="findByRoleDeptId" resultType="me.zhengjie.modules.system.domain.User">
+    <select id="findByRoleDeptId" resultType="cn.odboy.modules.system.domain.User">
         SELECT u.* FROM sys_user u, sys_users_roles r, sys_roles_depts d
         WHERE u.user_id = r.user_id AND r.role_id = d.role_id AND d.dept_id = #{deptId}
         group by u.user_id
     </select>
 
-    <select id="findByMenuId" resultType="me.zhengjie.modules.system.domain.User">
+    <select id="findByMenuId" resultType="cn.odboy.modules.system.domain.User">
         SELECT u.user_id as id, u.username FROM sys_user u, sys_users_roles ur, sys_roles_menus rm
         WHERE u.user_id = ur.user_id AND ur.role_id = rm.role_id AND rm.menu_id = #{menuId}
         group by u.user_id

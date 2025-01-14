@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="me.zhengjie.modules.system.mapper.DeptMapper">
-    <resultMap id="BaseResultMap" type="me.zhengjie.modules.system.domain.Dept">
+<mapper namespace="cn.odboy.modules.system.mapper.DeptMapper">
+    <resultMap id="BaseResultMap" type="cn.odboy.modules.system.domain.Dept">
         <id column="dept_id" property="id"/>
         <result column="dept_sort" property="deptSort"/>
         <result column="name" property="name"/>
@@ -62,7 +62,7 @@
         where pid is null
     </select>
 
-    <select id="findByRoleId" resultType="me.zhengjie.modules.system.domain.Dept">
+    <select id="findByRoleId" resultType="cn.odboy.modules.system.domain.Dept">
         select d.dept_id as id, d.name, d.pid, d.sub_count, d.create_time, d.update_time, d.create_by, d.update_by, d.enabled, d.dept_sort
         from sys_dept d, sys_roles_depts r
         where d.dept_id = r.dept_id and r.role_id = #{roleId}

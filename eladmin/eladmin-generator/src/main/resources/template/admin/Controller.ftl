@@ -15,7 +15,7 @@
 */
 package ${package}.rest;
 
-import me.zhengjie.annotation.Log;
+import cn.odboy.annotation.Log;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
 import ${package}.domain.vo.${className}QueryCriteria;
@@ -30,7 +30,7 @@ import io.swagger.annotations.*;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import me.zhengjie.model.PageResult;
+import cn.odboy.model.PageResult;
 
 /**
 * @author ${author}

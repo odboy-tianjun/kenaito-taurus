@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="me.zhengjie.modules.mnt.mapper.DatabaseMapper">
-    <resultMap id="BaseResultMap" type="me.zhengjie.modules.mnt.domain.Database">
+<mapper namespace="cn.odboy.modules.mnt.mapper.DatabaseMapper">
+    <resultMap id="BaseResultMap" type="cn.odboy.modules.mnt.domain.Database">
         <id column="db_id" property="id"/>
         <result column="name" property="name"/>
         <result column="jdbc_url" property="jdbcUrl"/>
