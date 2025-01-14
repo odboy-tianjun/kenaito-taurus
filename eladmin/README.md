@@ -101,6 +101,12 @@
     - model 模型
     - repository k8s控制类
     - util 工具/帮助类
+- eladmin-dingtalk-boot-starter 支持管控Kubernetes
+    - constant 常量
+    - contenxt 自动装配，连接初始化
+    - model 模型
+    - repository dingtalk控制类
+    - util 工具/帮助类
 - eladmin-system 系统核心模块（系统启动入口）
     - infra 基础设施层
         - k8s k8s相关
