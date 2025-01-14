@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.constant.DingtalkCacheKeyConst;
 import me.zhengjie.infra.exception.BadRequestException;
 import me.zhengjie.infra.exception.util.MessageFormatterUtil;
+import me.zhengjie.util.DingtalkClientHelper;
 import me.zhengjie.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,27 +26,13 @@ public class DingtalkAuthAdmin {
     @Autowired
     private RedisUtil redisUtil;
 
-    /**
-     * <b>description</b> :
-     * <p>使用 Token 初始化账号Client</p>
-     *
-     * @return Client
-     * @throws Exception
-     */
-    public com.aliyun.dingtalkoauth2_1_0.Client createClient() throws Exception {
-        com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config();
-        config.protocol = "https";
-        config.regionId = "central";
-        return new com.aliyun.dingtalkoauth2_1_0.Client(config);
-    }
-
     public String auth() throws BadRequestException {
         try {
             String accessToken = redisUtil.get(DingtalkCacheKeyConst.AccessToken, String.class);
             if (StrUtil.isNotEmpty(accessToken)) {
                 return accessToken;
             }
-            com.aliyun.dingtalkoauth2_1_0.Client client = createClient();
+            com.aliyun.dingtalkoauth2_1_0.Client client = DingtalkClientHelper.createAuthClient();
             com.aliyun.dingtalkoauth2_1_0.models.GetAccessTokenRequest getAccessTokenRequest = new com.aliyun.dingtalkoauth2_1_0.models.GetAccessTokenRequest()
                     .setAppKey(properties.getAppKey())
                     .setAppSecret(properties.getAppSecret());

@@ -18,4 +18,8 @@ public class DingtalkProperties {
      * Client Secret (原 AppSecret 和 SuiteSecret)
      */
     private String appSecret;
+    /**
+     * 应用内机器人代码
+     */
+    private String robotCode;
 }
