@@ -69,6 +69,8 @@
 
 - `eladmin-k8s-boot-starter` 为系统支持Kubernetes功能的模块
 
+- `eladmin-dingtalk-boot-starter` 为系统支持Dingtalk功能的模块
+
 #### 详细结构
 
 ```
