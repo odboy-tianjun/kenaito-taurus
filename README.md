@@ -69,6 +69,8 @@
 
 - `eladmin-k8s-boot-starter` 为系统支持Kubernetes功能的模块
 
+- `eladmin-dingtalk-boot-starter` 为系统支持Dingtalk功能的模块
+
 #### 详细结构
 
 ```
@@ -101,6 +103,12 @@
     - model 模型
     - repository k8s控制类
     - util 工具/帮助类
+- eladmin-dingtalk-boot-starter 支持管控Kubernetes
+    - constant 常量
+    - contenxt 自动装配，连接初始化
+    - model 模型
+    - repository dingtalk控制类
+    - util 工具/帮助类
 - eladmin-system 系统核心模块（系统启动入口）
     - infra 基础设施层
         - k8s k8s相关
@@ -111,6 +119,7 @@
 ```
 
 #### 特别鸣谢
+- 感谢 [elunez](https://github.com/elunez) 大佬提供的前后分离基础框架
 
 - 感谢 [PanJiaChen](https://github.com/PanJiaChen/vue-element-admin) 大佬提供的前端模板
 
