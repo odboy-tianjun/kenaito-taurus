@@ -15,14 +15,14 @@
  */
 package cn.odboy.modules.security.config;
 
-import com.wf.captcha.*;
-import com.wf.captcha.base.Captcha;
-import lombok.Data;
-import lombok.Getter;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.modules.security.contanst.LoginCode;
 import cn.odboy.modules.security.contanst.LoginCodeEnum;
 import cn.odboy.util.StringUtil;
+import com.wf.captcha.*;
+import com.wf.captcha.base.Captcha;
+import lombok.Data;
+import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -39,16 +39,13 @@ import java.util.Objects;
 @Component
 @ConfigurationProperties(prefix = "login")
 public class LoginProperties {
-
+    public static final String cacheKey = "user:login:";
     /**
      * 账号单用户 登录
      */
     @Getter
     private boolean singleLogin = false;
-
     private LoginCode loginCode;
-
-    public static final String cacheKey = "user-login-cache:";
 
     /**
      * 获取验证码生产类
@@ -99,7 +96,7 @@ public class LoginProperties {
             default:
                 throw new BadRequestException("验证码配置信息错误！正确配置查看 LoginCodeEnum ");
         }
-        if(StringUtil.isNotBlank(loginCode.getFontName())){
+        if (StringUtil.isNotBlank(loginCode.getFontName())) {
             captcha.setFont(new Font(loginCode.getFontName(), Font.PLAIN, loginCode.getFontSize()));
         }
         return captcha;
