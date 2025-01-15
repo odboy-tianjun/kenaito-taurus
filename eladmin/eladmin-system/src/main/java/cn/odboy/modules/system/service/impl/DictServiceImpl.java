@@ -53,14 +53,14 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Override
     public PageResult<Dict> queryAll(DictQueryCriteria criteria, Page<Object> page){
         criteria.setOffset(page.offset());
-        List<Dict> dicts = dictMapper.findAll(criteria);
-        Long total = dictMapper.countAll(criteria);
+        List<Dict> dicts = dictMapper.selectDicts(criteria);
+        Long total = dictMapper.countByBlurry(criteria);
         return PageUtil.toPage(dicts,total);
     }
 
     @Override
     public List<Dict> queryAll(DictQueryCriteria criteria) {
-        return dictMapper.findAll(criteria);
+        return dictMapper.selectDicts(criteria);
     }
 
     @Override
@@ -84,14 +84,14 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Transactional(rollbackFor = Exception.class)
     public void delete(Set<Long> ids) {
         // 清理缓存
-        List<Dict> dicts = dictMapper.selectBatchIds(ids);
+        List<Dict> dicts = dictMapper.selectByIds(ids);
         for (Dict dict : dicts) {
             delCaches(dict);
         }
         // 删除字典
-        dictMapper.deleteBatchIds(ids);
+        dictMapper.deleteByIds(ids);
         // 删除字典详情
-        deleteDetail.deleteByDictBatchIds(ids);
+        deleteDetail.deleteByDictIds(ids);
     }
 
     @Override

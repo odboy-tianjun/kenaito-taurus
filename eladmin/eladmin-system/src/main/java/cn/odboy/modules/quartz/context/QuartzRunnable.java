@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package cn.odboy.modules.quartz.util;
+package cn.odboy.modules.quartz.context;
 
 import lombok.extern.slf4j.Slf4j;
 import cn.odboy.infra.context.SpringBeanHolder;

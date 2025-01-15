@@ -21,12 +21,10 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
-
     <sql id="Base_Column_List">
         menu_id, title, name, menu_sort, component, path, type, permission, icon, cache, hidden, pid, sub_count, i_frame, create_by, update_by, create_time, update_time
     </sql>
-
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="selectMenus" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from sys_menu
@@ -50,8 +48,21 @@
         </where>
         order by menu_sort
     </select>
-
-    <select id="findByRoleIdsAndTypeNot" resultMap="BaseResultMap">
+    <select id="countByPid" resultType="java.lang.Integer">
+        SELECT count(*) FROM sys_menu WHERE pid = #{pid}
+    </select>
+    <update id="updateSubMenuCntById">
+        update sys_menu
+        set sub_count = #{count}
+        where menu_id = #{menuId}
+    </update>
+    <select id="getMenuByTitle" resultType="cn.odboy.modules.system.domain.Menu">
+        SELECT menu_id id FROM sys_menu WHERE title = #{title}
+    </select>
+    <select id="getMenuByComponentName" resultType="cn.odboy.modules.system.domain.Menu">
+        SELECT menu_id id FROM sys_menu WHERE name = #{name}
+    </select>
+    <select id="selectMenusByRoleIdsAndType" resultMap="BaseResultMap">
         SELECT m.* FROM sys_menu m, sys_roles_menus r
         WHERE m.menu_id = r.menu_id AND r.role_id IN
         <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
@@ -60,16 +71,14 @@
         AND type != #{type}
         order by m.menu_sort
     </select>
-
-    <select id="findByPidOrderByMenuSort" resultMap="BaseResultMap">
+    <select id="selectSubMenusByPid" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         from sys_menu
         WHERE pid = #{pid}
         ORDER BY menu_sort
     </select>
-
-    <select id="findByPidIsNullOrderByMenuSort" resultMap="BaseResultMap">
+    <select id="selectMenusOrderByMenuSort" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         from sys_menu

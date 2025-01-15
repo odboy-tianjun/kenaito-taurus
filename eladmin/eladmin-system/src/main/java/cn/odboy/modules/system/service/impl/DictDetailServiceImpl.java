@@ -49,7 +49,7 @@ public class DictDetailServiceImpl extends ServiceImpl<DictDetailMapper, DictDet
 
     @Override
     public PageResult<DictDetail> queryAll(DictDetailQueryCriteria criteria, Page<Object> page) {
-        return PageUtil.toPage(dictDetailMapper.findAll(criteria, page));
+        return PageUtil.toPage(dictDetailMapper.selectDictDetails(criteria, page));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class DictDetailServiceImpl extends ServiceImpl<DictDetailMapper, DictDet
     @Override
     @Cacheable(key = "'name:' + #p0")
     public List<DictDetail> getDictByName(String name) {
-        return dictDetailMapper.findByDictName(name);
+        return dictDetailMapper.selectDictDetailsByName(name);
     }
 
     @Override

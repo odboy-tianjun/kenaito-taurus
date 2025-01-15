@@ -85,7 +85,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 }
             }
         }
-        return menuMapper.findAll(criteria);
+        return menuMapper.selectMenus(criteria);
     }
 
     @Override
@@ -104,18 +104,18 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public List<Menu> findByUser(Long currentUserId) {
         List<Role> roles = roleService.findByUsersId(currentUserId);
         Set<Long> roleIds = roles.stream().map(Role::getId).collect(Collectors.toSet());
-        LinkedHashSet<Menu> menus = menuMapper.findByRoleIdsAndTypeNot(roleIds, 2);
+        LinkedHashSet<Menu> menus = menuMapper.selectMenusByRoleIdsAndType(roleIds, 2);
         return new ArrayList<>(menus);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(Menu resources) {
-        if(menuMapper.findByTitle(resources.getTitle()) != null){
+        if(menuMapper.getMenuByTitle(resources.getTitle()) != null){
             throw new EntityExistException(Menu.class,"title",resources.getTitle());
         }
         if(StringUtil.isNotBlank(resources.getComponentName())){
-            if(menuMapper.findByComponentName(resources.getComponentName()) != null){
+            if(menuMapper.getMenuByComponentName(resources.getComponentName()) != null){
                 throw new EntityExistException(Menu.class,"componentName",resources.getComponentName());
             }
         }
@@ -146,7 +146,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 throw new BadRequestException(BAD_REQUEST);
             }
         }
-        Menu menu1 = menuMapper.findByTitle(resources.getTitle());
+        Menu menu1 = menuMapper.getMenuByTitle(resources.getTitle());
 
         if(menu1 != null && !menu1.getId().equals(menu.getId())){
             throw new EntityExistException(Menu.class,"title",resources.getTitle());
@@ -161,7 +161,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         Long newPid = resources.getPid();
 
         if(StringUtil.isNotBlank(resources.getComponentName())){
-            menu1 = menuMapper.findByComponentName(resources.getComponentName());
+            menu1 = menuMapper.getMenuByComponentName(resources.getComponentName());
             if(menu1 != null && !menu1.getId().equals(menu.getId())){
                 throw new EntityExistException(Menu.class,"componentName",resources.getComponentName());
             }
@@ -190,7 +190,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public Set<Menu> getChildMenus(List<Menu> menuList, Set<Menu> menuSet) {
         for (Menu menu : menuList) {
             menuSet.add(menu);
-            List<Menu> menus = menuMapper.findByPidOrderByMenuSort(menu.getId());
+            List<Menu> menus = menuMapper.selectSubMenusByPid(menu.getId());
             if(menus!=null && menus.size()!=0){
                 getChildMenus(menus, menuSet);
             }
@@ -214,9 +214,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public List<Menu> getMenus(Long pid) {
         List<Menu> menus;
         if(pid != null && !pid.equals(0L)){
-            menus = menuMapper.findByPidOrderByMenuSort(pid);
+            menus = menuMapper.selectSubMenusByPid(pid);
         } else {
-            menus = menuMapper.findByPidIsNullOrderByMenuSort();
+            menus = menuMapper.selectMenusOrderByMenuSort();
         }
         return menus;
     }
@@ -224,10 +224,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     public List<Menu> getSuperior(Menu menu, List<Menu> menus) {
         if(menu.getPid() == null){
-            menus.addAll(menuMapper.findByPidIsNullOrderByMenuSort());
+            menus.addAll(menuMapper.selectMenusOrderByMenuSort());
             return menus;
         }
-        menus.addAll(menuMapper.findByPidOrderByMenuSort(menu.getPid()));
+        menus.addAll(menuMapper.selectSubMenusByPid(menu.getPid()));
         return getSuperior(findById(menu.getPid()), menus);
     }
 
@@ -328,7 +328,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     private void updateSubCnt(Long menuId){
         if(menuId != null){
             int count = menuMapper.countByPid(menuId);
-            menuMapper.updateSubCntById(count, menuId);
+            menuMapper.updateSubMenuCntById(count, menuId);
         }
     }
 
@@ -337,7 +337,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
      * @param id 菜单ID
      */
     public void delCaches(Long id){
-        List<User> users = userMapper.findByMenuId(id);
+        List<User> users = userMapper.selectUsersByMenuId(id);
         redisUtil.del(CacheKey.MENU_ID + id);
         redisUtil.delByKeys(CacheKey.MENU_USER, users.stream().map(User::getId).collect(Collectors.toSet()));
         // 清除 Role 缓存

@@ -31,7 +31,7 @@ import java.util.Map;
  * @date 2018/09/30 14:04:35
  */
 @Component
-public class AlipayUtils {
+public class AlipayUtil {
 
     /**
      * 生成订单号

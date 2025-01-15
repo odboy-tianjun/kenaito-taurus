@@ -15,8 +15,6 @@
  */
 package cn.odboy.modules.security.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.infra.exception.EntityNotFoundException;
 import cn.odboy.modules.security.service.dto.JwtUserDto;
@@ -24,6 +22,8 @@ import cn.odboy.modules.system.domain.User;
 import cn.odboy.modules.system.service.DataService;
 import cn.odboy.modules.system.service.RoleService;
 import cn.odboy.modules.system.service.UserService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -39,22 +39,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserService userService;
     private final RoleService roleService;
     private final DataService dataService;
-    private final UserCacheManager userCacheManager;
+    private final OnlineUserService onlineUserService;
 
     @Override
     public JwtUserDto loadUserByUsername(String username) {
-        JwtUserDto jwtUserDto = userCacheManager.getUserCache(username);
-        if(jwtUserDto == null){
-            User user;
+        JwtUserDto jwtUserDto = onlineUserService.getUserCache(username);
+        if (jwtUserDto == null) {
             try {
-                user = userService.getLoginData(username);
-            } catch (EntityNotFoundException e) {
-                // SpringSecurity会自动转换UsernameNotFoundException为BadCredentialsException
-                throw new UsernameNotFoundException(username, e);
-            }
-            if (user == null) {
-                throw new UsernameNotFoundException("");
-            } else {
+                User user = userService.getLoginData(username);
+                if (user == null) {
+                    throw new UsernameNotFoundException("");
+                }
                 if (!user.getEnabled()) {
                     throw new BadRequestException("账号未激活！");
                 }
@@ -64,7 +59,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                         roleService.mapToGrantedAuthorities(user)
                 );
                 // 添加缓存数据
-                userCacheManager.addUserCache(username, jwtUserDto);
+                onlineUserService.addUserCache(username, jwtUserDto);
+            } catch (EntityNotFoundException e) {
+                // SpringSecurity会自动转换UsernameNotFoundException为BadCredentialsException
+                throw new UsernameNotFoundException(username, e);
             }
         }
         return jwtUserDto;

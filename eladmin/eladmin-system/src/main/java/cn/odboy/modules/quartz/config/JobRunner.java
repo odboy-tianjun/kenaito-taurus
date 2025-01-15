@@ -15,25 +15,25 @@
  */
 package cn.odboy.modules.quartz.config;
 
-import lombok.RequiredArgsConstructor;
+import cn.odboy.modules.quartz.context.QuartzManage;
 import cn.odboy.modules.quartz.domain.QuartzJob;
 import cn.odboy.modules.quartz.mapper.QuartzJobMapper;
-import cn.odboy.modules.quartz.util.QuartzManage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 
 /**
  * @author Zheng Jie
  * @date 2019-01-07
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JobRunner implements ApplicationRunner {
-    private static final Logger log = LoggerFactory.getLogger(JobRunner.class);
     private final QuartzJobMapper quartzJobMapper;
     private final QuartzManage quartzManage;
 
@@ -44,7 +44,7 @@ public class JobRunner implements ApplicationRunner {
      */
     @Override
     public void run(ApplicationArguments applicationArguments) {
-        List<QuartzJob> quartzJobs = quartzJobMapper.findByIsPauseIsFalse();
+        List<QuartzJob> quartzJobs = quartzJobMapper.selectActiveJobs();
         quartzJobs.forEach(quartzManage::addJob);
         log.info("Timing task injection complete");
     }

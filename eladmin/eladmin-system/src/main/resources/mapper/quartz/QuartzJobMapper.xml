@@ -25,7 +25,7 @@
         job_id, job_name, bean_name, method_name, params, cron_expression, is_pause, person_in_charge, email, sub_task, pause_after_failure, description, create_time, update_time, create_by, update_by
     </sql>
 
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="selectJobs" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM sys_quartz_job
@@ -40,7 +40,7 @@
         ORDER BY job_id DESC
     </select>
 
-    <select id="findByIsPauseIsFalse" resultMap="BaseResultMap">
+    <select id="selectActiveJobs" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM sys_quartz_job

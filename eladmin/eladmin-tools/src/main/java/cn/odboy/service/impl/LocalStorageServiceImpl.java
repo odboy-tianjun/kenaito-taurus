@@ -53,12 +53,12 @@ public class LocalStorageServiceImpl extends ServiceImpl<LocalStorageMapper, Loc
 
     @Override
     public PageResult<LocalStorage> queryAll(LocalStorageQueryCriteria criteria, Page<Object> page){
-        return PageUtil.toPage(localStorageMapper.findAll(criteria, page));
+        return PageUtil.toPage(localStorageMapper.selectLocalStorages(criteria, page));
     }
 
     @Override
     public List<LocalStorage> queryAll(LocalStorageQueryCriteria criteria){
-        return localStorageMapper.findAll(criteria);
+        return localStorageMapper.selectLocalStorages(criteria);
     }
 
     @Override

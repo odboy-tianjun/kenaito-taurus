@@ -31,7 +31,7 @@ import cn.odboy.modules.quartz.mapper.QuartzJobMapper;
 import cn.odboy.modules.quartz.mapper.QuartzLogMapper;
 import cn.odboy.modules.quartz.service.QuartzJobService;
 import cn.odboy.modules.quartz.domain.vo.QuartzJobQueryCriteria;
-import cn.odboy.modules.quartz.util.QuartzManage;
+import cn.odboy.modules.quartz.context.QuartzManage;
 import cn.odboy.util.PageUtil;
 import org.quartz.CronExpression;
 import org.springframework.scheduling.annotation.Async;
@@ -56,22 +56,22 @@ public class QuartzJobServiceImpl extends ServiceImpl<QuartzJobMapper, QuartzJob
 
     @Override
     public PageResult<QuartzJob> queryAll(QuartzJobQueryCriteria criteria, Page<Object> page){
-        return PageUtil.toPage(quartzJobMapper.findAll(criteria, page));
+        return PageUtil.toPage(quartzJobMapper.selectJobs(criteria, page));
     }
 
     @Override
     public PageResult<QuartzLog> queryAllLog(QuartzJobQueryCriteria criteria, Page<Object> page){
-        return PageUtil.toPage(quartzLogMapper.findAll(criteria, page));
+        return PageUtil.toPage(quartzLogMapper.selectLogs(criteria, page));
     }
 
     @Override
     public List<QuartzJob> queryAll(QuartzJobQueryCriteria criteria) {
-        return quartzJobMapper.findAll(criteria);
+        return quartzJobMapper.selectJobs(criteria);
     }
 
     @Override
     public List<QuartzLog> queryAllLog(QuartzJobQueryCriteria criteria) {
-        return quartzLogMapper.findAll(criteria);
+        return quartzLogMapper.selectLogs(criteria);
     }
 
     @Override

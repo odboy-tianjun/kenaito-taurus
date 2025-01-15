@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.odboy.modules.system.mapper.RoleDeptMapper">
 
-    <insert id="insertData">
+    <insert id="insertRoleDept">
         insert into sys_roles_depts (role_id, dept_id)
         values
         <foreach collection="depts" item="item" open="(" separator="),(" close=")">

@@ -26,7 +26,7 @@ import cn.odboy.infra.security.annotation.AnonymousGetMapping;
 import cn.odboy.domain.vo.TradeVo;
 import cn.odboy.domain.AlipayConfig;
 import cn.odboy.util.AliPayStatusEnum;
-import cn.odboy.util.AlipayUtils;
+import cn.odboy.util.AlipayUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -49,7 +49,7 @@ import java.util.Map;
 @Api(tags = "工具：支付宝管理")
 public class AliPayController {
 
-    private final AlipayUtils alipayUtils;
+    private final AlipayUtil alipayUtil;
     private final AliPayService alipayService;
 
     @GetMapping
@@ -70,7 +70,7 @@ public class AliPayController {
     @PostMapping(value = "/toPayAsPC")
     public ResponseEntity<String> toPayAsPc(@Validated @RequestBody TradeVo trade) throws Exception {
         AlipayConfig aliPay = alipayService.find();
-        trade.setOutTradeNo(alipayUtils.getOrderCode());
+        trade.setOutTradeNo(alipayUtil.getOrderCode());
         String payUrl = alipayService.toPayAsPc(aliPay, trade);
         return ResponseEntity.ok(payUrl);
     }
@@ -80,7 +80,7 @@ public class AliPayController {
     @PostMapping(value = "/toPayAsWeb")
     public ResponseEntity<String> toPayAsWeb(@Validated @RequestBody TradeVo trade) throws Exception {
         AlipayConfig alipay = alipayService.find();
-        trade.setOutTradeNo(alipayUtils.getOrderCode());
+        trade.setOutTradeNo(alipayUtil.getOrderCode());
         String payUrl = alipayService.toPayAsWeb(alipay, trade);
         return ResponseEntity.ok(payUrl);
     }
@@ -92,7 +92,7 @@ public class AliPayController {
         AlipayConfig alipay = alipayService.find();
         response.setContentType("text/html;charset=" + alipay.getCharset());
         //内容验签，防止黑客篡改参数
-        if (alipayUtils.rsaCheck(request, alipay)) {
+        if (alipayUtil.rsaCheck(request, alipay)) {
             //商户订单号
             String outTradeNo = new String(request.getParameter("out_trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             //支付宝交易号
@@ -115,7 +115,7 @@ public class AliPayController {
         AlipayConfig alipay = alipayService.find();
         Map<String, String[]> parameterMap = request.getParameterMap();
         //内容验签，防止黑客篡改参数
-        if (alipayUtils.rsaCheck(request, alipay)) {
+        if (alipayUtil.rsaCheck(request, alipay)) {
             //交易状态
             String tradeStatus = new String(request.getParameter("trade_status").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             // 商户订单号

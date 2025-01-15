@@ -16,7 +16,7 @@
         job_id, name, job_sort, enabled, create_by, update_by, create_time, update_time
     </sql>
 
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="selectJobs" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from sys_job
@@ -32,5 +32,10 @@
             </if>
         </where>
         order by job_sort, job_id desc
+    </select>
+    <select id="getJobByName" resultType="cn.odboy.modules.system.domain.Job">
+        select job_id as id
+        from sys_job
+        where name = #{name}
     </select>
 </mapper>

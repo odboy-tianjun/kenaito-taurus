@@ -31,34 +31,18 @@ import java.util.Set;
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-
-    List<User> findAll(@Param("criteria") UserQueryCriteria criteria);
-
-    Long countAll(@Param("criteria") UserQueryCriteria criteria);
-
-    User findByUsername(@Param("username") String username);
-
-    User findByEmail(@Param("email") String email);
-
-    User findByPhone(@Param("phone") String phone);
-
-    @Select("update sys_user set password = #{password} , pwd_reset_time = #{lastPasswordResetTime} where username = #{username}")
-    void updatePass(@Param("username") String username, @Param("password") String password, @Param("lastPasswordResetTime") Date lastPasswordResetTime);
-
-    @Select("update sys_user set email = #{email} where username = #{username}")
-    void updateEmail(@Param("username") String username, @Param("email") String email);
-
-    List<User> findByRoleId(@Param("roleId") Long roleId);
-
-    List<User> findByRoleDeptId(@Param("deptId") Long deptId);
-
-    List<User> findByMenuId(@Param("menuId") Long menuId);
-
-    int countByJobs(@Param("jobIds") Set<Long> jobIds);
-
-    int countByDepts(@Param("deptIds") Set<Long> deptIds);
-
-    int countByRoles(@Param("roleIds") Set<Long> roleIds);
-
-    void resetPwd(@Param("userIds") Set<Long> userIds, @Param("pwd") String pwd);
+    List<User> selectUsers(@Param("criteria") UserQueryCriteria criteria);
+    Long countByBlurry(@Param("criteria") UserQueryCriteria criteria);
+    User getByUsername(@Param("username") String username);
+    User getByEmail(@Param("email") String email);
+    User getByPhone(@Param("phone") String phone);
+    void updatePwdByUsername(@Param("username") String username, @Param("password") String password, @Param("lastPwdResetTime") Date lastPwdResetTime);
+    void updateEmailByUsername(@Param("username") String username, @Param("email") String email);
+    List<User> selectUsersByRoleId(@Param("roleId") Long roleId);
+    List<User> selectUsersByRoleDeptId(@Param("deptId") Long deptId);
+    List<User> selectUsersByMenuId(@Param("menuId") Long menuId);
+    int countByJobIds(@Param("jobIds") Set<Long> jobIds);
+    int countByDeptIds(@Param("deptIds") Set<Long> deptIds);
+    int countByRoleIds(@Param("roleIds") Set<Long> roleIds);
+    void updatePwdByUserIds(@Param("userIds") Set<Long> userIds, @Param("pwd") String pwd);
 }

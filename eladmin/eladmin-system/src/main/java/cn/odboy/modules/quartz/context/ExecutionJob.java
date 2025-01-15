@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package cn.odboy.modules.quartz.util;
+package cn.odboy.modules.quartz.context;
 
 import cn.hutool.extra.template.Template;
 import cn.hutool.extra.template.TemplateConfig;

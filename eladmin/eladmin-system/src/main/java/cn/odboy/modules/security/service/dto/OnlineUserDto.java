@@ -25,8 +25,6 @@ import java.util.Date;
  * @author Zheng Jie
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class OnlineUserDto {
 
     /**

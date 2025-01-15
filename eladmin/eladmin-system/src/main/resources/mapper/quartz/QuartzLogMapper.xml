@@ -19,7 +19,7 @@
         log_id, job_name, bean_name, method_name, params, cron_expression, is_success, exception_detail, time, create_time
     </sql>
 
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="selectLogs" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM sys_quartz_log

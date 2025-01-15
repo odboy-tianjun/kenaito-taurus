@@ -28,8 +28,6 @@ import java.util.List;
 */
 @Mapper
 public interface DictMapper extends BaseMapper<Dict> {
-
-    List<Dict> findAll(@Param("criteria") DictQueryCriteria criteria);
-
-    Long countAll(@Param("criteria") DictQueryCriteria criteria);
+    List<Dict> selectDicts(@Param("criteria") DictQueryCriteria criteria);
+    Long countByBlurry(@Param("criteria") DictQueryCriteria criteria);
 }

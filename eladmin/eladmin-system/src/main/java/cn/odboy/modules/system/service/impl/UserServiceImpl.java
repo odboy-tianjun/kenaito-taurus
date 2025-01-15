@@ -15,35 +15,31 @@
  */
 package cn.odboy.modules.system.service.impl;
 
-import cn.odboy.util.FileUtil;
-import cn.odboy.util.RedisUtil;
-import cn.odboy.util.SecurityUtil;
-import cn.odboy.util.StringUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import cn.odboy.infra.context.CacheKey;
-import cn.odboy.infra.upload.FileProperties;
 import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.infra.exception.EntityExistException;
+import cn.odboy.infra.exception.EntityNotFoundException;
+import cn.odboy.infra.upload.FileProperties;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.security.service.OnlineUserService;
-import cn.odboy.modules.security.service.UserCacheManager;
 import cn.odboy.modules.system.domain.Job;
 import cn.odboy.modules.system.domain.Role;
 import cn.odboy.modules.system.domain.User;
-import cn.odboy.infra.exception.EntityExistException;
-import cn.odboy.infra.exception.EntityNotFoundException;
 import cn.odboy.modules.system.domain.vo.UserQueryCriteria;
 import cn.odboy.modules.system.mapper.UserJobMapper;
 import cn.odboy.modules.system.mapper.UserMapper;
 import cn.odboy.modules.system.mapper.UserRoleMapper;
 import cn.odboy.modules.system.service.UserService;
-import cn.odboy.util.PageUtil;
+import cn.odboy.util.*;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotBlank;
 import java.io.File;
@@ -65,20 +61,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final UserRoleMapper userRoleMapper;
     private final FileProperties properties;
     private final RedisUtil redisUtil;
-    private final UserCacheManager userCacheManager;
     private final OnlineUserService onlineUserService;
 
     @Override
     public PageResult<User> queryAll(UserQueryCriteria criteria, Page<Object> page) {
         criteria.setOffset(page.offset());
-        List<User> users = userMapper.findAll(criteria);
-        Long total = userMapper.countAll(criteria);
+        List<User> users = userMapper.selectUsers(criteria);
+        Long total = userMapper.countByBlurry(criteria);
         return PageUtil.toPage(users, total);
     }
 
     @Override
     public List<User> queryAll(UserQueryCriteria criteria) {
-        return userMapper.findAll(criteria);
+        return userMapper.selectUsers(criteria);
     }
 
     @Override
@@ -92,29 +87,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional(rollbackFor = Exception.class)
     public void create(User resources) {
         resources.setDeptId(resources.getDept().getId());
-        if (userMapper.findByUsername(resources.getUsername()) != null) {
+        if (userMapper.getByUsername(resources.getUsername()) != null) {
             throw new EntityExistException(User.class, "username", resources.getUsername());
         }
-        if (userMapper.findByEmail(resources.getEmail()) != null) {
+        if (userMapper.getByEmail(resources.getEmail()) != null) {
             throw new EntityExistException(User.class, "email", resources.getEmail());
         }
-        if (userMapper.findByPhone(resources.getPhone()) != null) {
+        if (userMapper.getByPhone(resources.getPhone()) != null) {
             throw new EntityExistException(User.class, "phone", resources.getPhone());
         }
         save(resources);
         // 保存用户岗位
-        userJobMapper.insertData(resources.getId(), resources.getJobs());
+        userJobMapper.insertUserJob(resources.getId(), resources.getJobs());
         // 保存用户角色
-        userRoleMapper.insertData(resources.getId(), resources.getRoles());
+        userRoleMapper.insertUserRole(resources.getId(), resources.getRoles());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(User resources) throws Exception {
         User user = getById(resources.getId());
-        User user1 = userMapper.findByUsername(resources.getUsername());
-        User user2 = userMapper.findByEmail(resources.getEmail());
-        User user3 = userMapper.findByPhone(resources.getPhone());
+        User user1 = userMapper.getByUsername(resources.getUsername());
+        User user2 = userMapper.getByEmail(resources.getEmail());
+        User user3 = userMapper.getByPhone(resources.getPhone());
         if (user1 != null && !user.getId().equals(user1.getId())) {
             throw new EntityExistException(User.class, "username", resources.getUsername());
         }
@@ -131,11 +126,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             redisUtil.del(CacheKey.ROLE_AUTH + resources.getId());
         }
         // 修改部门会影响 数据权限
-        if (!Objects.equals(resources.getDept(),user.getDept())) {
+        if (!Objects.equals(resources.getDept(), user.getDept())) {
             redisUtil.del(CacheKey.DATA_USER + resources.getId());
         }
         // 如果用户被禁用，则清除用户登录信息
-        if(!resources.getEnabled()){
+        if (!resources.getEnabled()) {
             onlineUserService.kickOutForUsername(resources.getUsername());
         }
         user.setDeptId(resources.getDept().getId());
@@ -153,17 +148,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         delCaches(user.getId(), user.getUsername());
         // 更新用户岗位
         userJobMapper.deleteByUserId(resources.getId());
-        userJobMapper.insertData(resources.getId(), resources.getJobs());
+        userJobMapper.insertUserJob(resources.getId(), resources.getJobs());
         // 更新用户角色
         userRoleMapper.deleteByUserId(resources.getId());
-        userRoleMapper.insertData(resources.getId(), resources.getRoles());
+        userRoleMapper.insertUserRole(resources.getId(), resources.getRoles());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateCenter(User resources) {
         User user = getById(resources.getId());
-        User user1 = userMapper.findByPhone(resources.getPhone());
+        User user1 = userMapper.getByPhone(resources.getPhone());
         if (user1 != null && !user.getId().equals(user1.getId())) {
             throw new EntityExistException(User.class, "phone", resources.getPhone());
         }
@@ -183,7 +178,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             User user = getById(id);
             delCaches(user.getId(), user.getUsername());
         }
-        userMapper.deleteBatchIds(ids);
+        userMapper.deleteByIds(ids);
         // 删除用户岗位
         userJobMapper.deleteByUserIds(ids);
         // 删除用户角色
@@ -192,12 +187,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public User findByName(String userName) {
-        return userMapper.findByUsername(userName);
+        return userMapper.getByUsername(userName);
     }
 
     @Override
     public User getLoginData(String userName) {
-        User user = userMapper.findByUsername(userName);
+        User user = userMapper.getByUsername(userName);
         if (user == null) {
             throw new EntityNotFoundException(User.class, "name", userName);
         } else {
@@ -208,14 +203,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePass(String username, String pass) {
-        userMapper.updatePass(username, pass, new Date());
+        userMapper.updatePwdByUsername(username, pass, new Date());
         flushCache(username);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void resetPwd(Set<Long> ids, String pwd) {
-        userMapper.resetPwd(ids, pwd);
+        userMapper.updatePwdByUserIds(ids, pwd);
     }
 
     @Override
@@ -226,10 +221,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 验证文件上传的格式
         String image = "gif jpg png jpeg";
         String fileType = FileUtil.getExtensionName(multipartFile.getOriginalFilename());
-        if(fileType != null && !image.contains(fileType)){
-            throw new BadRequestException("文件格式错误！, 仅支持 " + image +" 格式");
+        if (fileType != null && !image.contains(fileType)) {
+            throw new BadRequestException("文件格式错误！, 仅支持 " + image + " 格式");
         }
-        User user = userMapper.findByUsername(SecurityUtil.getCurrentUsername());
+        User user = userMapper.getByUsername(SecurityUtil.getCurrentUsername());
         String oldPath = user.getAvatarPath();
         File file = FileUtil.upload(multipartFile, properties.getPath().getAvatar());
         user.setAvatarPath(Objects.requireNonNull(file).getPath());
@@ -248,7 +243,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateEmail(String username, String email) {
-        userMapper.updateEmail(username, email);
+        userMapper.updateEmailByUsername(username, email);
         flushCache(username);
     }
 
@@ -288,6 +283,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * @param username /
      */
     private void flushCache(String username) {
-        userCacheManager.cleanUserCache(username);
+        onlineUserService.kickOutForUsername(username);
     }
 }

@@ -20,7 +20,7 @@
         dd.detail_id, dd.label, dd.`value`, dd.`dict_sort`, dd.create_by, dd.update_by, dd.create_time, dd.update_time, d.dict_id, d.name
     </sql>
 
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="selectDictDetails" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>
         from sys_dict_detail dd, sys_dict d
         where dd.dict_id = d.dict_id
@@ -33,7 +33,7 @@
         order by dd.dict_sort, dd.dict_id desc
     </select>
 
-    <select id="findByDictName" resultMap="BaseResultMap">
+    <select id="selectDictDetailsByName" resultMap="BaseResultMap">
         select <include refid="Base_Column_List"/>
         from sys_dict_detail dd, sys_dict d
         where dd.dict_id = d.dict_id
@@ -43,7 +43,7 @@
         order by dd.dict_sort
     </select>
 
-    <delete id="deleteByDictBatchIds">
+    <delete id="deleteByDictIds">
         delete from sys_dict_detail
         where dict_id in
         <foreach collection="dictIds" item="item" index="index" open="(" separator="," close=")">

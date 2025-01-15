@@ -31,24 +31,12 @@ import java.util.Set;
  */
 @Mapper
 public interface MenuMapper extends BaseMapper<Menu> {
-
-    List<Menu> findAll(@Param("criteria") MenuQueryCriteria criteria);
-
-    LinkedHashSet<Menu> findByRoleIdsAndTypeNot(@Param("roleIds") Set<Long> roleIds, @Param("type") Integer type);
-
-    List<Menu> findByPidIsNullOrderByMenuSort();
-
-    List<Menu> findByPidOrderByMenuSort(@Param("pid") Long pid);
-
-    @Select("SELECT menu_id id FROM sys_menu WHERE title = #{title}")
-    Menu findByTitle(@Param("title") String title);
-
-    @Select("SELECT menu_id id FROM sys_menu WHERE name = #{name}")
-    Menu findByComponentName(@Param("name") String name);
-
-    @Select("SELECT count(*) FROM sys_menu WHERE pid = #{pid}")
+    List<Menu> selectMenus(@Param("criteria") MenuQueryCriteria criteria);
     int countByPid(@Param("pid") Long pid);
-
-    @Select("update sys_menu set sub_count = #{count} where menu_id = #{menuId} ")
-    void updateSubCntById(@Param("count") int count, @Param("menuId") Long menuId);
+    void updateSubMenuCntById(@Param("count") int count, @Param("menuId") Long menuId);
+    Menu getMenuByTitle(@Param("title") String title);
+    Menu getMenuByComponentName(@Param("name") String name);
+    LinkedHashSet<Menu> selectMenusByRoleIdsAndType(@Param("roleIds") Set<Long> roleIds, @Param("type") Integer type);
+    List<Menu> selectMenusOrderByMenuSort();
+    List<Menu> selectSubMenusByPid(@Param("pid") Long pid);
 }

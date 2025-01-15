@@ -81,7 +81,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         }
         // 数据权限
         criteria.setIds(SecurityUtil.getCurrentUserDataScope());
-        List<Dept> list = deptMapper.findAll(criteria);
+        List<Dept> list = deptMapper.selectDepts(criteria);
         // 如果为空，就代表为自定义权限或者本级权限，就需要去重，不理解可以注释掉，看查询结果
         if(StringUtil.isBlank(dataScopeType)){
             return deduplication(list);
@@ -97,12 +97,12 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
 
     @Override
     public List<Dept> findByPid(long pid) {
-        return deptMapper.findByPid(pid);
+        return deptMapper.selectDeptsByPid(pid);
     }
 
     @Override
     public Set<Dept> findByRoleId(Long id) {
-        return deptMapper.findByRoleId(id);
+        return deptMapper.selectDeptsByRoleId(id);
     }
 
     @Override
@@ -162,7 +162,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     public Set<Dept> getDeleteDepts(List<Dept> menuList, Set<Dept> deptSet) {
         for (Dept dept : menuList) {
             deptSet.add(dept);
-            List<Dept> depts = deptMapper.findByPid(dept.getId());
+            List<Dept> depts = deptMapper.selectDeptsByPid(dept.getId());
             if(depts!=null && depts.size()!=0){
                 getDeleteDepts(depts, deptSet);
             }
@@ -175,8 +175,8 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
         List<Long> list = new ArrayList<>();
         deptList.forEach(dept -> {
                     if (dept!=null && dept.getEnabled()) {
-                        List<Dept> depts = deptMapper.findByPid(dept.getId());
-                        if (depts.size() != 0) {
+                        List<Dept> depts = deptMapper.selectDeptsByPid(dept.getId());
+                        if (!depts.isEmpty()) {
                             list.addAll(getDeptChildren(depts));
                         }
                         list.add(dept.getId());
@@ -189,10 +189,10 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Override
     public List<Dept> getSuperior(Dept dept, List<Dept> depts) {
         if(dept.getPid() == null){
-            depts.addAll(deptMapper.findByPidIsNull());
+            depts.addAll(deptMapper.selectRootDepts());
             return depts;
         }
-        depts.addAll(deptMapper.findByPid(dept.getPid()));
+        depts.addAll(deptMapper.selectDeptsByPid(dept.getPid()));
         return getSuperior(findById(dept.getPid()), depts);
     }
 
@@ -235,10 +235,10 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     @Override
     public void verification(Set<Dept> depts) {
         Set<Long> deptIds = depts.stream().map(Dept::getId).collect(Collectors.toSet());
-        if(userMapper.countByDepts(deptIds) > 0){
+        if(userMapper.countByDeptIds(deptIds) > 0){
             throw new BadRequestException("所选部门存在用户关联，请解除后再试！");
         }
-        if(roleMapper.countByDepts(deptIds) > 0){
+        if(roleMapper.countByDeptIds(deptIds) > 0){
             throw new BadRequestException("所选部门存在角色关联，请解除后再试！");
         }
     }
@@ -246,7 +246,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     private void updateSubCnt(Long deptId){
         if(deptId != null){
             int count = deptMapper.countByPid(deptId);
-            deptMapper.updateSubCntById(count, deptId);
+            deptMapper.updateSubDeptCntById(count, deptId);
         }
     }
 
@@ -272,7 +272,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
      * @param id /
      */
     public void delCaches(Long id){
-        List<User> users = userMapper.findByRoleDeptId(id);
+        List<User> users = userMapper.selectUsersByRoleDeptId(id);
         // 删除数据权限
         redisUtil.delByKeys(CacheKey.DATA_USER, users.stream().map(User::getId).collect(Collectors.toSet()));
         redisUtil.del(CacheKey.DEPT_ID + id);

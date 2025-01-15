@@ -26,9 +26,7 @@ import java.util.Set;
  */
 @Mapper
 public interface UserJobMapper {
-    void insertData(@Param("userId") Long userId, @Param("jobs") Set<Job> jobs);
-
+    void insertUserJob(@Param("userId") Long userId, @Param("jobs") Set<Job> jobs);
     void deleteByUserId(@Param("userId") Long userId);
-
     void deleteByUserIds(@Param("userIds") Set<Long> userIds);
 }

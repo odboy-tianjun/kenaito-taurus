@@ -21,21 +21,17 @@
             <result column="dept_name" property="name"/>
         </collection>
     </resultMap>
-
     <sql id="Base_Column_List">
         role.role_id as role_role_id, role.name as role_name, role.data_scope as role_data_scope,
         role.level as role_level, role.description as role_description, role.create_by as role_create_by,
         role.update_by as role_update_by, role.create_time as role_create_time, role.update_time as role_update_time
     </sql>
-
     <sql id="Menu_Column_List">
         menu.menu_id as menu_id, menu.title as menu_title, menu.permission as menu_permission
     </sql>
-
     <sql id="Dept_Column_List">
         dept.dept_id as dept_id, dept.name as dept_name
     </sql>
-
     <sql id="Where_sql">
         <where>
             <if test="criteria.blurry != null and criteria.blurry != ''">
@@ -49,13 +45,27 @@
             </if>
         </where>
     </sql>
-
-    <select id="queryAll" resultType="cn.odboy.modules.system.domain.Role">
+    <select id="selectMetaRoles" resultType="cn.odboy.modules.system.domain.Role">
         select role_id as id, name, level
         from sys_role order by level
     </select>
-
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="getById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>,
+        <include refid="Dept_Column_List"/>,
+        <include refid="Menu_Column_List"/>
+        from sys_role role
+        left join sys_roles_menus srm on role.role_id = srm.role_id
+        left join sys_menu menu on menu.menu_id = srm.menu_id
+        left join sys_roles_depts srd on role.role_id = srd.role_id
+        left join sys_dept dept on dept.dept_id = srd.dept_id
+        where role.role_id = #{roleId}
+    </select>
+    <select id="getByName" resultType="cn.odboy.modules.system.domain.Role">
+        select role_id as id from sys_role
+        where name = #{name}
+    </select>
+    <select id="selectRoles" resultMap="BaseResultMap">
         select role.*,
         <include refid="Dept_Column_List"/>,
         <include refid="Menu_Column_List"/>
@@ -74,32 +84,12 @@
         left join sys_dept dept on dept.dept_id = srd.dept_id
         order by role.role_level
     </select>
-
-    <select id="countAll" resultType="java.lang.Long">
+    <select id="countByBlurry" resultType="java.lang.Long">
         select count(*)
         from sys_role role
         <include refid="Where_sql"/>
     </select>
-
-    <select id="findByName" resultType="cn.odboy.modules.system.domain.Role">
-        select role_id as id from sys_role
-        where name = #{name}
-    </select>
-
-    <select id="findById" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>,
-        <include refid="Dept_Column_List"/>,
-        <include refid="Menu_Column_List"/>
-        from sys_role role
-        left join sys_roles_menus srm on role.role_id = srm.role_id
-        left join sys_menu menu on menu.menu_id = srm.menu_id
-        left join sys_roles_depts srd on role.role_id = srd.role_id
-        left join sys_dept dept on dept.dept_id = srd.dept_id
-        where role.role_id = #{roleId}
-    </select>
-
-    <select id="findByUserId" resultMap="BaseResultMap">
+    <select id="selectRolesByUserId" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>,
         <include refid="Dept_Column_List"/>,
@@ -112,8 +102,7 @@
         left join sys_users_roles ur on role.role_id = ur.role_id
         WHERE role.role_id = ur.role_id AND ur.user_id = #{userId}
     </select>
-
-    <select id="countByDepts" resultType="int">
+    <select id="countByDeptIds" resultType="int">
         select count(*)
         from sys_role r, sys_roles_depts d
         where r.role_id = d.role_id
@@ -121,5 +110,12 @@
         <foreach collection="deptIds" item="deptId" open="(" separator="," close=")">
             #{deptId}
         </foreach>
+    </select>
+    <select id="selectRolesByMenuId" resultType="cn.odboy.modules.system.domain.Role">
+        SELECT role.role_id as id
+        FROM sys_role role,
+             sys_roles_menus rm
+        WHERE role.role_id = rm.role_id
+          AND rm.menu_id = #{menuId}
     </select>
 </mapper>

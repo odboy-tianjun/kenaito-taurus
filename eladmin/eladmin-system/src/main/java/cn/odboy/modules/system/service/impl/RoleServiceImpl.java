@@ -17,32 +17,32 @@ package cn.odboy.modules.system.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.odboy.util.FileUtil;
-import cn.odboy.util.RedisUtil;
-import cn.odboy.util.StringUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import cn.odboy.infra.context.CacheKey;
 import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.infra.exception.EntityExistException;
 import cn.odboy.model.PageResult;
-import cn.odboy.modules.security.service.UserCacheManager;
 import cn.odboy.modules.security.service.dto.AuthorityDto;
 import cn.odboy.modules.system.domain.Menu;
 import cn.odboy.modules.system.domain.Role;
-import cn.odboy.infra.exception.EntityExistException;
 import cn.odboy.modules.system.domain.User;
+import cn.odboy.modules.system.domain.vo.RoleQueryCriteria;
 import cn.odboy.modules.system.mapper.RoleDeptMapper;
 import cn.odboy.modules.system.mapper.RoleMapper;
 import cn.odboy.modules.system.mapper.RoleMenuMapper;
 import cn.odboy.modules.system.mapper.UserMapper;
 import cn.odboy.modules.system.service.RoleService;
-import cn.odboy.modules.system.domain.vo.RoleQueryCriteria;
+import cn.odboy.util.FileUtil;
 import cn.odboy.util.PageUtil;
+import cn.odboy.util.RedisUtil;
+import cn.odboy.util.StringUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
@@ -62,42 +62,41 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     private final RoleMenuMapper roleMenuMapper;
     private final RedisUtil redisUtil;
     private final UserMapper userMapper;
-    private final UserCacheManager userCacheManager;
 
     @Override
     public List<Role> queryAll() {
-        return roleMapper.queryAll();
+        return roleMapper.selectMetaRoles();
     }
 
     @Override
     public List<Role> queryAll(RoleQueryCriteria criteria) {
-        return roleMapper.findAll(criteria);
+        return roleMapper.selectRoles(criteria);
     }
 
     @Override
     public PageResult<Role> queryAll(RoleQueryCriteria criteria, Page<Object> page) {
         criteria.setOffset(page.offset());
-        List<Role> roles = roleMapper.findAll(criteria);
-        Long total = roleMapper.countAll(criteria);
+        List<Role> roles = roleMapper.selectRoles(criteria);
+        Long total = roleMapper.countByBlurry(criteria);
         return PageUtil.toPage(roles, total);
     }
 
     @Override
     @Cacheable(key = "'id:' + #p0")
     public Role findById(long id) {
-        return roleMapper.findById(id);
+        return roleMapper.getById(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(Role resources) {
-        if (roleMapper.findByName(resources.getName()) != null) {
+        if (roleMapper.getByName(resources.getName()) != null) {
             throw new EntityExistException(Role.class, "username", resources.getName());
         }
         save(resources);
         // 判断是否有部门数据，若有，则需创建关联
         if (CollectionUtil.isNotEmpty(resources.getDepts())) {
-            roleDeptMapper.insertData(resources.getId(), resources.getDepts());
+            roleDeptMapper.insertRoleDept(resources.getId(), resources.getDepts());
         }
     }
 
@@ -105,7 +104,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     @Transactional(rollbackFor = Exception.class)
     public void update(Role resources) {
         Role role = getById(resources.getId());
-        Role role1 = roleMapper.findByName(resources.getName());
+        Role role1 = roleMapper.getByName(resources.getName());
         if (role1 != null && !role1.getId().equals(role.getId())) {
             throw new EntityExistException(Role.class, "username", resources.getName());
         }
@@ -120,7 +119,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         roleDeptMapper.deleteByRoleId(resources.getId());
         // 判断是否有部门数据，若有，则需更新关联
         if (CollectionUtil.isNotEmpty(resources.getDepts())) {
-            roleDeptMapper.insertData(resources.getId(), resources.getDepts());
+            roleDeptMapper.insertRoleDept(resources.getId(), resources.getDepts());
         }
         // 更新相关缓存
         delCaches(role.getId(), null);
@@ -128,12 +127,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Override
     public void updateMenu(Role role) {
-        List<User> users = userMapper.findByRoleId(role.getId());
+        List<User> users = userMapper.selectUsersByRoleId(role.getId());
         // 更新菜单
         roleMenuMapper.deleteByRoleId(role.getId());
         // 判断是否为空
-        if(CollUtil.isNotEmpty(role.getMenus())){
-            roleMenuMapper.insertData(role.getId(), role.getMenus());
+        if (CollUtil.isNotEmpty(role.getMenus())) {
+            roleMenuMapper.insertRoleMenu(role.getId(), role.getMenus());
         }
         // 更新缓存
         delCaches(role.getId(), users);
@@ -154,12 +153,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Override
     public List<Role> findByUsersId(Long userId) {
-        return roleMapper.findByUserId(userId);
+        return roleMapper.selectRolesByUserId(userId);
     }
 
     @Override
     public Integer findByRoles(Set<Role> roles) {
-        if (roles.size() == 0) {
+        if (roles.isEmpty()) {
             return Integer.MAX_VALUE;
         }
         Set<Role> roleSet = new HashSet<>();
@@ -179,7 +178,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             return permissions.stream().map(AuthorityDto::new)
                     .collect(Collectors.toList());
         }
-        List<Role> roles = roleMapper.findByUserId(user.getId());
+        List<Role> roles = roleMapper.selectRolesByUserId(user.getId());
         permissions = roles.stream().flatMap(role -> role.getMenus().stream())
                 .map(Menu::getPermission)
                 .filter(StringUtil::isNotBlank).collect(Collectors.toSet());
@@ -203,24 +202,24 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Override
     public void verification(Set<Long> ids) {
-        if (userMapper.countByRoles(ids) > 0) {
+        if (userMapper.countByRoleIds(ids) > 0) {
             throw new BadRequestException("所选角色存在用户关联，请解除关联再试！");
         }
     }
 
     @Override
     public List<Role> findByMenuId(Long menuId) {
-        return roleMapper.findByMenuId(menuId);
+        return roleMapper.selectRolesByMenuId(menuId);
     }
 
     /**
      * 清理缓存
+     *
      * @param id /
      */
     public void delCaches(Long id, List<User> users) {
-        users = CollectionUtil.isEmpty(users) ? userMapper.findByRoleId(id) : users;
+        users = CollectionUtil.isEmpty(users) ? userMapper.selectUsersByRoleId(id) : users;
         if (CollectionUtil.isNotEmpty(users)) {
-            users.forEach(item -> userCacheManager.cleanUserCache(item.getUsername()));
             Set<Long> userIds = users.stream().map(User::getId).collect(Collectors.toSet());
             redisUtil.delByKeys(CacheKey.DATA_USER, userIds);
             redisUtil.delByKeys(CacheKey.MENU_USER, userIds);

@@ -31,17 +31,15 @@ import java.util.Set;
 @Mapper
 public interface DeptMapper extends BaseMapper<Dept> {
 
-    List<Dept> findAll(@Param("criteria") DeptQueryCriteria criteria);
+    List<Dept> selectDepts(@Param("criteria") DeptQueryCriteria criteria);
 
-    List<Dept> findByPid(@Param("pid") Long pid);
+    List<Dept> selectDeptsByPid(@Param("pid") Long pid);
 
-    List<Dept> findByPidIsNull();
+    List<Dept> selectRootDepts();
 
-    Set<Dept> findByRoleId(@Param("roleId") Long roleId);
+    Set<Dept> selectDeptsByRoleId(@Param("roleId") Long roleId);
 
-    @Select("select count(*) from sys_dept where pid = #{pid}")
     int countByPid(@Param("pid") Long pid);
 
-    @Select("update sys_dept set sub_count = #{count} where dept_id = #{id}")
-    void updateSubCntById(@Param("count") Integer count, @Param("id") Long id);
+    void updateSubDeptCntById(@Param("count") Integer count, @Param("id") Long id);
 }

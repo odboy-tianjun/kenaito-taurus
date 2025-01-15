@@ -36,7 +36,7 @@
         </where>
     </sql>
 
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="selectDicts" resultMap="BaseResultMap">
         SELECT d.*,
         <include refid="Dict_Details_Column_List"/>
         from (
@@ -51,7 +51,7 @@
         order by d.dict_id desc
     </select>
 
-    <select id="countAll" resultType="java.lang.Long">
+    <select id="countByBlurry" resultType="java.lang.Long">
         select count(*)
         from sys_dict d
         <include refid="Where_sql"/>
