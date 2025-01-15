@@ -25,7 +25,7 @@
         dd.detail_id as dd_id, dd.label, dd.`value`, dd.create_time as dd_create_time
     </sql>
 
-    <sql id="Where_sql">
+    <sql id="WhereSQL">
         <where>
             <if test="criteria.blurry != null and criteria.blurry != ''">
                 and (
@@ -42,7 +42,7 @@
         from (
             select <include refid="Base_Column_List"/>
             from sys_dict d
-            <include refid="Where_sql"/>
+            <include refid="WhereSQL"/>
             <if test="criteria.offset != null">
                 limit #{criteria.offset}, #{criteria.size}
             </if>
@@ -54,6 +54,6 @@
     <select id="countByBlurry" resultType="java.lang.Long">
         select count(*)
         from sys_dict d
-        <include refid="Where_sql"/>
+        <include refid="WhereSQL"/>
     </select>
 </mapper>

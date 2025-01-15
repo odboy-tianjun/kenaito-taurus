@@ -32,9 +32,9 @@ import java.util.List;
  **/
 @Mapper
 public interface ServerMapper extends BaseMapper<Server> {
-    Server findByIp(@Param("ip") String ip);
+    Server getByIp(@Param("ip") String ip);
 
-    IPage<Server> findAll(@Param("criteria") ServerQueryCriteria criteria, Page<Object> page);
+    IPage<Server> selectServers(@Param("criteria") ServerQueryCriteria criteria, Page<Object> page);
 
-    List<Server> findAll(@Param("criteria") ServerQueryCriteria criteria);
+    List<Server> selectServers(@Param("criteria") ServerQueryCriteria criteria);
 }

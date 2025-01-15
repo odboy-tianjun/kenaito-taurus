@@ -33,7 +33,7 @@ import java.util.List;
 @Mapper
 public interface DeployHistoryMapper extends BaseMapper<DeployHistory> {
 
-    IPage<DeployHistory> findAll(@Param("criteria") DeployHistoryQueryCriteria criteria, Page<Object> page);
+    IPage<DeployHistory> selectDeployHistory(@Param("criteria") DeployHistoryQueryCriteria criteria, Page<Object> page);
 
-    List<DeployHistory> findAll(@Param("criteria") DeployHistoryQueryCriteria criteria);
+    List<DeployHistory> selectDeployHistory(@Param("criteria") DeployHistoryQueryCriteria criteria);
 }

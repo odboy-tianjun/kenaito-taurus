@@ -32,7 +32,7 @@
     <sql id="Dept_Column_List">
         dept.dept_id as dept_id, dept.name as dept_name
     </sql>
-    <sql id="Where_sql">
+    <sql id="WhereSQL">
         <where>
             <if test="criteria.blurry != null and criteria.blurry != ''">
                 and (
@@ -73,7 +73,7 @@
             select
             <include refid="Base_Column_List"/>
             from sys_role role
-            <include refid="Where_sql"/>
+            <include refid="WhereSQL"/>
             <if test="criteria.offset != null">
                 limit #{criteria.offset}, #{criteria.size}
             </if>
@@ -87,7 +87,7 @@
     <select id="countByBlurry" resultType="java.lang.Long">
         select count(*)
         from sys_role role
-        <include refid="Where_sql"/>
+        <include refid="WhereSQL"/>
     </select>
     <select id="selectRolesByUserId" resultMap="BaseResultMap">
         SELECT

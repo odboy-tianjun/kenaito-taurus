@@ -48,12 +48,12 @@ public class DatabaseServiceImpl extends ServiceImpl<DatabaseMapper, Database> i
 
     @Override
     public PageResult<Database> queryAll(DatabaseQueryCriteria criteria, Page<Object> page){
-        return PageUtil.toPage(databaseMapper.findAll(criteria, page));
+        return PageUtil.toPage(databaseMapper.selectDatabases(criteria, page));
     }
 
     @Override
     public List<Database> queryAll(DatabaseQueryCriteria criteria){
-        return databaseMapper.findAll(criteria);
+        return databaseMapper.selectDatabases(criteria);
     }
 
     @Override

@@ -14,7 +14,7 @@
         history_id, app_name, ip, deploy_date, deploy_user, deploy_id
     </sql>
 
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="selectDeployHistory" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM mnt_deploy_history

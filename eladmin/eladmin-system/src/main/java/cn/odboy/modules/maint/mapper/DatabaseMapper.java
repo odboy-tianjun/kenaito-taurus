@@ -33,7 +33,7 @@ import java.util.List;
 @Mapper
 public interface DatabaseMapper extends BaseMapper<Database> {
 
-    IPage<Database> findAll(@Param("criteria") DatabaseQueryCriteria criteria, Page<Object> page);
+    IPage<Database> selectDatabases(@Param("criteria") DatabaseQueryCriteria criteria, Page<Object> page);
 
-    List<Database> findAll(@Param("criteria") DatabaseQueryCriteria criteria);
+    List<Database> selectDatabases(@Param("criteria") DatabaseQueryCriteria criteria);
 }

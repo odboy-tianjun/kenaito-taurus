@@ -19,7 +19,7 @@ import cn.odboy.util.CloseUtil;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.modules.maint.enums.DataTypeEnum;
+import cn.odboy.modules.maint.constant.DataTypeEnum;
 import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.File;

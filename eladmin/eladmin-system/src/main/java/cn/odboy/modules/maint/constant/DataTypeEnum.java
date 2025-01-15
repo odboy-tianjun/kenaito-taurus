@@ -17,7 +17,7 @@
  *
  */
 
-package cn.odboy.modules.maint.enums;
+package cn.odboy.modules.maint.constant;
 import lombok.extern.slf4j.Slf4j;
 
 /**

@@ -17,7 +17,7 @@
         db_id, name, jdbc_url, pwd, user_name, create_by, update_by, create_time, update_time
     </sql>
 
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="selectDatabases" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM mnt_database

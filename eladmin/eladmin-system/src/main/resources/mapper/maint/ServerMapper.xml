@@ -18,7 +18,7 @@
         server_id, name, ip, port, account, password, create_by, update_by, create_time, update_time
     </sql>
 
-    <select id="findByIp" resultMap="BaseResultMap">
+    <select id="getByIp" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM mnt_server
@@ -27,7 +27,7 @@
         </where>
     </select>
 
-    <select id="findAll" resultMap="BaseResultMap">
+    <select id="selectServers" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM mnt_server

@@ -30,12 +30,8 @@ import java.util.Set;
  **/
 @Mapper
 public interface DeployMapper extends BaseMapper<Deploy> {
-
-    Long countAll(@Param("criteria") DeployQueryCriteria criteria);
-
-    List<Deploy> findAll(@Param("criteria") DeployQueryCriteria criteria);
-
-    Set<Long> getIdByAppIds(@Param("appIds") Set<Long> appIds);
-
+    Long countByAppName(@Param("criteria") DeployQueryCriteria criteria);
+    List<Deploy> selectDeploys(@Param("criteria") DeployQueryCriteria criteria);
+    Set<Long> selectDeployIdsByAppIds(@Param("appIds") Set<Long> appIds);
     Deploy getDeployById(@Param("deployId") Long deployId);
 }

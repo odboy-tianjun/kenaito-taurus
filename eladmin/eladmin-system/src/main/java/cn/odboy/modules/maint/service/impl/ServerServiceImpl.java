@@ -47,17 +47,17 @@ public class ServerServiceImpl extends ServiceImpl<ServerMapper, Server> impleme
 
     @Override
     public PageResult<Server> queryAll(ServerQueryCriteria criteria, Page<Object> page){
-        return PageUtil.toPage(serverMapper.findAll(criteria, page));
+        return PageUtil.toPage(serverMapper.selectServers(criteria, page));
     }
 
     @Override
     public List<Server> queryAll(ServerQueryCriteria criteria){
-        return serverMapper.findAll(criteria);
+        return serverMapper.selectServers(criteria);
     }
 
     @Override
     public Server findByIp(String ip) {
-        return serverMapper.findByIp(ip);
+        return serverMapper.getByIp(ip);
     }
 
     @Override

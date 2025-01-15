@@ -70,14 +70,14 @@ public class DeployServiceImpl extends ServiceImpl<DeployMapper, Deploy> impleme
     @Override
     public PageResult<Deploy> queryAll(DeployQueryCriteria criteria, Page<Object> page) {
         criteria.setOffset(page.offset());
-        List<Deploy> deploys = deployMapper.findAll(criteria);
-        Long total = deployMapper.countAll(criteria);
+        List<Deploy> deploys = deployMapper.selectDeploys(criteria);
+        Long total = deployMapper.countByAppName(criteria);
         return PageUtil.toPage(deploys, total);
     }
 
     @Override
     public List<Deploy> queryAll(DeployQueryCriteria criteria) {
-        return deployMapper.findAll(criteria);
+        return deployMapper.selectDeploys(criteria);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class DeployServiceImpl extends ServiceImpl<DeployMapper, Deploy> impleme
         resources.setAppId(resources.getApp().getId());
         save(resources);
         // 保存关联关系
-        deployServerMapper.insertData(resources.getId(), resources.getDeploys());
+        deployServerMapper.insertDeployServer(resources.getId(), resources.getDeploys());
     }
 
     @Override
@@ -97,7 +97,7 @@ public class DeployServiceImpl extends ServiceImpl<DeployMapper, Deploy> impleme
         saveOrUpdate(deploy);
         // 更新关联关系
         deployServerMapper.deleteByDeployId(resources.getId());
-        deployServerMapper.insertData(resources.getId(), resources.getDeploys());
+        deployServerMapper.insertDeployServer(resources.getId(), resources.getDeploys());
     }
 
     @Override

@@ -51,12 +51,12 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
 
     @Override
     public PageResult<App> queryAll(AppQueryCriteria criteria, Page<Object> page){
-        return PageUtil.toPage(appMapper.queryAll(criteria, page));
+        return PageUtil.toPage(appMapper.selectApps(criteria, page));
     }
 
     @Override
     public List<App> queryAll(AppQueryCriteria criteria){
-        return appMapper.queryAll(criteria);
+        return appMapper.selectApps(criteria);
     }
 
     @Override
@@ -95,10 +95,10 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
         // 删除应用
         removeBatchByIds(ids);
         // 删除部署
-        Set<Long> deployIds = deployMapper.getIdByAppIds(ids);
+        Set<Long> deployIds = deployMapper.selectDeployIdsByAppIds(ids);
         if(CollUtil.isNotEmpty(deployIds)){
             deployServerMapper.deleteByDeployIds(deployIds);
-            deployMapper.deleteBatchIds(deployIds);
+            deployMapper.deleteByIds(deployIds);
         }
     }
 

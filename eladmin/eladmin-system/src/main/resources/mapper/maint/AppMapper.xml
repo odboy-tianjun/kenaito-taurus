@@ -20,7 +20,7 @@
         app_id,name,port,upload_path,deploy_path,backup_path,start_script,deploy_script,create_by,update_by,create_time,update_time
     </sql>
 
-    <select id="queryAll" resultMap="BaseResultMap">
+    <select id="selectApps" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from mnt_app

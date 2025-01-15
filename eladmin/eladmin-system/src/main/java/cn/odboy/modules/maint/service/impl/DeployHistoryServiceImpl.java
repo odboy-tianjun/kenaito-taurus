@@ -46,12 +46,12 @@ public class DeployHistoryServiceImpl extends ServiceImpl<DeployHistoryMapper, D
 
     @Override
     public PageResult<DeployHistory> queryAll(DeployHistoryQueryCriteria criteria, Page<Object> page) {
-        return PageUtil.toPage(deployhistoryMapper.findAll(criteria, page));
+        return PageUtil.toPage(deployhistoryMapper.selectDeployHistory(criteria, page));
     }
 
     @Override
     public List<DeployHistory> queryAll(DeployHistoryQueryCriteria criteria) {
-        return deployhistoryMapper.findAll(criteria);
+        return deployhistoryMapper.selectDeployHistory(criteria);
     }
 
     @Override

@@ -32,8 +32,6 @@ import java.util.List;
  **/
 @Mapper
 public interface AppMapper extends BaseMapper<App> {
-
-    IPage<App> queryAll(@Param("criteria") AppQueryCriteria criteria, Page<Object> page);
-
-    List<App> queryAll(@Param("criteria") AppQueryCriteria criteria);
+    IPage<App> selectApps(@Param("criteria") AppQueryCriteria criteria, Page<Object> page);
+    List<App> selectApps(@Param("criteria") AppQueryCriteria criteria);
 }
