@@ -15,10 +15,9 @@
  */
 package cn.odboy.modules.security.security;
 
+import cn.odboy.modules.security.context.TokenHelper;
 import lombok.RequiredArgsConstructor;
-import cn.odboy.modules.security.config.SecurityProperties;
 import cn.odboy.modules.security.service.OnlineUserService;
-import cn.odboy.modules.security.service.UserCacheManager;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -29,15 +28,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  */
 @RequiredArgsConstructor
 public class TokenConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
-
     private final TokenProvider tokenProvider;
-    private final SecurityProperties properties;
     private final OnlineUserService onlineUserService;
-    private final UserCacheManager userCacheManager;
+    private final TokenHelper tokenHelper;
 
     @Override
     public void configure(HttpSecurity http) {
-        TokenFilter customFilter = new TokenFilter(tokenProvider, properties, onlineUserService, userCacheManager);
+        TokenFilter customFilter = new TokenFilter(tokenProvider, onlineUserService, tokenHelper);
         http.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

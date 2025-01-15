@@ -1,14 +1,14 @@
 package cn.odboy.modules.security.config;
 
-import lombok.RequiredArgsConstructor;
 import cn.odboy.constant.RequestMethodEnum;
+import cn.odboy.modules.security.context.TokenHelper;
 import cn.odboy.modules.security.security.JwtAccessDeniedHandler;
 import cn.odboy.modules.security.security.JwtAuthenticationEntryPoint;
 import cn.odboy.modules.security.security.TokenConfigurer;
 import cn.odboy.modules.security.security.TokenProvider;
 import cn.odboy.modules.security.service.OnlineUserService;
-import cn.odboy.modules.security.service.UserCacheManager;
-import cn.odboy.util.AnonTagUtils;
+import cn.odboy.util.AnonTagUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,7 +46,7 @@ public class SpringSecurityConfig {
     private final ApplicationContext applicationContext;
     private final SecurityProperties properties;
     private final OnlineUserService onlineUserService;
-    private final UserCacheManager userCacheManager;
+    private final TokenHelper tokenHelper;
 
     @Bean
     GrantedAuthorityDefaults grantedAuthorityDefaults() {
@@ -63,7 +63,7 @@ public class SpringSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         // 获取匿名标记
-        Map<String, Set<String>> anonymousUrls = AnonTagUtils.getAnonymousUrl(applicationContext);
+        Map<String, Set<String>> anonymousUrls = AnonTagUtil.getAnonymousUrl(applicationContext);
         httpSecurity
                 // 禁用 CSRF
                 .csrf().disable()
@@ -124,6 +124,6 @@ public class SpringSecurityConfig {
     }
 
     private TokenConfigurer securityConfigurerAdapter() {
-        return new TokenConfigurer(tokenProvider, properties, onlineUserService, userCacheManager);
+        return new TokenConfigurer(tokenProvider, onlineUserService, tokenHelper);
     }
 }

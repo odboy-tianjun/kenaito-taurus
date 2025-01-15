@@ -27,7 +27,6 @@
 - 对一些常用地前端组件封装：表格数据请求、数据字典等
 - 前后端统一异常拦截处理，统一输出异常，避免繁琐的判断
 - 支持在线用户管理与服务器性能监控，支持限制单用户登录
-- 支持运维管理，可方便地对远程服务器的应用进行部署与管理
 
 #### 系统功能
 
@@ -45,7 +44,6 @@
 - 七牛云存储：可同步七牛云存储的数据到系统，无需登录七牛云直接操作云数据
 - 支付宝支付：整合了支付宝支付并且提供了测试账号，可自行测试
 - 服务监控：监控服务器的负载情况
-- 运维管理：一键部署你的应用
 
 #### 项目结构
 
@@ -115,16 +113,16 @@
         - server 配置跨域与静态资源，与数据权限
         - thread 线程池相关
         - websocket WebSocket相关
-    - modules 系统相关模块(登录授权、系统监控、定时任务、运维管理等)
+    - modules 系统相关模块(登录授权、系统监控、定时任务等)
 ```
 
 #### 特别鸣谢
 - 感谢 [elunez](https://github.com/elunez) 大佬提供的前后分离基础框架
 
+- 感谢 [zhy6599](https://gitee.com/zhy6599) 大佬提供的后端运维管理相关功能
+
 - 感谢 [PanJiaChen](https://github.com/PanJiaChen/vue-element-admin) 大佬提供的前端模板
 
 - 感谢 [Moxun](https://github.com/moxun1639) 大佬提供的前端 Curd 通用组件
-
-- 感谢 [zhy6599](https://gitee.com/zhy6599) 大佬提供的后端运维管理相关功能
 
 - 感谢 [j.yao.SUSE](https://github.com/everhopingandwaiting) 大佬提供的匿名接口与Redis限流等功能

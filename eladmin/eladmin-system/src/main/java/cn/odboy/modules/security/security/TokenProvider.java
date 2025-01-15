@@ -19,20 +19,22 @@ import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import cn.odboy.modules.security.config.SecurityProperties;
+import cn.odboy.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.modules.security.config.SecurityProperties;
-import cn.odboy.util.RedisUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,10 +43,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Component
 public class TokenProvider implements InitializingBean {
-
+    public static final String AUTHORITIES_KEY = "user";
+    public static final String AUTHORITIES_UID = "uid";
     private final SecurityProperties properties;
     private final RedisUtil redisUtil;
-    public static final String AUTHORITIES_KEY = "user";
     private JwtParser jwtParser;
     private JwtBuilder jwtBuilder;
 
@@ -76,6 +78,7 @@ public class TokenProvider implements InitializingBean {
                 // 加入ID确保生成的 Token 都不一致
                 .setId(IdUtil.simpleUUID())
                 .claim(AUTHORITIES_KEY, authentication.getName())
+                .claim(AUTHORITIES_UID, IdUtil.objectId())
                 .setSubject(authentication.getName())
                 .compact();
     }
@@ -125,6 +128,7 @@ public class TokenProvider implements InitializingBean {
 
     /**
      * 获取登录用户RedisKey
+     *
      * @param token /
      * @return key
      */
