@@ -18,7 +18,7 @@
         config_id, table_name, api_alias, pack, module_name, path, api_path, author, prefix, cover
     </sql>
 
-    <select id="findByTableName" resultMap="BaseResultMap">
+    <select id="getByTableName" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM code_gen_config

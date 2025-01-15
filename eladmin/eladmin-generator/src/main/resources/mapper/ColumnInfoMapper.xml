@@ -21,7 +21,7 @@
         column_id, table_name, column_name, column_type, key_type, extra, remark, not_null, list_show, form_show, form_type, query_type, dict_name
     </sql>
 
-    <select id="getTables" resultType="cn.odboy.domain.vo.TableInfo">
+    <select id="selectTableInfos" resultType="cn.odboy.domain.vo.TableInfo">
         select table_name, create_time, engine, table_collation as coding, table_comment as remark
         from information_schema.tables
         where table_schema = (select database())
@@ -29,7 +29,7 @@
         order by create_time desc
     </select>
 
-    <select id="findByTableNameOrderByIdAsc" resultMap="BaseResultMap">
+    <select id="selectGenColumnInfosByTableName" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from code_column_config
@@ -37,7 +37,7 @@
         order by column_id
     </select>
 
-    <select id="getColumns" resultMap="BaseResultMap">
+    <select id="selectDatabaseColumnInfos" resultMap="BaseResultMap">
         select column_name, if(is_nullable = 'NO', 1, 0) not_null,
                data_type as column_type, column_comment as remark,
                column_key key_type, extra

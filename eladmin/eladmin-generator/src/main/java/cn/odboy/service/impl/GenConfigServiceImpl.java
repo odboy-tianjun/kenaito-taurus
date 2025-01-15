@@ -36,7 +36,7 @@ public class GenConfigServiceImpl extends ServiceImpl<GenConfigMapper, GenConfig
 
     @Override
     public GenConfig find(String tableName) {
-        GenConfig genConfig = genConfigMapper.findByTableName(tableName);
+        GenConfig genConfig = genConfigMapper.getByTableName(tableName);
         if(genConfig == null){
             return new GenConfig(tableName);
         }

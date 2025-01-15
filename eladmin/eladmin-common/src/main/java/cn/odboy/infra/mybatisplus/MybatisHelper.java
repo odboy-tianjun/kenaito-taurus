@@ -34,7 +34,7 @@ public class MybatisHelper {
     /**
      * 分割器
      */
-    private static final Splitter splitter = Splitter.on(",").trimResults().omitEmptyStrings();
+    private static final Splitter SPLITTER = Splitter.on(",").trimResults().omitEmptyStrings();
 
     public static <R, Q> QueryWrapper<R> build(Q query) {
         QueryWrapper<R> queryWrapper = new QueryWrapper<>();
@@ -215,7 +215,7 @@ public class MybatisHelper {
      * @param <R>          /
      */
     private static <R> void handleBlurryQuery(QueryWrapper<R> queryWrapper, String blurry, Object fieldVal) {
-        List<String> blurryList = splitter.splitToList(blurry);
+        List<String> blurryList = SPLITTER.splitToList(blurry);
         queryWrapper.and(wrapper -> {
             for (String blurryItem : blurryList) {
                 String column = humpToUnderline(blurryItem);

@@ -13,13 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package cn.odboy.modules.mnt.util;
+package cn.odboy.util;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.util.CloseUtil;
+
 import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,7 +33,7 @@ import java.util.List;
  * @author /
  */
 @Slf4j
-public class SqlUtils {
+public class SqlUtil {
 
 	/**
 	 * 获取数据源

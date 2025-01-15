@@ -58,13 +58,13 @@ public class GeneratorServiceImpl extends ServiceImpl<ColumnInfoMapper, ColumnIn
 
     @Override
     public PageResult<TableInfo> getTables(String name, Page<Object> page) {
-        return PageUtil.toPage(columnInfoMapper.getTables(name, page));
+        return PageUtil.toPage(columnInfoMapper.selectTableInfos(name, page));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<ColumnInfo> getColumns(String tableName) {
-        List<ColumnInfo> columnInfos = columnInfoMapper.findByTableNameOrderByIdAsc(tableName);
+        List<ColumnInfo> columnInfos = columnInfoMapper.selectGenColumnInfosByTableName(tableName);
         if (CollectionUtil.isNotEmpty(columnInfos)) {
             return columnInfos;
         } else {
@@ -76,7 +76,7 @@ public class GeneratorServiceImpl extends ServiceImpl<ColumnInfoMapper, ColumnIn
 
     @Override
     public List<ColumnInfo> query(String tableName) {
-        List<ColumnInfo> columnInfos = columnInfoMapper.getColumns(tableName);
+        List<ColumnInfo> columnInfos = columnInfoMapper.selectDatabaseColumnInfos(tableName);
         for (ColumnInfo columnInfo : columnInfos) {
             columnInfo.setTableName(tableName);
             if(GenUtil.PK.equalsIgnoreCase(columnInfo.getKeyType())

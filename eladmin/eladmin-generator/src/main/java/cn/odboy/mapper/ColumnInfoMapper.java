@@ -30,10 +30,7 @@ import java.util.List;
  */
 @Mapper
 public interface ColumnInfoMapper extends BaseMapper<ColumnInfo> {
-
-    IPage<TableInfo> getTables(@Param("tableName") String tableName, Page<Object> page);
-
-    List<ColumnInfo> findByTableNameOrderByIdAsc(@Param("tableName") String tableName);
-
-    List<ColumnInfo> getColumns(@Param("tableName") String tableName);
+    IPage<TableInfo> selectTableInfos(@Param("tableName") String tableName, Page<Object> page);
+    List<ColumnInfo> selectGenColumnInfosByTableName(@Param("tableName") String tableName);
+    List<ColumnInfo> selectDatabaseColumnInfos(@Param("tableName") String tableName);
 }

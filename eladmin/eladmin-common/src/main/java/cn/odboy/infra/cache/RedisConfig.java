@@ -81,6 +81,7 @@ public class RedisConfig extends CachingConfigurerSupport {
         ParserConfig.getGlobalInstance().addAccept("cn.odboy.infra.websocket.model");
         ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.mnt.domain");
         ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.quartz.domain");
+        ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.maint.domain");
         ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.system.domain");
         ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.security.service.dto");
         // key的序列化采用StringRedisSerializer

@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.odboy.mapper.SysLogMapper">
-
     <sql id="info_column">
         log_id id,description,method,params,request_ip,time,username,address,browser,exception_detail,create_time
     </sql>
-
     <sql id="error_column">
         log_id id,description,method,params,request_ip,username,address,browser,exception_detail,create_time
     </sql>
-
     <sql id="user_column">
         log_id id,description,request_ip,time,address,browser,create_time
     </sql>
-
     <sql id="query">
         from sys_log
         <where>
@@ -39,8 +35,7 @@
         </where>
         order by log_id desc
     </sql>
-
-    <select id="queryAll" resultType="cn.odboy.domain.SysLog">
+    <select id="selectLogs" resultType="cn.odboy.domain.SysLog">
         select
         <choose>
             <when test="criteria.logType == 'ERROR'">
@@ -52,18 +47,15 @@
         </choose>
         <include refid="query"/>
     </select>
-
-    <select id="queryAllByUser" resultType="cn.odboy.domain.SysLog">
+    <select id="selectLogsByUser" resultType="cn.odboy.domain.SysLog">
         select
         <include refid="user_column"/>
         <include refid="query"/>
     </select>
-
-    <delete id="deleteByLevel">
-        delete from sys_log where log_type = #{logType}
-    </delete>
-
-    <select id="getExceptionDetails" resultType="java.lang.String">
+    <select id="getLogExceptionDetailsById" resultType="java.lang.String">
         select exception_detail from sys_log where log_id = #{id}
     </select>
+    <delete id="deleteLogByLogType">
+        delete from sys_log where log_type = #{logType}
+    </delete>
 </mapper>

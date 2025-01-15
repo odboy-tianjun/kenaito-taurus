@@ -32,11 +32,10 @@ import java.util.List;
  **/
 @Mapper
 public interface SysLogMapper extends BaseMapper<SysLog> {
+    List<SysLog> selectLogs(@Param("criteria") SysLogQueryCriteria criteria);
+    IPage<SysLog> selectLogs(@Param("criteria") SysLogQueryCriteria criteria, Page<SysLog> page);
 
-    List<SysLog> queryAll(@Param("criteria") SysLogQueryCriteria criteria);
-
-    IPage<SysLog> queryAll(@Param("criteria") SysLogQueryCriteria criteria, Page<SysLog> page);
-    IPage<SysLog> queryAllByUser(@Param("criteria") SysLogQueryCriteria criteria, Page<SysLog> page);
-    String getExceptionDetails(@Param("id") Long id);
-    void deleteByLevel(@Param("logType") String logType);
+    IPage<SysLog> selectLogsByUser(@Param("criteria") SysLogQueryCriteria criteria, Page<SysLog> page);
+    String getLogExceptionDetailsById(@Param("id") Long id);
+    void deleteLogByLogType(@Param("logType") String logType);
 }

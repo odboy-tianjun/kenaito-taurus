@@ -63,9 +63,8 @@ public class LogAspect {
      */
     @Around("logPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object result;
         currentTime.set(System.currentTimeMillis());
-        result = joinPoint.proceed();
+        Object result = joinPoint.proceed();
         SysLog sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get());
         currentTime.remove();
         HttpServletRequest request = RequestHolder.getHttpServletRequest();

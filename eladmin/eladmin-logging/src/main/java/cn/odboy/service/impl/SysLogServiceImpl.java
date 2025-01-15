@@ -54,17 +54,17 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
 
     @Override
     public PageResult<SysLog> queryAll(SysLogQueryCriteria criteria, Page<SysLog> page) {
-        return PageUtil.toPage(sysLogMapper.queryAll(criteria, page));
+        return PageUtil.toPage(sysLogMapper.selectLogs(criteria, page));
     }
 
     @Override
     public List<SysLog> queryAll(SysLogQueryCriteria criteria) {
-        return sysLogMapper.queryAll(criteria);
+        return sysLogMapper.selectLogs(criteria);
     }
 
     @Override
     public PageResult<SysLog> queryAllByUser(SysLogQueryCriteria criteria, Page<SysLog> page) {
-        return PageUtil.toPage(sysLogMapper.queryAllByUser(criteria, page));
+        return PageUtil.toPage(sysLogMapper.selectLogsByUser(criteria, page));
     }
 
     @Override
@@ -89,7 +89,7 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
         sysLog.setUsername(username);
         sysLog.setParams(getParameter(method, joinPoint.getArgs()));
         // 记录登录用户，隐藏密码信息
-        if(signature.getName().equals("login") && StringUtil.isNotEmpty(sysLog.getParams())){
+        if("login".equals(signature.getName()) && StringUtil.isNotEmpty(sysLog.getParams())){
             JSONObject obj = JSON.parseObject(sysLog.getParams());
             sysLog.setUsername(obj.getString("username"));
             sysLog.setParams(JSON.toJSONString(Dict.create().set("username", sysLog.getUsername())));
@@ -135,7 +135,7 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
 
     @Override
     public Object findByErrDetail(Long id) {
-        String details = sysLogMapper.getExceptionDetails(id);
+        String details = sysLogMapper.getLogExceptionDetailsById(id);
         return Dict.create().set("exception", details);
     }
 
@@ -161,13 +161,13 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
     @Transactional(rollbackFor = Exception.class)
     public void delAllByError() {
         // 删除 ERROR 级别的日志
-        sysLogMapper.deleteByLevel("ERROR");
+        sysLogMapper.deleteLogByLogType("ERROR");
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void delAllByInfo() {
         // 删除 INFO 级别的日志
-        sysLogMapper.deleteByLevel("INFO");
+        sysLogMapper.deleteLogByLogType("INFO");
     }
 }

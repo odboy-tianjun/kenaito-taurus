@@ -30,7 +30,7 @@ import java.util.*;
  * @description 匿名标记工具
  * @date 2025-01-13
  **/
-public class AnonTagUtils {
+public class AnonTagUtil {
 
     /**
      * 获取匿名标记的URL
