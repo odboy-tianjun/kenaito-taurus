@@ -11,11 +11,10 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
-    
     <sql id="Base_Column_List">
-        job_id, name, job_sort, enabled, create_by, update_by, create_time, update_time
+        job_id
+        , name, job_sort, enabled, create_by, update_by, create_time, update_time
     </sql>
-
     <select id="selectJobs" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

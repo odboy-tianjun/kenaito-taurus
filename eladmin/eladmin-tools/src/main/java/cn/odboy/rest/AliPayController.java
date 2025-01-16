@@ -15,18 +15,18 @@
  */
 package cn.odboy.rest;
 
+import cn.odboy.annotation.Log;
+import cn.odboy.domain.AlipayConfig;
+import cn.odboy.domain.vo.TradeVo;
+import cn.odboy.infra.security.annotation.AnonymousAccess;
+import cn.odboy.infra.security.annotation.AnonymousGetMapping;
 import cn.odboy.service.AliPayService;
+import cn.odboy.util.AliPayStatusEnum;
+import cn.odboy.util.AlipayUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.infra.security.annotation.AnonymousAccess;
-import cn.odboy.annotation.Log;
-import cn.odboy.infra.security.annotation.AnonymousGetMapping;
-import cn.odboy.domain.vo.TradeVo;
-import cn.odboy.domain.AlipayConfig;
-import cn.odboy.util.AliPayStatusEnum;
-import cn.odboy.util.AlipayUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -48,7 +48,6 @@ import java.util.Map;
 @RequestMapping("/api/aliPay")
 @Api(tags = "工具：支付宝管理")
 public class AliPayController {
-
     private final AlipayUtil alipayUtil;
     private final AliPayService alipayService;
 
@@ -98,7 +97,6 @@ public class AliPayController {
             //支付宝交易号
             String tradeNo = new String(request.getParameter("trade_no").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             System.out.println("商户订单号" + outTradeNo + "  " + "第三方交易号" + tradeNo);
-
             // 根据业务需要返回数据，这里统一返回OK
             return new ResponseEntity<>("payment successful", HttpStatus.OK);
         } else {

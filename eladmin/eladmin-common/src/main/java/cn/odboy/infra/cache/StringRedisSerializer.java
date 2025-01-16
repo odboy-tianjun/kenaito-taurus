@@ -8,14 +8,12 @@ import reactor.util.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-
 /**
  * 重写序列化器
  *
  * @author /
  */
 public class StringRedisSerializer implements RedisSerializer<Object> {
-
     private final Charset charset;
 
     public StringRedisSerializer() {
@@ -35,7 +33,6 @@ public class StringRedisSerializer implements RedisSerializer<Object> {
     @Override
     public @Nullable byte[] serialize(Object object) {
         String string = JSON.toJSONString(object);
-
         if (org.apache.commons.lang3.StringUtils.isBlank(string)) {
             return null;
         }

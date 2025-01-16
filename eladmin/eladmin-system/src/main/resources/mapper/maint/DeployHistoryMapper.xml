@@ -9,11 +9,10 @@
         <result column="deploy_user" property="deployUser"/>
         <result column="deploy_id" property="deployId"/>
     </resultMap>
-
     <sql id="Base_Column_List">
-        history_id, app_name, ip, deploy_date, deploy_user, deploy_id
+        history_id
+        , app_name, ip, deploy_date, deploy_user, deploy_id
     </sql>
-
     <select id="selectDeployHistory" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
@@ -21,9 +20,9 @@
         <where>
             <if test="criteria.blurry != null and criteria.blurry != ''">
                 AND (
-                    app_name LIKE CONCAT('%',#{criteria.blurry},'%')
-                    or ip LIKE CONCAT('%',#{criteria.blurry},'%')
-                    or deploy_user LIKE CONCAT('%',#{criteria.blurry},'%')
+                app_name LIKE CONCAT('%',#{criteria.blurry},'%')
+                or ip LIKE CONCAT('%',#{criteria.blurry},'%')
+                or deploy_user LIKE CONCAT('%',#{criteria.blurry},'%')
                 )
             </if>
             <if test="criteria.deployId != null">
@@ -35,5 +34,4 @@
         </where>
         order by deploy_date desc
     </select>
-
 </mapper>

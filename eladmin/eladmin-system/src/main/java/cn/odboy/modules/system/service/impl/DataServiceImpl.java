@@ -15,17 +15,18 @@
  */
 package cn.odboy.modules.system.service.impl;
 
-import lombok.RequiredArgsConstructor;
+import cn.odboy.constant.DataScopeEnum;
 import cn.odboy.modules.system.domain.Dept;
 import cn.odboy.modules.system.domain.Role;
 import cn.odboy.modules.system.domain.User;
 import cn.odboy.modules.system.service.DataService;
 import cn.odboy.modules.system.service.DeptService;
 import cn.odboy.modules.system.service.RoleService;
-import cn.odboy.constant.DataScopeEnum;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
 import java.util.*;
 
 /**
@@ -37,12 +38,12 @@ import java.util.*;
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "data")
 public class DataServiceImpl implements DataService {
-
     private final RoleService roleService;
     private final DeptService deptService;
 
     /**
      * 用户角色和用户部门改变时需清理缓存
+     *
      * @param user /
      * @return /
      */
@@ -72,11 +73,12 @@ public class DataServiceImpl implements DataService {
 
     /**
      * 获取自定义的数据权限
+     *
      * @param deptIds 部门ID
-     * @param role 角色
+     * @param role    角色
      * @return 数据权限ID
      */
-    public Set<Long> getCustomize(Set<Long> deptIds, Role role){
+    public Set<Long> getCustomize(Set<Long> deptIds, Role role) {
         Set<Dept> depts = deptService.findByRoleId(role.getId());
         for (Dept dept : depts) {
             deptIds.add(dept.getId());

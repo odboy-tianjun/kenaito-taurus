@@ -15,30 +15,32 @@
  */
 package cn.odboy.util;
 
+import cn.odboy.constant.DataScopeEnum;
+import cn.odboy.infra.context.SpringBeanHolder;
+import cn.odboy.infra.exception.BadRequestException;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.infra.context.SpringBeanHolder;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.constant.DataScopeEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
 import java.util.List;
 
 /**
  * 获取当前登录的用户
+ *
  * @author Zheng Jie
  * @date 2019-01-17
  */
 @Slf4j
 public class SecurityUtil {
-
     /**
      * 获取当前登录的用户
+     *
      * @return UserDetails
      */
     public static UserDetails getCurrentUser() {
@@ -65,6 +67,7 @@ public class SecurityUtil {
 
     /**
      * 获取系统用户ID
+     *
      * @return 系统用户ID
      */
     public static Long getCurrentUserId() {
@@ -76,9 +79,10 @@ public class SecurityUtil {
 
     /**
      * 获取当前用户的数据权限
+     *
      * @return /
      */
-    public static List<Long> getCurrentUserDataScope(){
+    public static List<Long> getCurrentUserDataScope() {
         UserDetails userDetails = getCurrentUser();
         // 将 Java 对象转换为 JSONObject 对象
         JSONObject jsonObject = (JSONObject) JSON.toJSON(userDetails);
@@ -88,20 +92,21 @@ public class SecurityUtil {
 
     /**
      * 获取数据权限级别
+     *
      * @return 级别
      */
     public static String getDataScopeType() {
         List<Long> dataScopes = getCurrentUserDataScope();
-        if(!dataScopes.isEmpty()){
+        if (!dataScopes.isEmpty()) {
             return "";
         }
         return DataScopeEnum.ALL.getValue();
     }
 
-    public static String safeGetCurrentUsername(){
+    public static String safeGetCurrentUsername() {
         try {
             return SecurityUtil.getCurrentUsername();
-        }catch (Exception e){
+        } catch (Exception e) {
             return "system";
         }
     }

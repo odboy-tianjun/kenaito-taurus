@@ -21,19 +21,16 @@ import org.springframework.stereotype.Component;
 
 /**
  * 线程池配置属性类
+ *
  * @author https://juejin.im/entry/5abb8f6951882555677e9da2
  * @date 2019年10月31日14:58:18
  */
 @Data
 @Component
 public class AsyncTaskProperties {
-
     public static int corePoolSize;
-
     public static int maxPoolSize;
-
     public static int keepAliveSeconds;
-
     public static int queueCapacity;
 
     @Value("${task.pool.core-pool-size}")

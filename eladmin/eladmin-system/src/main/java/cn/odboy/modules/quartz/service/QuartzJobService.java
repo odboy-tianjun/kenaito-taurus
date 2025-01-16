@@ -15,12 +15,12 @@
  */
 package cn.odboy.modules.quartz.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import cn.odboy.model.PageResult;
 import cn.odboy.modules.quartz.domain.QuartzJob;
 import cn.odboy.modules.quartz.domain.QuartzLog;
 import cn.odboy.modules.quartz.domain.vo.QuartzJobQueryCriteria;
-import cn.odboy.model.PageResult;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -32,7 +32,6 @@ import java.util.Set;
  * @date 2019-01-07
  */
 public interface QuartzJobService extends IService<QuartzJob> {
-
     /**
      * 分页查询
      *
@@ -44,6 +43,7 @@ public interface QuartzJobService extends IService<QuartzJob> {
 
     /**
      * 查询全部
+     *
      * @param criteria 条件
      * @return /
      */
@@ -60,6 +60,7 @@ public interface QuartzJobService extends IService<QuartzJob> {
 
     /**
      * 查询全部
+     *
      * @param criteria 条件
      * @return /
      */
@@ -67,36 +68,42 @@ public interface QuartzJobService extends IService<QuartzJob> {
 
     /**
      * 创建
+     *
      * @param resources /
      */
     void create(QuartzJob resources);
 
     /**
      * 编辑
+     *
      * @param resources /
      */
     void update(QuartzJob resources);
 
     /**
      * 删除任务
+     *
      * @param ids /
      */
     void delete(Set<Long> ids);
 
     /**
      * 更改定时任务状态
+     *
      * @param quartzJob /
      */
     void updateIsPause(QuartzJob quartzJob);
 
     /**
      * 立即执行定时任务
+     *
      * @param quartzJob /
      */
     void execution(QuartzJob quartzJob);
 
     /**
      * 导出定时任务
+     *
      * @param queryAll 待导出的数据
      * @param response /
      * @throws IOException /
@@ -105,14 +112,16 @@ public interface QuartzJobService extends IService<QuartzJob> {
 
     /**
      * 导出定时任务日志
+     *
      * @param queryAllLog 待导出的数据
-     * @param response /
+     * @param response    /
      * @throws IOException /
      */
     void downloadLog(List<QuartzLog> queryAllLog, HttpServletResponse response) throws IOException;
 
     /**
      * 执行子任务
+     *
      * @param tasks /
      * @throws InterruptedException /
      */

@@ -56,7 +56,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class DeployServiceImpl extends ServiceImpl<DeployMapper, Deploy> implements DeployService {
-
     private final String FILE_SEPARATOR = "/";
     private final DeployMapper deployMapper;
     private final DeployServerMapper deployServerMapper;
@@ -217,7 +216,6 @@ public class DeployServiceImpl extends ServiceImpl<DeployMapper, Deploy> impleme
     private void stopApp(int port, ExecuteShellUtil executeShellUtil) {
         //发送停止命令
         executeShellUtil.execute(String.format("lsof -i :%d|grep -v \"PID\"|awk '{print \"kill -9\",$2}'|sh", port));
-
     }
 
     /**
@@ -354,7 +352,6 @@ public class DeployServiceImpl extends ServiceImpl<DeployMapper, Deploy> impleme
         String ip = resources.getIp();
         ExecuteShellUtil executeShellUtil = getExecuteShellUtil(ip);
         String msg;
-
         msg = String.format("登陆到服务器:%s", ip);
         log.info(msg);
         sendMsg(msg, MsgTypeEnum.INFO);

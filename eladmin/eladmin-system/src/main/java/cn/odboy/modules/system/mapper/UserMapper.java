@@ -15,12 +15,12 @@
  */
 package cn.odboy.modules.system.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import cn.odboy.modules.system.domain.User;
 import cn.odboy.modules.system.domain.vo.UserQueryCriteria;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -32,17 +32,30 @@ import java.util.Set;
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
     List<User> selectUsers(@Param("criteria") UserQueryCriteria criteria);
+
     Long countByBlurry(@Param("criteria") UserQueryCriteria criteria);
+
     User getByUsername(@Param("username") String username);
+
     User getByEmail(@Param("email") String email);
+
     User getByPhone(@Param("phone") String phone);
+
     void updatePwdByUsername(@Param("username") String username, @Param("password") String password, @Param("lastPwdResetTime") Date lastPwdResetTime);
+
     void updateEmailByUsername(@Param("username") String username, @Param("email") String email);
+
     List<User> selectUsersByRoleId(@Param("roleId") Long roleId);
+
     List<User> selectUsersByRoleDeptId(@Param("deptId") Long deptId);
+
     List<User> selectUsersByMenuId(@Param("menuId") Long menuId);
+
     int countByJobIds(@Param("jobIds") Set<Long> jobIds);
+
     int countByDeptIds(@Param("deptIds") Set<Long> deptIds);
+
     int countByRoleIds(@Param("roleIds") Set<Long> roleIds);
+
     void updatePwdByUserIds(@Param("userIds") Set<Long> userIds, @Param("pwd") String pwd);
 }

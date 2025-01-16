@@ -2,13 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.odboy.mapper.SysLogMapper">
     <sql id="info_column">
-        log_id id,description,method,params,request_ip,time,username,address,browser,exception_detail,create_time
+        log_id
+        id,description,method,params,request_ip,time,username,address,browser,exception_detail,create_time
     </sql>
     <sql id="error_column">
-        log_id id,description,method,params,request_ip,username,address,browser,exception_detail,create_time
+        log_id
+        id,description,method,params,request_ip,username,address,browser,exception_detail,create_time
     </sql>
     <sql id="user_column">
-        log_id id,description,request_ip,time,address,browser,create_time
+        log_id
+        id,description,request_ip,time,address,browser,create_time
     </sql>
     <sql id="query">
         from sys_log
@@ -53,9 +56,13 @@
         <include refid="query"/>
     </select>
     <select id="getLogExceptionDetailsById" resultType="java.lang.String">
-        select exception_detail from sys_log where log_id = #{id}
+        select exception_detail
+        from sys_log
+        where log_id = #{id}
     </select>
     <delete id="deleteLogByLogType">
-        delete from sys_log where log_type = #{logType}
+        delete
+        from sys_log
+        where log_type = #{logType}
     </delete>
 </mapper>

@@ -1,23 +1,44 @@
+/*
+ *  Copyright 2022-2025 Tian Jun
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package cn.odboy.infra.mybatisplus.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.infra.mybatisplus.EasyMapper;
+import cn.odboy.infra.mybatisplus.MybatisHelper;
+import cn.odboy.model.PageResult;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.infra.mybatisplus.EasyMapper;
-import cn.odboy.infra.mybatisplus.MybatisHelper;
-import cn.odboy.model.PageResult;
 import org.apache.ibatis.binding.MapperMethod;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * 公共抽象Mapper接口类
+ *
+ * @author odboy
+ * @date 2022-04-03
+ */
 public class EasyServiceImpl<M extends EasyMapper<T>, T> extends ServiceImpl<M, T> {
     public LambdaQueryWrapper<T> quick() {
         return new LambdaQueryWrapper<>();

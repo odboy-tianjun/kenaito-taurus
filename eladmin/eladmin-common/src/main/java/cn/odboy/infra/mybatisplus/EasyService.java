@@ -1,15 +1,36 @@
+/*
+ *  Copyright 2022-2025 Tian Jun
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package cn.odboy.infra.mybatisplus;
 
+import cn.odboy.model.PageResult;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.IService;
-import cn.odboy.model.PageResult;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * 公共抽象Mapper接口类
+ *
+ * @author odboy
+ * @date 2022-04-03
+ */
 public interface EasyService<T> extends IService<T> {
     LambdaQueryWrapper<T> quick();
 

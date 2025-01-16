@@ -15,11 +15,11 @@
  */
 package cn.odboy.modules.maint.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.Database;
 import cn.odboy.modules.maint.domain.dto.DatabaseQueryCriteria;
-import cn.odboy.model.PageResult;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -31,7 +31,6 @@ import java.util.Set;
  * @date 2019-08-24
  */
 public interface DatabaseService extends IService<Database> {
-
     /**
      * 分页查询
      *
@@ -43,6 +42,7 @@ public interface DatabaseService extends IService<Database> {
 
     /**
      * 查询全部
+     *
      * @param criteria 条件
      * @return /
      */
@@ -50,24 +50,28 @@ public interface DatabaseService extends IService<Database> {
 
     /**
      * 创建
+     *
      * @param resources /
      */
     void create(Database resources);
 
     /**
      * 编辑
+     *
      * @param resources /
      */
     void update(Database resources);
 
     /**
      * 删除
+     *
      * @param ids /
      */
     void delete(Set<String> ids);
 
     /**
      * 测试连接
+     *
      * @param resources /
      * @return /
      */
@@ -75,6 +79,7 @@ public interface DatabaseService extends IService<Database> {
 
     /**
      * 导出数据
+     *
      * @param queryAll /
      * @param response /
      * @throws IOException e

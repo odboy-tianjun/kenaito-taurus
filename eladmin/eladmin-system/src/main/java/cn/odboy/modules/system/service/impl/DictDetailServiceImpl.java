@@ -15,34 +15,34 @@
  */
 package cn.odboy.modules.system.service.impl;
 
-import cn.odboy.util.RedisUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import cn.odboy.infra.context.CacheKey;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Dict;
 import cn.odboy.modules.system.domain.DictDetail;
-import cn.odboy.modules.system.mapper.DictMapper;
 import cn.odboy.modules.system.domain.vo.DictDetailQueryCriteria;
-import cn.odboy.util.PageUtil;
 import cn.odboy.modules.system.mapper.DictDetailMapper;
+import cn.odboy.modules.system.mapper.DictMapper;
 import cn.odboy.modules.system.service.DictDetailService;
+import cn.odboy.util.PageUtil;
+import cn.odboy.util.RedisUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 /**
-* @author Zheng Jie
-* @date 2019-04-10
-*/
+ * @author Zheng Jie
+ * @date 2019-04-10
+ */
 @Service
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "dict")
 public class DictDetailServiceImpl extends ServiceImpl<DictDetailMapper, DictDetail> implements DictDetailService {
-
     private final DictMapper dictMapper;
     private final DictDetailMapper dictDetailMapper;
     private final RedisUtil redisUtil;
@@ -87,7 +87,7 @@ public class DictDetailServiceImpl extends ServiceImpl<DictDetailMapper, DictDet
         delCaches(dictDetail);
     }
 
-    public void delCaches(DictDetail dictDetail){
+    public void delCaches(DictDetail dictDetail) {
         Dict dict = dictMapper.selectById(dictDetail.getDictId());
         redisUtil.del(CacheKey.DICT_NAME + dict.getName());
     }

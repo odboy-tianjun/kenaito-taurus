@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2022-2025 Tian Jun
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package cn.odboy.repository;
 
 import cn.hutool.core.lang.Assert;
@@ -10,7 +25,7 @@ import cn.odboy.context.DingtalkAuthAdmin;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.infra.exception.util.MessageFormatterUtil;
 import cn.odboy.model.DingtalkWorkflow;
-import cn.odboy.util.DingtalkClientHelper;
+import cn.odboy.util.DingtalkClientConfigFactory;
 import cn.odboy.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,7 +53,7 @@ public class DingtalkWorkflowRepository {
     public String createWorkflow(DingtalkWorkflow.CreateArgs args) {
         ValidationUtil.validate(args);
         try {
-            com.aliyun.dingtalkworkflow_1_0.Client client = DingtalkClientHelper.createWorkflowClient();
+            com.aliyun.dingtalkworkflow_1_0.Client client = DingtalkClientConfigFactory.createWorkflowClient();
             com.aliyun.dingtalkworkflow_1_0.models.StartProcessInstanceHeaders startProcessInstanceHeaders = new com.aliyun.dingtalkworkflow_1_0.models.StartProcessInstanceHeaders();
             startProcessInstanceHeaders.xAcsDingtalkAccessToken = dingtalkAuthAdmin.auth();
             com.aliyun.dingtalkworkflow_1_0.models.StartProcessInstanceRequest startProcessInstanceRequest = new com.aliyun.dingtalkworkflow_1_0.models.StartProcessInstanceRequest()
@@ -95,7 +110,7 @@ public class DingtalkWorkflowRepository {
     public GetProcessInstanceResponseBody.GetProcessInstanceResponseBodyResult describeWorkflowByInstanceId(String processInstanceId) {
         Assert.notEmpty(processInstanceId, "审批流实例Id不能为空");
         try {
-            com.aliyun.dingtalkworkflow_1_0.Client client = DingtalkClientHelper.createWorkflowClient();
+            com.aliyun.dingtalkworkflow_1_0.Client client = DingtalkClientConfigFactory.createWorkflowClient();
             com.aliyun.dingtalkworkflow_1_0.models.GetProcessInstanceHeaders getProcessInstanceHeaders = new com.aliyun.dingtalkworkflow_1_0.models.GetProcessInstanceHeaders();
             getProcessInstanceHeaders.xAcsDingtalkAccessToken = dingtalkAuthAdmin.auth();
             com.aliyun.dingtalkworkflow_1_0.models.GetProcessInstanceRequest getProcessInstanceRequest = new com.aliyun.dingtalkworkflow_1_0.models.GetProcessInstanceRequest()
@@ -140,7 +155,7 @@ public class DingtalkWorkflowRepository {
         Assert.notNull(taskId, "审批流实例任务Id不能为空");
         Assert.notNull(processInstanceResult, "审批操作不能为空");
         try {
-            com.aliyun.dingtalkworkflow_1_0.Client client = DingtalkClientHelper.createWorkflowClient();
+            com.aliyun.dingtalkworkflow_1_0.Client client = DingtalkClientConfigFactory.createWorkflowClient();
             com.aliyun.dingtalkworkflow_1_0.models.ExecuteProcessInstanceHeaders executeProcessInstanceHeaders = new com.aliyun.dingtalkworkflow_1_0.models.ExecuteProcessInstanceHeaders();
             executeProcessInstanceHeaders.xAcsDingtalkAccessToken = dingtalkAuthAdmin.auth();
             com.aliyun.dingtalkworkflow_1_0.models.ExecuteProcessInstanceRequest executeProcessInstanceRequest = new com.aliyun.dingtalkworkflow_1_0.models.ExecuteProcessInstanceRequest()
@@ -183,7 +198,7 @@ public class DingtalkWorkflowRepository {
     public Boolean revokeWorkflow(String processInstanceId, String remark) {
         Assert.notEmpty(processInstanceId, "审批流实例Id不能为空");
         try {
-            com.aliyun.dingtalkworkflow_1_0.Client client = DingtalkClientHelper.createWorkflowClient();
+            com.aliyun.dingtalkworkflow_1_0.Client client = DingtalkClientConfigFactory.createWorkflowClient();
             com.aliyun.dingtalkworkflow_1_0.models.TerminateProcessInstanceHeaders terminateProcessInstanceHeaders = new com.aliyun.dingtalkworkflow_1_0.models.TerminateProcessInstanceHeaders();
             terminateProcessInstanceHeaders.xAcsDingtalkAccessToken = dingtalkAuthAdmin.auth();
             com.aliyun.dingtalkworkflow_1_0.models.TerminateProcessInstanceRequest terminateProcessInstanceRequest = new com.aliyun.dingtalkworkflow_1_0.models.TerminateProcessInstanceRequest()

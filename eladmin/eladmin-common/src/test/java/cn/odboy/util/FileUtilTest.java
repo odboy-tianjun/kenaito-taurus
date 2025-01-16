@@ -7,7 +7,6 @@ import static cn.odboy.util.FileUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileUtilTest {
-
     @Test
     public void testToFile() {
         long retval = toFile(new MockMultipartFile("foo", (byte[]) null)).getTotalSpace();

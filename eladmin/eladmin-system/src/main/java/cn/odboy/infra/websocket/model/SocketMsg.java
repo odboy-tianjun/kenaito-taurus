@@ -24,11 +24,11 @@ import lombok.Data;
  */
 @Data
 public class SocketMsg {
-	private String msg;
-	private MsgTypeEnum msgType;
+    private String msg;
+    private MsgTypeEnum msgType;
 
-	public SocketMsg(String msg, MsgTypeEnum msgType) {
-		this.msg = msg;
-		this.msgType = msgType;
-	}
+    public SocketMsg(String msg, MsgTypeEnum msgType) {
+        this.msg = msg;
+        this.msgType = msgType;
+    }
 }

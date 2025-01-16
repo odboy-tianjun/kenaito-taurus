@@ -15,11 +15,12 @@
  */
 package cn.odboy.modules.security.service.dto;
 
+import cn.odboy.modules.system.domain.User;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import cn.odboy.modules.system.domain.User;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,11 +32,8 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public class JwtUserDto implements UserDetails {
-
     private final User user;
-
     private final List<Long> dataScopes;
-
     private final List<AuthorityDto> authorities;
 
     public Set<String> getRoles() {

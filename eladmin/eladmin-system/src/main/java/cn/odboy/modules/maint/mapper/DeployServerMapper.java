@@ -28,7 +28,6 @@ import java.util.Set;
  **/
 @Mapper
 public interface DeployServerMapper {
-
     void insertDeployServer(@Param("deployId") Long deployId, @Param("servers") Set<Server> servers);
 
     void deleteByDeployId(@Param("deployId") Long deployId);

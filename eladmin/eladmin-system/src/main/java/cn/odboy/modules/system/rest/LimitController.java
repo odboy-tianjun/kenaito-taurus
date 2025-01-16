@@ -15,10 +15,10 @@
  */
 package cn.odboy.modules.system.rest;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import cn.odboy.infra.limit.Limit;
 import cn.odboy.infra.security.annotation.AnonymousGetMapping;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +32,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequestMapping("/api/limit")
 @Api(tags = "系统：限流测试管理")
 public class LimitController {
-
     private static final AtomicInteger ATOMIC_INTEGER = new AtomicInteger();
 
     /**

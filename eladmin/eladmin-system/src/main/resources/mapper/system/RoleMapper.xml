@@ -22,15 +22,24 @@
         </collection>
     </resultMap>
     <sql id="Base_Column_List">
-        role.role_id as role_role_id, role.name as role_name, role.data_scope as role_data_scope,
+        role
+        .
+        role_id
+        as role_role_id, role.name as role_name, role.data_scope as role_data_scope,
         role.level as role_level, role.description as role_description, role.create_by as role_create_by,
         role.update_by as role_update_by, role.create_time as role_create_time, role.update_time as role_update_time
     </sql>
     <sql id="Menu_Column_List">
-        menu.menu_id as menu_id, menu.title as menu_title, menu.permission as menu_permission
+        menu
+        .
+        menu_id
+        as menu_id, menu.title as menu_title, menu.permission as menu_permission
     </sql>
     <sql id="Dept_Column_List">
-        dept.dept_id as dept_id, dept.name as dept_name
+        dept
+        .
+        dept_id
+        as dept_id, dept.name as dept_name
     </sql>
     <sql id="WhereSQL">
         <where>
@@ -47,7 +56,8 @@
     </sql>
     <select id="selectMetaRoles" resultType="cn.odboy.modules.system.domain.Role">
         select role_id as id, name, level
-        from sys_role order by level
+        from sys_role
+        order by level
     </select>
     <select id="getById" resultMap="BaseResultMap">
         select
@@ -62,7 +72,8 @@
         where role.role_id = #{roleId}
     </select>
     <select id="getByName" resultType="cn.odboy.modules.system.domain.Role">
-        select role_id as id from sys_role
+        select role_id as id
+        from sys_role
         where name = #{name}
     </select>
     <select id="selectRoles" resultMap="BaseResultMap">
@@ -70,16 +81,16 @@
         <include refid="Dept_Column_List"/>,
         <include refid="Menu_Column_List"/>
         from (
-            select
-            <include refid="Base_Column_List"/>
-            from sys_role role
-            <include refid="WhereSQL"/>
-            <if test="criteria.offset != null">
-                limit #{criteria.offset}, #{criteria.size}
-            </if>
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role role
+        <include refid="WhereSQL"/>
+        <if test="criteria.offset != null">
+            limit #{criteria.offset}, #{criteria.size}
+        </if>
         ) role
         left join sys_roles_menus srm on role.role_role_id = srm.role_id
-        left join  sys_menu menu on menu.menu_id = srm.menu_id
+        left join sys_menu menu on menu.menu_id = srm.menu_id
         left join sys_roles_depts srd on role.role_role_id = srd.role_id
         left join sys_dept dept on dept.dept_id = srd.dept_id
         order by role.role_level

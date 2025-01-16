@@ -1,6 +1,7 @@
 package cn.odboy.util;
 
 import org.apache.commons.codec.binary.Base64;
+
 import javax.crypto.Cipher;
 import java.io.ByteArrayOutputStream;
 import java.security.*;
@@ -15,7 +16,6 @@ import java.security.spec.X509EncodedKeySpec;
  * @date 2020-05-18
  **/
 public class RsaUtil {
-
     private static final String SRC = "123456";
 
     public static void main(String[] args) throws Exception {
@@ -50,6 +50,7 @@ public class RsaUtil {
 
     /**
      * 私钥加密公钥解密
+     *
      * @throws Exception /
      */
     private static void test2(RsaKeyPair keyPair) throws Exception {
@@ -71,7 +72,7 @@ public class RsaUtil {
      * 公钥解密
      *
      * @param publicKeyText 公钥
-     * @param text 待解密的信息
+     * @param text          待解密的信息
      * @return /
      * @throws Exception /
      */
@@ -89,7 +90,7 @@ public class RsaUtil {
      * 私钥加密
      *
      * @param privateKeyText 私钥
-     * @param text 待加密的信息
+     * @param text           待加密的信息
      * @return /
      * @throws Exception /
      */
@@ -107,7 +108,7 @@ public class RsaUtil {
      * 私钥解密
      *
      * @param privateKeyText 私钥
-     * @param text 待解密的文本
+     * @param text           待解密的文本
      * @return /
      * @throws Exception /
      */
@@ -125,7 +126,7 @@ public class RsaUtil {
      * 公钥加密
      *
      * @param publicKeyText 公钥
-     * @param text 待加密的文本
+     * @param text          待加密的文本
      * @return /
      */
     public static String encryptByPublicKey(String publicKeyText, String text) throws Exception {
@@ -138,7 +139,7 @@ public class RsaUtil {
         return Base64.encodeBase64String(result);
     }
 
-    private static byte[] doLongerCipherFinal(int opMode,Cipher cipher, byte[] source) throws Exception {
+    private static byte[] doLongerCipherFinal(int opMode, Cipher cipher, byte[] source) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         if (opMode == Cipher.DECRYPT_MODE) {
             out.write(cipher.doFinal(source));
@@ -172,12 +173,10 @@ public class RsaUtil {
         return new RsaKeyPair(publicKeyString, privateKeyString);
     }
 
-
     /**
      * RSA密钥对对象
      */
     public static class RsaKeyPair {
-
         private final String publicKey;
         private final String privateKey;
 
@@ -193,6 +192,5 @@ public class RsaUtil {
         public String getPrivateKey() {
             return privateKey;
         }
-
     }
 }

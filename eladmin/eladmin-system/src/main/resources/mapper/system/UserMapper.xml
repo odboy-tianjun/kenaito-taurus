@@ -35,18 +35,27 @@
         </collection>
     </resultMap>
     <sql id="Base_Column_List">
-           u.user_id as user_user_id, u.dept_id as user_dept_id, u.username as user_username,
-           u.nick_name as user_nick_name, u.email as user_email, u.phone as user_phone,
-           u.gender as user_gender, u.avatar_name as user_avatar_name, u.avatar_path as user_avatar_path,
-           u.enabled as user_enabled, u.pwd_reset_time as user_pwd_reset_time, u.create_by as user_create_by,
-           u.update_by as user_update_by, u.create_time as user_create_time, u.update_time as user_update_time,
-           d.dept_id as dept_id, d.name as dept_name
+        u
+        .
+        user_id
+        as user_user_id, u.dept_id as user_dept_id, u.username as user_username,
+        u.nick_name as user_nick_name, u.email as user_email, u.phone as user_phone,
+        u.gender as user_gender, u.avatar_name as user_avatar_name, u.avatar_path as user_avatar_path,
+        u.enabled as user_enabled, u.pwd_reset_time as user_pwd_reset_time, u.create_by as user_create_by,
+        u.update_by as user_update_by, u.create_time as user_create_time, u.update_time as user_update_time,
+        d.dept_id as dept_id, d.name as dept_name
     </sql>
     <sql id="Job_Column_List">
-        j.job_id as job_id, j.name as job_name
+        j
+        .
+        job_id
+        as job_id, j.name as job_name
     </sql>
     <sql id="Role_Column_List">
-        r.role_id as role_id, r.name as role_name, r.level as role_level, r.data_scope as role_data_scope
+        r
+        .
+        role_id
+        as role_id, r.name as role_name, r.level as role_level, r.data_scope as role_data_scope
     </sql>
     <sql id="WhereSQL">
         <where>
@@ -79,15 +88,15 @@
         <include refid="Job_Column_List"/>,
         <include refid="Role_Column_List"/>
         from (
-            select
-            <include refid="Base_Column_List"/>
-            from sys_user u
-            left join sys_dept d on u.dept_id = d.dept_id
-            <include refid="WhereSQL"/>
-            <if test="criteria.offset != null">
-                order by u.user_id desc
-                limit #{criteria.offset}, #{criteria.size}
-            </if>
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user u
+        left join sys_dept d on u.dept_id = d.dept_id
+        <include refid="WhereSQL"/>
+        <if test="criteria.offset != null">
+            order by u.user_id desc
+            limit #{criteria.offset}, #{criteria.size}
+        </if>
         ) u
         left join sys_users_jobs suj on u.user_user_id = suj.user_id
         left join sys_job j on suj.job_id = j.job_id
@@ -109,32 +118,52 @@
         where u.username = #{username}
     </select>
     <select id="getByEmail" resultType="cn.odboy.modules.system.domain.User">
-        select user_id as id, username from sys_user
+        select user_id as id, username
+        from sys_user
         where email = #{email}
     </select>
     <select id="getByPhone" resultType="cn.odboy.modules.system.domain.User">
-        select user_id as id, username from sys_user
+        select user_id as id, username
+        from sys_user
         where phone = #{phone}
     </select>
     <update id="updatePwdByUsername">
-        update sys_user set password = #{password} , pwd_reset_time = #{lastPwdResetTime} where username = #{username}
+        update sys_user
+        set password       = #{password},
+            pwd_reset_time = #{lastPwdResetTime}
+        where username = #{username}
     </update>
     <update id="updateEmailByUsername">
-        update sys_user set email = #{email} where username = #{username}
+        update sys_user
+        set email = #{email}
+        where username = #{username}
     </update>
     <select id="selectUsersByRoleId" resultType="cn.odboy.modules.system.domain.User">
-        SELECT u.user_id as id, u.username FROM sys_user u, sys_users_roles r
-        WHERE u.user_id = r.user_id AND r.role_id = #{roleId}
+        SELECT u.user_id as id, u.username
+        FROM sys_user u,
+             sys_users_roles r
+        WHERE u.user_id = r.user_id
+          AND r.role_id = #{roleId}
         group by u.user_id
     </select>
     <select id="selectUsersByRoleDeptId" resultType="cn.odboy.modules.system.domain.User">
-        SELECT u.* FROM sys_user u, sys_users_roles r, sys_roles_depts d
-        WHERE u.user_id = r.user_id AND r.role_id = d.role_id AND d.dept_id = #{deptId}
+        SELECT u.*
+        FROM sys_user u,
+             sys_users_roles r,
+             sys_roles_depts d
+        WHERE u.user_id = r.user_id
+          AND r.role_id = d.role_id
+          AND d.dept_id = #{deptId}
         group by u.user_id
     </select>
     <select id="selectUsersByMenuId" resultType="cn.odboy.modules.system.domain.User">
-        SELECT u.user_id as id, u.username FROM sys_user u, sys_users_roles ur, sys_roles_menus rm
-        WHERE u.user_id = ur.user_id AND ur.role_id = rm.role_id AND rm.menu_id = #{menuId}
+        SELECT u.user_id as id, u.username
+        FROM sys_user u,
+             sys_users_roles ur,
+             sys_roles_menus rm
+        WHERE u.user_id = ur.user_id
+          AND ur.role_id = rm.role_id
+          AND rm.menu_id = #{menuId}
         group by u.user_id
     </select>
     <select id="countByJobIds" resultType="int">

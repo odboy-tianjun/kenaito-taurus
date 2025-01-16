@@ -24,7 +24,6 @@ import cn.odboy.infra.mybatisplus.EasyService;
  * @date 2018-12-31
  */
 public interface AliPayService extends EasyService<AlipayConfig> {
-
     /**
      * 查询配置
      *

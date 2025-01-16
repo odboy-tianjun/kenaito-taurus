@@ -16,8 +16,8 @@
 package cn.odboy.infra.mybatisplus;
 
 import cn.hutool.core.date.DateTime;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import cn.odboy.util.SecurityUtil;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +30,6 @@ import java.util.Date;
  **/
 @Component
 public class MyMetaObjectHandler implements MetaObjectHandler {
-
     @Override
     public void insertFill(MetaObject metaObject) {
         Date now = DateTime.now();
@@ -65,4 +64,3 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "updateBy", String.class, username);
     }
 }
-

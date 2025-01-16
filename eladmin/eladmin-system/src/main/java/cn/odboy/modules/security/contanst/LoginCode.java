@@ -25,7 +25,6 @@ import lombok.Data;
  */
 @Data
 public class LoginCode {
-
     /**
      * 验证码配置
      */

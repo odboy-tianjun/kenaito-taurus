@@ -22,24 +22,19 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
-* @author zhanghouying
-* @date 2019-08-24
-*/
+ * @author zhanghouying
+ * @date 2019-08-24
+ */
 @Data
-public class DeployQueryCriteria{
-
+public class DeployQueryCriteria {
     @ApiModelProperty(value = "应用名称")
     private String appName;
-
     @ApiModelProperty(value = "创建时间")
     private List<Timestamp> createTime;
-
     @ApiModelProperty(value = "页码", example = "1")
     private Integer page = 1;
-
     @ApiModelProperty(value = "每页数据量", example = "10")
     private Integer size = 10;
-
     @ApiModelProperty(value = "查询分页偏移量", hidden = true)
     private Long offset;
 }

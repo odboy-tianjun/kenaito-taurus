@@ -21,7 +21,6 @@ package cn.odboy.modules.security.contanst;
  * @author: liaojinlong
  * @date: 2020/6/10 17:40
  */
-
 public enum LoginCodeEnum {
     /**
      * 算数

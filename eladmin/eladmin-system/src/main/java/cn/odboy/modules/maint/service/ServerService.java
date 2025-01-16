@@ -16,10 +16,10 @@
 package cn.odboy.modules.maint.service;
 
 import cn.odboy.model.PageResult;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import cn.odboy.modules.maint.domain.Server;
 import cn.odboy.modules.maint.domain.dto.ServerQueryCriteria;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -27,11 +27,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
-* @author zhanghouying
-* @date 2019-08-24
-*/
+ * @author zhanghouying
+ * @date 2019-08-24
+ */
 public interface ServerService extends IService<Server> {
-
     /**
      * 分页查询
      *
@@ -43,6 +42,7 @@ public interface ServerService extends IService<Server> {
 
     /**
      * 查询全部数据
+     *
      * @param criteria 条件
      * @return /
      */
@@ -50,18 +50,21 @@ public interface ServerService extends IService<Server> {
 
     /**
      * 创建
+     *
      * @param resources /
      */
     void create(Server resources);
 
     /**
      * 编辑
+     *
      * @param resources /
      */
     void update(Server resources);
 
     /**
      * 删除
+     *
      * @param ids /
      */
     void delete(Set<Long> ids);
@@ -76,6 +79,7 @@ public interface ServerService extends IService<Server> {
 
     /**
      * 测试连接
+     *
      * @param resources /
      * @return /
      */
@@ -83,6 +87,7 @@ public interface ServerService extends IService<Server> {
 
     /**
      * 导出数据
+     *
      * @param queryAll /
      * @param response /
      * @throws IOException /

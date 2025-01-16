@@ -8,16 +8,13 @@
         <version>1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>eladmin-system</artifactId>
     <name>核心模块</name>
-
     <properties>
         <jjwt.version>0.11.5</jjwt.version>
         <!-- oshi监控需要指定jna版本, 问题详见 https://github.com/oshi/oshi/issues/1040 -->
         <jna.version>5.8.0</jna.version>
     </properties>
-
     <dependencies>
         <!-- 代码生成模块 -->
         <dependency>
@@ -31,38 +28,38 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <!-- tools 模块包含了 common 和 logging 模块 -->
         <dependency>
             <groupId>cn.odboy</groupId>
             <artifactId>eladmin-tools</artifactId>
             <version>1.1</version>
         </dependency>
-
+        <!-- 自定义子模块 -->
         <dependency>
             <groupId>cn.odboy</groupId>
             <artifactId>eladmin-gitlab-boot-starter</artifactId>
             <version>1.1</version>
         </dependency>
-
         <dependency>
             <groupId>cn.odboy</groupId>
             <artifactId>eladmin-k8s-boot-starter</artifactId>
             <version>1.1</version>
         </dependency>
-
         <dependency>
             <groupId>cn.odboy</groupId>
             <artifactId>eladmin-dingtalk-boot-starter</artifactId>
             <version>1.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>cn.odboy</groupId>
+            <artifactId>eladmin-minio-boot-starter</artifactId>
+            <version>1.1</version>
+        </dependency>
         <!-- Spring boot websocket -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-websocket</artifactId>
-		</dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
         <!-- quartz -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -78,7 +75,6 @@
             <artifactId>c3p0</artifactId>
             <version>0.10.1</version>
         </dependency>
-
         <!-- jwt -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -95,7 +91,6 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>${jjwt.version}</version>
         </dependency>
-
         <!-- linux的管理 -->
         <dependency>
             <groupId>ch.ethz.ganymed</groupId>
@@ -107,7 +102,6 @@
             <artifactId>jsch</artifactId>
             <version>0.1.55</version>
         </dependency>
-
         <!-- 获取系统信息 -->
         <dependency>
             <groupId>com.github.oshi</groupId>
@@ -115,7 +109,6 @@
             <version>6.6.5</version>
         </dependency>
     </dependencies>
-
     <!-- 打包 -->
     <build>
         <finalName>eladmin-system</finalName>
@@ -136,8 +129,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>9</source>
-                    <target>9</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>

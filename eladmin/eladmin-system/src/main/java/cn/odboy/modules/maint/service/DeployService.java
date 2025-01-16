@@ -15,12 +15,12 @@
  */
 package cn.odboy.modules.maint.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.Deploy;
 import cn.odboy.modules.maint.domain.DeployHistory;
 import cn.odboy.modules.maint.domain.dto.DeployQueryCriteria;
-import cn.odboy.model.PageResult;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -28,11 +28,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
-* @author zhanghouying
-* @date 2019-08-24
-*/
+ * @author zhanghouying
+ * @date 2019-08-24
+ */
 public interface DeployService extends IService<Deploy> {
-
     /**
      * 分页查询
      *
@@ -44,6 +43,7 @@ public interface DeployService extends IService<Deploy> {
 
     /**
      * 查询全部数据
+     *
      * @param criteria 条件
      * @return /
      */
@@ -51,44 +51,52 @@ public interface DeployService extends IService<Deploy> {
 
     /**
      * 创建
+     *
      * @param resources /
      */
     void create(Deploy resources);
 
-
     /**
      * 编辑
+     *
      * @param resources /
      */
     void update(Deploy resources);
 
     /**
      * 删除
+     *
      * @param ids /
      */
     void delete(Set<Long> ids);
 
     /**
      * 部署服务
+     *
      * @param fileSavePath /
-     * @param appId /
+     * @param appId        /
      */
     void deploy(String fileSavePath, Long appId);
 
     /**
      * 查询部署状态
+     *
      * @param resources /
      * @return /
      */
     String serverStatus(Deploy resources);
+
     /**
      * 启动服务
+     *
      * @param resources /
      * @return /
      */
     String startServer(Deploy resources);
+
     /**
      * 停止服务
+     *
      * @param resources /
      * @return /
      */
@@ -96,6 +104,7 @@ public interface DeployService extends IService<Deploy> {
 
     /**
      * 停止服务
+     *
      * @param resources /
      * @return /
      */
@@ -103,6 +112,7 @@ public interface DeployService extends IService<Deploy> {
 
     /**
      * 导出数据
+     *
      * @param queryAll /
      * @param response /
      * @throws IOException /

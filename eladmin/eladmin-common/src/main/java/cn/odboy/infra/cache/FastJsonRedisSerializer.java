@@ -6,14 +6,13 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 
 import java.nio.charset.StandardCharsets;
 
- /**
+/**
  * Value 序列化
  *
- * @author /
  * @param <T>
+ * @author /
  */
 public class FastJsonRedisSerializer<T> implements RedisSerializer<T> {
-
     private final Class<T> clazz;
 
     FastJsonRedisSerializer(Class<T> clazz) {
@@ -37,5 +36,4 @@ public class FastJsonRedisSerializer<T> implements RedisSerializer<T> {
         String str = new String(bytes, StandardCharsets.UTF_8);
         return JSON.parseObject(str, clazz);
     }
-
 }

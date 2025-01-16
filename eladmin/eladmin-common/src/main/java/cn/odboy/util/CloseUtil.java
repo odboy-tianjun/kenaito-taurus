@@ -24,7 +24,6 @@ import java.io.Closeable;
  * @date 2021-03-05
  **/
 public class CloseUtil {
-
     public static void close(Closeable closeable) {
         if (null != closeable) {
             try {

@@ -1,8 +1,8 @@
 package cn.odboy.infra.context;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.Data;
 import cn.odboy.constant.ElConstant;
+import lombok.Data;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +19,9 @@ import org.springframework.core.env.ConfigurableEnvironment;
 public class ElContext {
     public static String applicationName;
 
-//    @Value("${spring.application.name}")
-//    public void setApplicationName(String name) {
-//        ElContext.applicationName = name;
-//    }
-
+    /**
+     * 初始化完配置后，加载默认的应用名称
+     */
     @Bean
     public BeanFactoryPostProcessor configLoader(ConfigurableEnvironment environment) {
         return configurableListableBeanFactory -> {

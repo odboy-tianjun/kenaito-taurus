@@ -21,7 +21,6 @@ package cn.odboy.infra.context;
  * @apiNote: 关于缓存的Key集合
  */
 public interface CacheKey {
-
     /**
      * 用户
      */

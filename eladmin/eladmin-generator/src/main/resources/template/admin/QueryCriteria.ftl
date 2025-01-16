@@ -14,18 +14,16 @@
 *  limitations under the License.
 */
 package ${package}.domain.vo;
-
 import lombok.Data;
 <#if queryHasTimestamp>
-import java.sql.Timestamp;
+    import java.sql.Timestamp;
 </#if>
 <#if queryHasBigDecimal>
-import java.math.BigDecimal;
+    import java.math.BigDecimal;
 </#if>
 <#if betweens?? && (betweens?size > 0)>
-import java.util.List;
+    import java.util.List;
 </#if>
-
 /**
 * @author ${author}
 * @date ${date}
@@ -34,12 +32,12 @@ import java.util.List;
 public class ${className}QueryCriteria{
 <#if queryColumns??>
     <#list queryColumns as column>
-    private ${column.columnType} ${column.changeColumnName};
+        private ${column.columnType} ${column.changeColumnName};
     </#list>
 </#if>
 <#if betweens??>
     <#list betweens as column>
-    private List<${column.columnType}> ${column.changeColumnName};
+        private List<${column.columnType}> ${column.changeColumnName};
     </#list>
 </#if>
 }

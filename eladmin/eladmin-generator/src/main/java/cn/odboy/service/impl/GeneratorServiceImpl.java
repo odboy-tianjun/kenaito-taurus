@@ -19,23 +19,24 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.odboy.domain.ColumnInfo;
 import cn.odboy.domain.GenConfig;
+import cn.odboy.domain.vo.TableInfo;
+import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.mapper.ColumnInfoMapper;
+import cn.odboy.model.PageResult;
+import cn.odboy.service.GeneratorService;
 import cn.odboy.util.FileUtil;
 import cn.odboy.util.GenUtil;
+import cn.odboy.util.PageUtil;
 import cn.odboy.util.StringUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.domain.vo.TableInfo;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.model.PageResult;
-import cn.odboy.service.GeneratorService;
-import cn.odboy.util.PageUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -52,7 +53,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class GeneratorServiceImpl extends ServiceImpl<ColumnInfoMapper, ColumnInfo> implements GeneratorService {
-
     private final ColumnInfoMapper columnInfoMapper;
     private final String CONFIG_MESSAGE = "请先配置生成器";
 
@@ -79,8 +79,8 @@ public class GeneratorServiceImpl extends ServiceImpl<ColumnInfoMapper, ColumnIn
         List<ColumnInfo> columnInfos = columnInfoMapper.selectDatabaseColumnInfos(tableName);
         for (ColumnInfo columnInfo : columnInfos) {
             columnInfo.setTableName(tableName);
-            if(GenUtil.PK.equalsIgnoreCase(columnInfo.getKeyType())
-                    && GenUtil.EXTRA.equalsIgnoreCase(columnInfo.getExtra())){
+            if (GenUtil.PK.equalsIgnoreCase(columnInfo.getKeyType())
+                    && GenUtil.EXTRA.equalsIgnoreCase(columnInfo.getExtra())) {
                 columnInfo.setNotNull(false);
             }
         }

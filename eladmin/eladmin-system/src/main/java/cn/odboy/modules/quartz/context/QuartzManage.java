@@ -35,7 +35,6 @@ import static org.quartz.TriggerBuilder.newTrigger;
 @Component
 public class QuartzManage {
     private static final String JOB_NAME = "TASK_";
-
     @Resource
     private Scheduler scheduler;
 
@@ -46,26 +45,21 @@ public class QuartzManage {
                     .newJob(ExecutionJob.class).
                     withIdentity(JOB_NAME + quartzJob.getId())
                     .build();
-
             // 通过触发器名和cron表达式创建 Trigger
             Trigger cronTrigger = newTrigger()
                     .withIdentity(JOB_NAME + quartzJob.getId())
                     .startNow()
                     .withSchedule(CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression()))
                     .build();
-
             cronTrigger.getJobDataMap().put(QuartzJob.JOB_KEY, quartzJob);
-
             // 重置启动时间
             ((CronTriggerImpl) cronTrigger).setStartTime(new Date());
-
             try {
                 // 执行定时任务，如果是持久化的，这里会报错，捕获输出
                 scheduler.scheduleJob(jobDetail, cronTrigger);
             } catch (ObjectAlreadyExistsException e) {
                 log.warn("定时任务已存在，跳过加载");
             }
-
             // 暂停任务
             if (quartzJob.getIsPause()) {
                 pauseJob(quartzJob);
@@ -95,7 +89,6 @@ public class QuartzManage {
             // 重置启动时间
             ((CronTriggerImpl) trigger).setStartTime(new Date());
             trigger.getJobDataMap().put(QuartzJob.JOB_KEY, quartzJob);
-
             scheduler.rescheduleJob(triggerKey, trigger);
             // 暂停任务
             if (quartzJob.getIsPause()) {
@@ -105,7 +98,6 @@ public class QuartzManage {
             log.error("更新定时任务失败", e);
             throw new BadRequestException("更新定时任务失败");
         }
-
     }
 
     /**

@@ -13,11 +13,9 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
-    
     <sql id="Base_Column_List">
         server_id, name, ip, port, account, password, create_by, update_by, create_time, update_time
     </sql>
-
     <select id="getByIp" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
@@ -26,7 +24,6 @@
             ip = #{ip}
         </where>
     </select>
-
     <select id="selectServers" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
@@ -34,8 +31,8 @@
         <where>
             <if test="criteria.blurry != null and criteria.blurry != ''">
                 AND (
-                    name LIKE CONCAT('%',#{criteria.blurry},'%')
-                    or ip LIKE CONCAT('%',#{criteria.blurry},'%')
+                name LIKE CONCAT('%',#{criteria.blurry},'%')
+                or ip LIKE CONCAT('%',#{criteria.blurry},'%')
                 )
             </if>
             <if test="criteria.createTime != null and criteria.createTime.size() != 0">

@@ -15,13 +15,14 @@
  */
 package cn.odboy.mapper;
 
+import cn.odboy.domain.ColumnInfo;
+import cn.odboy.domain.vo.TableInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import cn.odboy.domain.ColumnInfo;
-import cn.odboy.domain.vo.TableInfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -31,6 +32,8 @@ import java.util.List;
 @Mapper
 public interface ColumnInfoMapper extends BaseMapper<ColumnInfo> {
     IPage<TableInfo> selectTableInfos(@Param("tableName") String tableName, Page<Object> page);
+
     List<ColumnInfo> selectGenColumnInfosByTableName(@Param("tableName") String tableName);
+
     List<ColumnInfo> selectDatabaseColumnInfos(@Param("tableName") String tableName);
 }

@@ -1,10 +1,25 @@
+/*
+ *  Copyright 2022-2025 Tian Jun
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package cn.odboy.repository;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import cn.odboy.constant.EnvEnum;
 import cn.odboy.context.GitlabAuthAdmin;
-import cn.odboy.context.GitlabCIFileAdmin;
+import cn.odboy.context.GitlabCiFileAdmin;
 import cn.odboy.context.GitlabIgnoreFileAdmin;
 import cn.odboy.infra.exception.BadRequestException;
 import org.gitlab4j.api.*;
@@ -31,7 +46,7 @@ public class GitlabRepoRepository {
     @Autowired
     private GitlabIgnoreFileAdmin ignoreFileAdmin;
     @Autowired
-    private GitlabCIFileAdmin ciFileAdmin;
+    private GitlabCiFileAdmin ciFileAdmin;
 
     /**
      * 根据projectId创建分支
@@ -272,7 +287,6 @@ public class GitlabRepoRepository {
             log.error("不支持的语言, 跳过 .gitignore 文件初始化");
             return;
         }
-
         try (GitLabApi client = repository.auth()) {
             RepositoryFile repositoryFile = new RepositoryFile();
             repositoryFile.setFilePath(".gitignore");
@@ -289,18 +303,16 @@ public class GitlabRepoRepository {
             log.error("不支持的语言, 跳过 .gitlab-ci.yml 文件初始化");
             return;
         }
-
         try (GitLabApi client = repository.auth()) {
-            String fileContent = ciFileAdmin.getCIFileContent(language);
+            String fileContent = ciFileAdmin.getCiFileContent(language);
             RepositoryFile repositoryFile = new RepositoryFile();
-            repositoryFile.setFilePath("..gitlab-ci.yml");
+            repositoryFile.setFilePath(".gitlab-ci.yml");
             repositoryFile.setContent(fileContent);
-            client.getRepositoryFileApi().createFile(projectId, repositoryFile, defaultBranch, "init ..gitlab-ci.yml");
-            log.info("初始化 ..gitlab-ci.yml 文件成功");
+            client.getRepositoryFileApi().createFile(projectId, repositoryFile, defaultBranch, "init .gitlab-ci.yml");
+            log.info("初始化 .gitlab-ci.yml 文件成功");
         } catch (GitLabApiException e) {
-            log.error("初始化 ..gitlab-ci.yml 文件失败", e);
+            log.error("初始化 .gitlab-ci.yml 文件失败", e);
         }
-
         try (GitLabApi client = repository.auth()) {
             EnvEnum[] allEnvList = new EnvEnum[]{EnvEnum.Daily, EnvEnum.Stage, EnvEnum.Online};
             for (EnvEnum envEnum : allEnvList) {
@@ -309,7 +321,6 @@ public class GitlabRepoRepository {
                     String dockerfileContent = ciFileAdmin.getDockerfileContent(language, envEnum);
                     dockerfileContent = dockerfileContent.replaceAll("#APP_NAME#", appName);
                     RepositoryFile repositoryFile = new RepositoryFile();
-
                     repositoryFile.setFilePath(filePath);
                     repositoryFile.setContent(dockerfileContent);
                     client.getRepositoryFileApi().createFile(projectId, repositoryFile, defaultBranch, "init " + filePath);
@@ -319,7 +330,6 @@ public class GitlabRepoRepository {
                 }
             }
         }
-
         String releaseFileName = appName + ".release";
         try (GitLabApi client = repository.auth()) {
             String dockerfileContent = ciFileAdmin.getReleaseFileContent(language);

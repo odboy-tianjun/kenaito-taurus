@@ -15,31 +15,33 @@
  */
 package cn.odboy.modules.system.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import cn.odboy.modules.system.domain.Dept;
 import cn.odboy.modules.system.domain.vo.DeptQueryCriteria;
+import com.baomidou.mybatisplus.extension.service.IService;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
 /**
-* @author Zheng Jie
-* @date 2019-03-25
-*/
+ * @author Zheng Jie
+ * @date 2019-03-25
+ */
 public interface DeptService extends IService<Dept> {
-
     /**
      * 查询所有数据
+     *
      * @param criteria 条件
-     * @param isQuery /
-     * @throws Exception /
+     * @param isQuery  /
      * @return /
+     * @throws Exception /
      */
     List<Dept> queryAll(DeptQueryCriteria criteria, Boolean isQuery) throws Exception;
 
     /**
      * 根据ID查询
+     *
      * @param id /
      * @return /
      */
@@ -47,25 +49,28 @@ public interface DeptService extends IService<Dept> {
 
     /**
      * 创建
+     *
      * @param resources /
      */
     void create(Dept resources);
 
     /**
      * 编辑
+     *
      * @param resources /
      */
     void update(Dept resources);
 
     /**
      * 删除
-     * @param depts /
      *
+     * @param depts /
      */
     void delete(Set<Dept> depts);
 
     /**
      * 根据PID查询
+     *
      * @param pid /
      * @return /
      */
@@ -73,6 +78,7 @@ public interface DeptService extends IService<Dept> {
 
     /**
      * 根据角色ID查询
+     *
      * @param id /
      * @return /
      */
@@ -80,7 +86,8 @@ public interface DeptService extends IService<Dept> {
 
     /**
      * 导出数据
-     * @param depts 待导出的数据
+     *
+     * @param depts    待导出的数据
      * @param response /
      * @throws IOException /
      */
@@ -88,15 +95,17 @@ public interface DeptService extends IService<Dept> {
 
     /**
      * 获取待删除的部门
+     *
      * @param deptList /
-     * @param depts /
+     * @param depts    /
      * @return /
      */
     Set<Dept> getDeleteDepts(List<Dept> deptList, Set<Dept> depts);
 
     /**
      * 根据ID获取同级与上级数据
-     * @param dept /
+     *
+     * @param dept  /
      * @param depts /
      * @return /
      */
@@ -104,6 +113,7 @@ public interface DeptService extends IService<Dept> {
 
     /**
      * 构建树形数据
+     *
      * @param depts /
      * @return /
      */
@@ -111,6 +121,7 @@ public interface DeptService extends IService<Dept> {
 
     /**
      * 获取
+     *
      * @param deptList 、
      * @return 、
      */
@@ -118,6 +129,7 @@ public interface DeptService extends IService<Dept> {
 
     /**
      * 验证是否被角色或用户关联
+     *
      * @param depts /
      */
     void verification(Set<Dept> depts);

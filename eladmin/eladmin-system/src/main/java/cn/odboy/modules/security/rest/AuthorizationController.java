@@ -16,28 +16,28 @@
 package cn.odboy.modules.security.rest;
 
 import cn.hutool.core.util.IdUtil;
+import cn.odboy.annotation.Log;
+import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.infra.security.RsaProperties;
+import cn.odboy.infra.security.annotation.AnonymousDeleteMapping;
+import cn.odboy.infra.security.annotation.AnonymousGetMapping;
+import cn.odboy.infra.security.annotation.AnonymousPostMapping;
+import cn.odboy.modules.security.config.LoginProperties;
+import cn.odboy.modules.security.config.SecurityProperties;
+import cn.odboy.modules.security.contanst.LoginCodeEnum;
+import cn.odboy.modules.security.security.TokenProvider;
+import cn.odboy.modules.security.service.OnlineUserService;
+import cn.odboy.modules.security.service.dto.AuthUserDto;
+import cn.odboy.modules.security.service.dto.JwtUserDto;
+import cn.odboy.util.RedisUtil;
+import cn.odboy.util.RsaUtil;
+import cn.odboy.util.SecurityUtil;
+import cn.odboy.util.StringUtil;
 import com.wf.captcha.base.Captcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.annotation.Log;
-import cn.odboy.infra.security.annotation.AnonymousDeleteMapping;
-import cn.odboy.infra.security.annotation.AnonymousGetMapping;
-import cn.odboy.infra.security.annotation.AnonymousPostMapping;
-import cn.odboy.infra.security.RsaProperties;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.modules.security.contanst.LoginCodeEnum;
-import cn.odboy.modules.security.config.LoginProperties;
-import cn.odboy.modules.security.config.SecurityProperties;
-import cn.odboy.modules.security.security.TokenProvider;
-import cn.odboy.modules.security.service.dto.AuthUserDto;
-import cn.odboy.modules.security.service.dto.JwtUserDto;
-import cn.odboy.modules.security.service.OnlineUserService;
-import cn.odboy.util.RsaUtil;
-import cn.odboy.util.RedisUtil;
-import cn.odboy.util.SecurityUtil;
-import cn.odboy.util.StringUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,9 +45,13 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,8 +73,8 @@ public class AuthorizationController {
     private final OnlineUserService onlineUserService;
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    @Resource
-    private LoginProperties loginProperties;
+    private final UserDetailsService userDetailsService;
+    private final LoginProperties loginProperties;
 
     @Log("用户登录")
     @ApiOperation("登录授权")
@@ -92,14 +96,38 @@ public class AuthorizationController {
                 new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        // 生成令牌与第三方系统获取令牌方式
-        // UserDetails userDetails = userDetailsService.loadUserByUsername(userInfo.getUsername());
-        // Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        // SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenProvider.createToken(authentication);
         final JwtUserDto jwtUserDto = (JwtUserDto) authentication.getPrincipal();
         // 返回 token 与 用户信息
         Map<String, Object> authInfo = new HashMap<String, Object>(2) {{
+            put("token", properties.getTokenStartWith() + token);
+            put("user", jwtUserDto);
+        }};
+        if (loginProperties.isSingleLogin()) {
+            // 踢掉之前已经登录的token
+            onlineUserService.kickOutForUsername(authUser.getUsername());
+        }
+        // 保存在线信息
+        onlineUserService.save(jwtUserDto, token, request);
+        // 返回登录信息
+        return ResponseEntity.ok(authInfo);
+    }
+
+    @Log("获取授权码")
+    @ApiOperation("获取授权码")
+    @AnonymousPostMapping(value = "/getAccessToken")
+    public ResponseEntity<Object> getAccessToken(@Validated @RequestBody AuthUserDto authUser, HttpServletRequest request) throws Exception {
+        if (authUser.getUsername() == null && authUser.getPassword() == null) {
+            throw new BadRequestException("获取授权码失败, 无效授权信息");
+        }
+        // 生成令牌与第三方系统获取令牌方式
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = tokenProvider.createToken(authentication);
+        final JwtUserDto jwtUserDto = (JwtUserDto) authentication.getPrincipal();
+        // 返回 token 与 用户信息
+        Map<String, Object> authInfo = new HashMap<>(2) {{
             put("token", properties.getTokenStartWith() + token);
             put("user", jwtUserDto);
         }};

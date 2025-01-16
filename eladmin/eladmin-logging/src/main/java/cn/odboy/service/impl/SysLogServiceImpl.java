@@ -17,19 +17,19 @@ package cn.odboy.service.impl;
 
 import cn.hutool.core.lang.Dict;
 import cn.odboy.annotation.Log;
+import cn.odboy.domain.SysLog;
+import cn.odboy.domain.vo.SysLogQueryCriteria;
 import cn.odboy.mapper.SysLogMapper;
+import cn.odboy.model.PageResult;
+import cn.odboy.service.SysLogService;
 import cn.odboy.util.FileUtil;
+import cn.odboy.util.PageUtil;
 import cn.odboy.util.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import cn.odboy.domain.SysLog;
-import cn.odboy.model.PageResult;
-import cn.odboy.service.SysLogService;
-import cn.odboy.domain.vo.SysLogQueryCriteria;
-import cn.odboy.util.PageUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Service;
@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -76,20 +77,17 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         Log aopLog = method.getAnnotation(Log.class);
-
         // 方法路径
         String methodName = joinPoint.getTarget().getClass().getName() + "." + signature.getName() + "()";
-
         // 描述
         sysLog.setDescription(aopLog.value());
-        
         sysLog.setRequestIp(ip);
         sysLog.setAddress(StringUtil.getCityInfo(sysLog.getRequestIp()));
         sysLog.setMethod(methodName);
         sysLog.setUsername(username);
         sysLog.setParams(getParameter(method, joinPoint.getArgs()));
         // 记录登录用户，隐藏密码信息
-        if("login".equals(signature.getName()) && StringUtil.isNotEmpty(sysLog.getParams())){
+        if ("login".equals(signature.getName()) && StringUtil.isNotEmpty(sysLog.getParams())) {
             JSONObject obj = JSON.parseObject(sysLog.getParams());
             sysLog.setUsername(obj.getString("username"));
             sysLog.setParams(JSON.toJSONString(Dict.create().set("username", sysLog.getUsername())));
@@ -118,7 +116,7 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
             //将RequestParam注解修饰的参数作为请求参数
             RequestParam requestParam = parameters[i].getAnnotation(RequestParam.class);
             if (requestParam != null) {
-                Map<String, Object> map = new HashMap<>(2);
+                Map<String, Object> map = new HashMap<>();
                 String key = parameters[i].getName();
                 if (!StringUtil.isEmpty(requestParam.value())) {
                     key = requestParam.value();

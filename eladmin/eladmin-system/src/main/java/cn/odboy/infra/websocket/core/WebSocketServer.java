@@ -36,17 +36,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
 public class WebSocketServer {
-
     /**
      * concurrent包的线程安全Map，用来存放每个客户端对应的MyWebSocket对象。（分布式必出问题）
      */
     private static final Map<String, WebSocketServer> CLIENT = new ConcurrentHashMap<>();
-
     /**
      * 与某个客户端的连接会话，需要通过它来给客户端发送数据
      */
     private Session session;
-
     /**
      * 接收sid
      */
@@ -111,7 +108,6 @@ public class WebSocketServer {
     private void sendMessage(String message) throws IOException {
         this.session.getBasicRemote().sendText(message);
     }
-
 
     /**
      * 群发自定义消息

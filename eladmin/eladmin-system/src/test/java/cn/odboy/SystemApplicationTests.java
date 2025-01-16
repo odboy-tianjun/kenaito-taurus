@@ -5,7 +5,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SystemApplicationTests {
-
     @Test
     public void contextLoads() {
     }
@@ -13,4 +12,3 @@ public class SystemApplicationTests {
     public static void main(String[] args) {
     }
 }
-

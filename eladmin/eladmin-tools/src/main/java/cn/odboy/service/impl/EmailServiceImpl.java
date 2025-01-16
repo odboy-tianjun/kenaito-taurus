@@ -17,14 +17,14 @@ package cn.odboy.service.impl;
 
 import cn.hutool.extra.mail.Mail;
 import cn.hutool.extra.mail.MailAccount;
+import cn.odboy.domain.EmailConfig;
 import cn.odboy.domain.vo.EmailVo;
+import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.mapper.EmailConfigMapper;
 import cn.odboy.service.EmailService;
+import cn.odboy.util.EncryptUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import cn.odboy.domain.EmailConfig;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.util.EncryptUtil;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -39,13 +39,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "email")
 public class EmailServiceImpl extends ServiceImpl<EmailConfigMapper, EmailConfig> implements EmailService {
-
     @Override
     @CachePut(key = "'config'")
     @Transactional(rollbackFor = Exception.class)
     public EmailConfig config(EmailConfig emailConfig, EmailConfig old) throws Exception {
         emailConfig.setId(1L);
-        if(!emailConfig.getPass().equals(old.getPass())){
+        if (!emailConfig.getPass().equals(old.getPass())) {
             // 对称加密
             emailConfig.setPass(EncryptUtil.desEncrypt(emailConfig.getPass()));
         }
@@ -62,8 +61,8 @@ public class EmailServiceImpl extends ServiceImpl<EmailConfigMapper, EmailConfig
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void send(EmailVo emailVo, EmailConfig emailConfig){
-        if(emailConfig.getId() == null){
+    public void send(EmailVo emailVo, EmailConfig emailConfig) {
+        if (emailConfig.getId() == null) {
             throw new BadRequestException("请先配置，再操作");
         }
         // 封装
@@ -80,7 +79,7 @@ public class EmailServiceImpl extends ServiceImpl<EmailConfigMapper, EmailConfig
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
-        account.setFrom(emailConfig.getUser()+"<"+emailConfig.getFromUser()+">");
+        account.setFrom(emailConfig.getUser() + "<" + emailConfig.getFromUser() + ">");
         // ssl方式发送
         account.setSslEnable(true);
         // 使用STARTTLS安全连接
@@ -99,7 +98,7 @@ public class EmailServiceImpl extends ServiceImpl<EmailConfigMapper, EmailConfig
                     //关闭session
                     .setUseGlobalSession(false)
                     .send();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
         }
     }

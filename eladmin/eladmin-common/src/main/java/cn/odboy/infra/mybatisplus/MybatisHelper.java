@@ -1,41 +1,38 @@
 package cn.odboy.infra.mybatisplus;
 
-
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.odboy.base.MyEntity;
+import cn.odboy.constant.ElConstant;
+import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.infra.mybatisplus.common.MpDataScope;
 import cn.odboy.infra.mybatisplus.common.MpFilterUser;
 import cn.odboy.infra.mybatisplus.common.MpQuery;
+import cn.odboy.util.SecurityUtil;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.base.MyEntity;
-import cn.odboy.constant.ElConstant;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.util.SecurityUtil;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * 查询条件创建工具
+ * 查询条件创建工具(优化版)
+ *
+ * @author odboy
+ * @date 2025-01-02
  */
 @Slf4j
 public class MybatisHelper {
-    /**
-     * 分割器
-     */
-    private static final Splitter SPLITTER = Splitter.on(",").trimResults().omitEmptyStrings();
-
     public static <R, Q> QueryWrapper<R> build(Q query) {
         QueryWrapper<R> queryWrapper = new QueryWrapper<>();
         if (query == null) {
@@ -215,7 +212,7 @@ public class MybatisHelper {
      * @param <R>          /
      */
     private static <R> void handleBlurryQuery(QueryWrapper<R> queryWrapper, String blurry, Object fieldVal) {
-        List<String> blurryList = SPLITTER.splitToList(blurry);
+        List<String> blurryList = Arrays.stream(blurry.split(",")).filter(StrUtil::isNotBlank).distinct().collect(Collectors.toList());
         queryWrapper.and(wrapper -> {
             for (String blurryItem : blurryList) {
                 String column = humpToUnderline(blurryItem);
@@ -266,10 +263,8 @@ public class MybatisHelper {
         //query.and(wrapper->wrapper.eq("c",1));
         query.eq("id", 1);
         query.orderByDesc("id");
-
 //        query.apply("left join student t1 on t1.id = t1.id");
 //        query.last("left join student t1 on t1.id = t1.id");
-
         System.err.println("getSqlSelect=================================");
         System.err.println(query.getSqlSelect());
         System.err.println("getSqlSegment=================================");

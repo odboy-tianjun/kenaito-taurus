@@ -16,9 +16,9 @@
 package cn.odboy.infra.mybatisplus;
 
 import cn.hutool.core.util.StrUtil;
+import cn.odboy.infra.context.ElContext;
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.infra.context.ElContext;
 
 /**
  * @author Zheng Jie
@@ -27,14 +27,21 @@ import cn.odboy.infra.context.ElContext;
  **/
 @Slf4j
 public class CustomP6SpyLogger implements MessageFormattingStrategy {
-
-    // 重置颜色
+    /**
+     * 重置颜色
+     */
     private static final String RESET = "\u001B[0m";
-    // 红色
+    /**
+     * 红色
+     */
     private static final String RED = "\u001B[31m";
-    // 绿色
+    /**
+     * 绿色
+     */
     private static final String GREEN = "\u001B[32m";
-    // 蓝色
+    /**
+     * 蓝色
+     */
     private static final String BLUE = "\u001B[34m";
 
     /**
@@ -66,4 +73,3 @@ public class CustomP6SpyLogger implements MessageFormattingStrategy {
         );
     }
 }
-

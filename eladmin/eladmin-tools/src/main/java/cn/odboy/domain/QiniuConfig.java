@@ -15,38 +15,34 @@
  */
 package cn.odboy.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
  * 七牛云对象存储配置类
+ *
  * @author Zheng Jie
  * @date 2018-12-31
  */
 @Data
 @TableName("tool_qiniu_config")
 public class QiniuConfig implements Serializable {
-
     @TableId("config_id")
     private Long id;
-
     @NotBlank
     @ApiModelProperty(value = "accessKey")
     private String accessKey;
-
     @NotBlank
     @ApiModelProperty(value = "secretKey")
     private String secretKey;
-
     @NotBlank
     @ApiModelProperty(value = "存储空间名称作为唯一的 Bucket 识别符")
     private String bucket;
-
     /**
      * Zone表示与机房的对应关系
      * 华东	Zone.zone0()
@@ -58,11 +54,9 @@ public class QiniuConfig implements Serializable {
     @NotBlank
     @ApiModelProperty(value = "Zone表示与机房的对应关系")
     private String zone;
-
     @NotBlank
     @ApiModelProperty(value = "外链域名，可自定义，需在七牛云绑定")
     private String host;
-
     @ApiModelProperty(value = "空间类型：公开/私有")
     private String type = "公开";
 }

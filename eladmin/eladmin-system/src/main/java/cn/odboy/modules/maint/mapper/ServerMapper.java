@@ -15,11 +15,11 @@
  */
 package cn.odboy.modules.maint.mapper;
 
+import cn.odboy.modules.maint.domain.Server;
+import cn.odboy.modules.maint.domain.dto.ServerQueryCriteria;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import cn.odboy.modules.maint.domain.Server;
-import cn.odboy.modules.maint.domain.dto.ServerQueryCriteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

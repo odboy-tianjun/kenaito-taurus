@@ -39,7 +39,7 @@ import java.util.Objects;
 @Component
 @ConfigurationProperties(prefix = "login")
 public class LoginProperties {
-    public static final String cacheKey = "user:login:";
+    public static final String CACHE_KEY = "user:login:";
     /**
      * 账号单用户 登录
      */
@@ -110,17 +110,14 @@ public class LoginProperties {
         @Override
         protected char[] alphas() {
             // 生成随机数字和运算符
-            int n1 = num(1, 10), n2 = num(1, 10);
+            int n1 = num(1, 100), n2 = num(1, 100);
             int opt = num(3);
-
             // 计算结果
             int res = new int[]{n1 + n2, n1 - n2, n1 * n2}[opt];
             // 转换为字符运算符
             char optChar = "+-x".charAt(opt);
-
             this.setArithmeticString(String.format("%s%c%s=?", n1, optChar, n2));
             this.chars = String.valueOf(res);
-
             return chars.toCharArray();
         }
     }

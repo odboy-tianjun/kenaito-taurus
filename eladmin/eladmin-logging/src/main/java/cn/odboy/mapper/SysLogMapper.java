@@ -15,11 +15,11 @@
  */
 package cn.odboy.mapper;
 
+import cn.odboy.domain.SysLog;
+import cn.odboy.domain.vo.SysLogQueryCriteria;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import cn.odboy.domain.SysLog;
-import cn.odboy.domain.vo.SysLogQueryCriteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -33,9 +33,12 @@ import java.util.List;
 @Mapper
 public interface SysLogMapper extends BaseMapper<SysLog> {
     List<SysLog> selectLogs(@Param("criteria") SysLogQueryCriteria criteria);
+
     IPage<SysLog> selectLogs(@Param("criteria") SysLogQueryCriteria criteria, Page<SysLog> page);
 
     IPage<SysLog> selectLogsByUser(@Param("criteria") SysLogQueryCriteria criteria, Page<SysLog> page);
+
     String getLogExceptionDetailsById(@Param("id") Long id);
+
     void deleteLogByLogType(@Param("logType") String logType);
 }

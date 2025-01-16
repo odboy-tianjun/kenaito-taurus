@@ -17,10 +17,11 @@ package cn.odboy.util;
 
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
-import lombok.extern.slf4j.Slf4j;
 import cn.odboy.infra.context.SpringBeanHolder;
+import lombok.extern.slf4j.Slf4j;
 import net.dreamlu.mica.ip2region.core.Ip2regionSearcher;
 import net.dreamlu.mica.ip2region.core.IpInfo;
+
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
@@ -33,12 +34,10 @@ import java.util.*;
  * 字符串工具类, 继承org.apache.commons.lang3.StringUtils类
  */
 @Slf4j
-@SuppressWarnings({"unchecked","all"})
+@SuppressWarnings({"unchecked", "all"})
 public class StringUtil extends org.apache.commons.lang3.StringUtils {
-
     private static final char SEPARATOR = '_';
     private static final String UNKNOWN = "unknown";
-
     /**
      * 注入bean
      */
@@ -55,14 +54,11 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
         if (s == null) {
             return null;
         }
-
         s = s.toLowerCase();
-
         StringBuilder sb = new StringBuilder(s.length());
         boolean upperCase = false;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-
             if (c == SEPARATOR) {
                 upperCase = true;
             } else if (upperCase) {
@@ -72,7 +68,6 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
                 sb.append(c);
             }
         }
-
         return sb.toString();
     }
 
@@ -102,18 +97,14 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
         if (s == null) {
             return null;
         }
-
         StringBuilder sb = new StringBuilder();
         boolean upperCase = false;
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-
             boolean nextUpperCase = true;
-
             if (i < (s.length() - 1)) {
                 nextUpperCase = Character.isUpperCase(s.charAt(i + 1));
             }
-
             if ((i > 0) && Character.isUpperCase(c)) {
                 if (!upperCase || !nextUpperCase) {
                     sb.append(SEPARATOR);
@@ -122,10 +113,8 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
             } else {
                 upperCase = false;
             }
-
             sb.append(Character.toLowerCase(c));
         }
-
         return sb.toString();
     }
 
@@ -164,7 +153,7 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
      */
     public static String getCityInfo(String ip) {
         IpInfo ipInfo = IP_SEARCHER.memorySearch(ip);
-        if(ipInfo != null){
+        if (ipInfo != null) {
             return ipInfo.getAddress();
         }
         return null;
@@ -173,7 +162,7 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
     public static String getBrowser(HttpServletRequest request) {
         UserAgent ua = UserAgentUtil.parse(request.getHeader("User-Agent"));
         String browser = ua.getBrowser().toString() + " " + ua.getVersion();
-        return browser.replace(".0.0.0","");
+        return browser.replace(".0.0.0", "");
     }
 
     /**
@@ -183,7 +172,6 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
         String[] weekDays = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
-
         int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
         if (w < 0) {
             w = 0;
@@ -200,10 +188,10 @@ public class StringUtil extends org.apache.commons.lang3.StringUtils {
         try {
             InetAddress candidateAddress = null;
             // 遍历所有的网络接口
-            for (Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces(); interfaces.hasMoreElements();) {
+            for (Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces(); interfaces.hasMoreElements(); ) {
                 NetworkInterface anInterface = interfaces.nextElement();
                 // 在所有的接口下再遍历IP
-                for (Enumeration<InetAddress> inetAddresses = anInterface.getInetAddresses(); inetAddresses.hasMoreElements();) {
+                for (Enumeration<InetAddress> inetAddresses = anInterface.getInetAddresses(); inetAddresses.hasMoreElements(); ) {
                     InetAddress inetAddr = inetAddresses.nextElement();
                     // 排除loopback类型地址
                     if (!inetAddr.isLoopbackAddress()) {

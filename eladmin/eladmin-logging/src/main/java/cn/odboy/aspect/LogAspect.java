@@ -15,13 +15,13 @@
  */
 package cn.odboy.aspect;
 
-import lombok.extern.slf4j.Slf4j;
 import cn.odboy.domain.SysLog;
+import cn.odboy.infra.context.RequestHolder;
 import cn.odboy.infra.exception.util.ThrowableUtil;
 import cn.odboy.service.SysLogService;
-import cn.odboy.infra.context.RequestHolder;
 import cn.odboy.util.SecurityUtil;
 import cn.odboy.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -29,6 +29,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -39,9 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Slf4j
 public class LogAspect {
-
     private final SysLogService sysLogService;
-
     ThreadLocal<Long> currentTime = new ThreadLocal<>();
 
     public LogAspect(SysLogService sysLogService) {
@@ -65,10 +64,10 @@ public class LogAspect {
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         currentTime.set(System.currentTimeMillis());
         Object result = joinPoint.proceed();
-        SysLog sysLog = new SysLog("INFO",System.currentTimeMillis() - currentTime.get());
+        SysLog sysLog = new SysLog("INFO", System.currentTimeMillis() - currentTime.get());
         currentTime.remove();
         HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        sysLogService.save(SecurityUtil.safeGetCurrentUsername(), StringUtil.getBrowser(request), StringUtil.getIp(request),joinPoint, sysLog);
+        sysLogService.save(SecurityUtil.safeGetCurrentUsername(), StringUtil.getBrowser(request), StringUtil.getIp(request), joinPoint, sysLog);
         return result;
     }
 
@@ -76,14 +75,14 @@ public class LogAspect {
      * 配置异常通知
      *
      * @param joinPoint join point for advice
-     * @param e exception
+     * @param e         exception
      */
     @AfterThrowing(pointcut = "logPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        SysLog sysLog = new SysLog("ERROR",System.currentTimeMillis() - currentTime.get());
+        SysLog sysLog = new SysLog("ERROR", System.currentTimeMillis() - currentTime.get());
         currentTime.remove();
         sysLog.setExceptionDetail(new String(ThrowableUtil.getStackTrace(e).getBytes()));
         HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        sysLogService.save(SecurityUtil.safeGetCurrentUsername(), StringUtil.getBrowser(request), StringUtil.getIp(request), (ProceedingJoinPoint)joinPoint, sysLog);
+        sysLogService.save(SecurityUtil.safeGetCurrentUsername(), StringUtil.getBrowser(request), StringUtil.getIp(request), (ProceedingJoinPoint) joinPoint, sysLog);
     }
 }

@@ -29,7 +29,6 @@ import java.io.File;
  */
 @Configuration
 public class MultipartConfig {
-
     /**
      * 文件上传临时路径
      */

@@ -16,12 +16,9 @@
 package cn.odboy.modules.security.security;
 
 import cn.hutool.core.util.StrUtil;
-import cn.odboy.modules.security.config.SecurityProperties;
 import cn.odboy.modules.security.context.TokenHelper;
 import cn.odboy.modules.security.service.OnlineUserService;
 import cn.odboy.modules.security.service.dto.OnlineUserDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;

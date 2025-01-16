@@ -5,20 +5,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 创建自定义的线程池
+ *
  * @author Zheng Jie
  * @description
  * @date 2023-06-08
  **/
 @Configuration
 public class CustomExecutorConfig {
-
     /**
      * 自定义线程池，用法 @Async
+     *
      * @return Executor
      */
     @Bean
@@ -43,6 +45,7 @@ public class CustomExecutorConfig {
 
     /**
      * 自定义线程池，用法 @Async("otherAsync")
+     *
      * @return Executor
      */
     @Bean

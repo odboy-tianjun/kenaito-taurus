@@ -25,6 +25,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
+
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -36,7 +37,6 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"unchecked", "all"})
 public class RedisUtil {
     private static final Logger log = LoggerFactory.getLogger(RedisUtil.class);
-
     private RedisTemplate<Object, Object> redisTemplate;
 
     public RedisUtil(RedisTemplate<Object, Object> redisTemplate) {
@@ -197,9 +197,10 @@ public class RedisUtil {
 
     /**
      * 批量模糊删除key
+     *
      * @param pattern
      */
-    public void scanDel(String pattern){
+    public void scanDel(String pattern) {
         ScanOptions options = ScanOptions.scanOptions().match(pattern).build();
         try (Cursor<byte[]> cursor = redisTemplate.executeWithStickyConnection(
                 (RedisCallback<Cursor<byte[]>>) connection -> (Cursor<byte[]>) new ConvertingCursor<>(
@@ -209,7 +210,6 @@ public class RedisUtil {
             }
         }
     }
-
     // ============================String=============================
 
     /**
@@ -243,7 +243,7 @@ public class RedisUtil {
     /**
      * 普通缓存获取
      *
-     * @param key 键
+     * @param key   键
      * @param clazz 列表中元素的类型
      * @return 值
      */
@@ -262,7 +262,6 @@ public class RedisUtil {
         return null;
     }
 
-
     /**
      * 普通缓存获取
      *
@@ -270,7 +269,7 @@ public class RedisUtil {
      * @return 值
      */
     public String getStr(String key) {
-        if(StrUtil.isBlank(key)){
+        if (StrUtil.isBlank(key)) {
             return null;
         }
         Object value = redisTemplate.opsForValue().get(key);
@@ -290,7 +289,7 @@ public class RedisUtil {
     public List<Object> multiGet(List<String> keys) {
         List list = redisTemplate.opsForValue().multiGet(Sets.newHashSet(keys));
         List resultList = Lists.newArrayList();
-        Optional.ofNullable(list).ifPresent(e-> list.forEach(ele-> Optional.ofNullable(ele).ifPresent(resultList::add)));
+        Optional.ofNullable(list).ifPresent(e -> list.forEach(ele -> Optional.ofNullable(ele).ifPresent(resultList::add)));
         return resultList;
     }
 
@@ -359,7 +358,6 @@ public class RedisUtil {
             return false;
         }
     }
-
     // ================================Map=================================
 
     /**
@@ -381,7 +379,6 @@ public class RedisUtil {
      */
     public Map<Object, Object> hmget(String key) {
         return redisTemplate.opsForHash().entries(key);
-
     }
 
     /**
@@ -506,7 +503,6 @@ public class RedisUtil {
     public double hdecr(String key, String item, double by) {
         return redisTemplate.opsForHash().increment(key, item, -by);
     }
-
     // ============================set=============================
 
     /**
@@ -608,7 +604,6 @@ public class RedisUtil {
             return 0;
         }
     }
-
     // ===============================list=================================
 
     /**
@@ -786,11 +781,11 @@ public class RedisUtil {
         log.debug("缓存删除数量：" + count + "个");
         log.debug("--------------------------------------------");
     }
-
     // ============================incr=============================
 
     /**
      * 递增
+     *
      * @param key
      * @return
      */
@@ -800,6 +795,7 @@ public class RedisUtil {
 
     /**
      * 递减
+     *
      * @param key
      * @return
      */

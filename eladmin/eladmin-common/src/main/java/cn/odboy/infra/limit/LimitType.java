@@ -17,6 +17,7 @@ package cn.odboy.infra.limit;
 
 /**
  * 限流枚举
+ *
  * @author /
  */
 public enum LimitType {

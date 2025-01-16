@@ -12,11 +12,10 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
-
     <sql id="Base_Column_List">
-        db_id, name, jdbc_url, pwd, user_name, create_by, update_by, create_time, update_time
+        db_id
+        , name, jdbc_url, pwd, user_name, create_by, update_by, create_time, update_time
     </sql>
-
     <select id="selectDatabases" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>

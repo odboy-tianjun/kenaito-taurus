@@ -1,13 +1,8 @@
 <h1 style="text-align: center">ELADMIN 后台管理系统</h1>
-
 #### 项目简介
-
 一个基于 Spring Boot 2.7.18 、 Mybatis-Plus、 JWT、Spring Security、Redis、Vue的前后端分离的后台管理系统
-
 **开发文档：**  [https://eladmin.vip](https://eladmin.vip)
-
 **体验地址：**  [https://eladmin.vip/demo](https://eladmin.vip/demo)
-
 **账号密码：** `admin / 123456`
 
 #### 项目源码
@@ -15,6 +10,18 @@
 |        | 后端源码(eladmin)                               | 前端源码(eladmin-web)                           |
 |--------|---------------------------------------------|---------------------------------------------|
 | github | https://github.com/odboy-tianjun/eladmin-mp | https://github.com/odboy-tianjun/eladmin-mp |
+
+#### 系统启动效率
+
+| 模块             | 加入项目                                | 启动耗时(seconds) |
+|----------------|-------------------------------------|---------------|
+| eladmin-system | 无                                   | 9.19          |
+| eladmin-system | 分布式quartz                           | 18.637        |
+| eladmin-system | minio                               | 9.19          |
+| eladmin-system | minio、dingtalk                      | 9.262         |
+| eladmin-system | minio、dingtalk、gitlab               | 9.559         |
+| eladmin-system | minio、dingtalk、gitlab、k8s           | 56.945        |
+| eladmin-system | minio、dingtalk、gitlab、k8s、分布式quartz | 72.224        |
 
 #### 主要特性
 
@@ -50,24 +57,16 @@
 项目采用按功能分模块的开发方式，结构如下
 
 - `eladmin-infra-base` 为系统的基础依赖模块
-
 - `eladmin-infra-exception` 为系统的异常处理模块
-
 - `eladmin-common` 为系统的公共模块，各种工具类，公共配置存在该模块
-
 - `eladmin-system` 为系统核心模块也是项目入口模块，也是最终需要打包部署的模块
-
 - `eladmin-logging` 为系统的日志模块，其他模块如果需要记录日志需要引入该模块
-
 - `eladmin-tools` 为第三方工具模块，包含：邮件、七牛云存储、本地存储、支付宝
-
 - `eladmin-generator` 为系统的代码生成模块，支持生成前后端CRUD代码
-
 - `eladmin-gitlab-boot-starter` 为系统支持Gitlab功能的模块
-
 - `eladmin-k8s-boot-starter` 为系统支持Kubernetes功能的模块
-
 - `eladmin-dingtalk-boot-starter` 为系统支持Dingtalk功能的模块
+- `eladmin-minio-boot-starter` 为系统支持Minio功能的模块
 
 #### 详细结构
 
@@ -107,6 +106,11 @@
     - model 模型
     - repository dingtalk控制类
     - util 工具/帮助类
+- eladmin-minio-boot-starter 支持管控Minio
+    - constant 常量
+    - contenxt 自动装配，连接初始化
+    - model 模型
+    - repository minio控制类
 - eladmin-system 系统核心模块（系统启动入口）
     - infra 基础设施层
         - k8s k8s相关
@@ -117,12 +121,9 @@
 ```
 
 #### 特别鸣谢
+
 - 感谢 [elunez](https://github.com/elunez) 大佬提供的前后分离基础框架
-
 - 感谢 [zhy6599](https://gitee.com/zhy6599) 大佬提供的后端运维管理相关功能
-
 - 感谢 [PanJiaChen](https://github.com/PanJiaChen/vue-element-admin) 大佬提供的前端模板
-
 - 感谢 [Moxun](https://github.com/moxun1639) 大佬提供的前端 Curd 通用组件
-
 - 感谢 [j.yao.SUSE](https://github.com/everhopingandwaiting) 大佬提供的匿名接口与Redis限流等功能

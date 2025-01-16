@@ -14,7 +14,6 @@
 *  limitations under the License.
 */
 package ${package}.rest;
-
 import cn.odboy.annotation.Log;
 import ${package}.domain.${className};
 import ${package}.service.${className}Service;
@@ -31,7 +30,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import cn.odboy.model.PageResult;
-
 /**
 * @author ${author}
 * @date ${date}
@@ -41,49 +39,48 @@ import cn.odboy.model.PageResult;
 @Api(tags = "${apiAlias}管理")
 @RequestMapping("/api/${changeClassName}")
 public class ${className}Controller {
-
-    private final ${className}Service ${changeClassName}Service;
-
-    @Log("导出数据")
-    @ApiOperation("导出数据")
-    @GetMapping(value = "/download")
-    @PreAuthorize("@el.check('${changeClassName}:list')")
-    public void export${className}(HttpServletResponse response, ${className}QueryCriteria criteria) throws IOException {
-        ${changeClassName}Service.download(${changeClassName}Service.queryAll(criteria), response);
+private final ${className}Service ${changeClassName}Service;
+@Log("导出数据")
+@ApiOperation("导出数据")
+@GetMapping(value = "/download")
+@PreAuthorize("@el.check('${changeClassName}:list')")
+public void export${className}(HttpServletResponse response, ${className}QueryCriteria criteria) throws IOException {
+${changeClassName}Service.download(${changeClassName}Service.queryAll(criteria), response);
+}
+@GetMapping
+@Log("查询${apiAlias}")
+@ApiOperation("查询${apiAlias}")
+@PreAuthorize("@el.check('${changeClassName}:list')")
+public ResponseEntity
+<PageResult<${className}>> query${className}(${className}QueryCriteria criteria, Page
+<Object> page){
+    return new ResponseEntity<>(${changeClassName}Service.queryAll(criteria,page),HttpStatus.OK);
     }
-
-    @GetMapping
-    @Log("查询${apiAlias}")
-    @ApiOperation("查询${apiAlias}")
-    @PreAuthorize("@el.check('${changeClassName}:list')")
-    public ResponseEntity<PageResult<${className}>> query${className}(${className}QueryCriteria criteria, Page<Object> page){
-        return new ResponseEntity<>(${changeClassName}Service.queryAll(criteria,page),HttpStatus.OK);
-    }
-
     @PostMapping
     @Log("新增${apiAlias}")
     @ApiOperation("新增${apiAlias}")
     @PreAuthorize("@el.check('${changeClassName}:add')")
-    public ResponseEntity<Object> create${className}(@Validated @RequestBody ${className} resources){
+    public ResponseEntity
+    <Object> create${className}(@Validated @RequestBody ${className} resources){
         ${changeClassName}Service.create(resources);
         return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @PutMapping
-    @Log("修改${apiAlias}")
-    @ApiOperation("修改${apiAlias}")
-    @PreAuthorize("@el.check('${changeClassName}:edit')")
-    public ResponseEntity<Object> update${className}(@Validated @RequestBody ${className} resources){
-        ${changeClassName}Service.update(resources);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @DeleteMapping
-    @Log("删除${apiAlias}")
-    @ApiOperation("删除${apiAlias}")
-    @PreAuthorize("@el.check('${changeClassName}:del')")
-    public ResponseEntity<Object> delete${className}(@RequestBody List<${pkColumnType}> ids) {
-        ${changeClassName}Service.deleteAll(ids);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-}
+        }
+        @PutMapping
+        @Log("修改${apiAlias}")
+        @ApiOperation("修改${apiAlias}")
+        @PreAuthorize("@el.check('${changeClassName}:edit')")
+        public ResponseEntity
+        <Object> update${className}(@Validated @RequestBody ${className} resources){
+            ${changeClassName}Service.update(resources);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            @DeleteMapping
+            @Log("删除${apiAlias}")
+            @ApiOperation("删除${apiAlias}")
+            @PreAuthorize("@el.check('${changeClassName}:del')")
+            public ResponseEntity
+            <Object> delete${className}(@RequestBody List<${pkColumnType}> ids) {
+                ${changeClassName}Service.deleteAll(ids);
+                return new ResponseEntity<>(HttpStatus.OK);
+                }
+                }

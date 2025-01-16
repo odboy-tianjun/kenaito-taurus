@@ -15,15 +15,15 @@
  */
 package cn.odboy.modules.maint.rest;
 
+import cn.odboy.annotation.Log;
 import cn.odboy.model.PageResult;
+import cn.odboy.modules.maint.domain.DeployHistory;
+import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryCriteria;
+import cn.odboy.modules.maint.service.DeployHistoryService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import cn.odboy.annotation.Log;
-import cn.odboy.modules.maint.domain.DeployHistory;
-import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryCriteria;
-import cn.odboy.modules.maint.service.DeployHistoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,15 +34,14 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
-* @author zhanghouying
-* @date 2019-08-24
-*/
+ * @author zhanghouying
+ * @date 2019-08-24
+ */
 @RestController
 @RequiredArgsConstructor
 @Api(tags = "运维：部署历史管理")
 @RequestMapping("/api/deployHistory")
 public class DeployHistoryController {
-
     private final DeployHistoryService deployhistoryService;
 
     @ApiOperation("导出部署历史数据")
@@ -55,16 +54,16 @@ public class DeployHistoryController {
     @ApiOperation(value = "查询部署历史")
     @GetMapping
     @PreAuthorize("@el.check('deployHistory:list')")
-    public ResponseEntity<PageResult<DeployHistory>> queryDeployHistory(DeployHistoryQueryCriteria criteria){
+    public ResponseEntity<PageResult<DeployHistory>> queryDeployHistory(DeployHistoryQueryCriteria criteria) {
         Page<Object> page = new Page<>(criteria.getPage(), criteria.getSize());
-        return new ResponseEntity<>(deployhistoryService.queryAll(criteria, page),HttpStatus.OK);
+        return new ResponseEntity<>(deployhistoryService.queryAll(criteria, page), HttpStatus.OK);
     }
 
     @Log("删除DeployHistory")
     @ApiOperation(value = "删除部署历史")
     @DeleteMapping
     @PreAuthorize("@el.check('deployHistory:del')")
-    public ResponseEntity<Object> deleteDeployHistory(@RequestBody Set<String> ids){
+    public ResponseEntity<Object> deleteDeployHistory(@RequestBody Set<String> ids) {
         deployhistoryService.delete(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }

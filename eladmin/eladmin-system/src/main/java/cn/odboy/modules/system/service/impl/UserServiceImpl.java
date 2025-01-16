@@ -55,7 +55,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "user")
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
-
     private final UserMapper userMapper;
     private final UserJobMapper userJobMapper;
     private final UserRoleMapper userRoleMapper;

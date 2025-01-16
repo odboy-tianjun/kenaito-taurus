@@ -15,11 +15,12 @@
  */
 package cn.odboy.modules.maint.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import cn.odboy.modules.maint.domain.Deploy;
 import cn.odboy.modules.maint.domain.dto.DeployQueryCriteria;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 import java.util.Set;
 
@@ -31,7 +32,10 @@ import java.util.Set;
 @Mapper
 public interface DeployMapper extends BaseMapper<Deploy> {
     Long countByAppName(@Param("criteria") DeployQueryCriteria criteria);
+
     List<Deploy> selectDeploys(@Param("criteria") DeployQueryCriteria criteria);
+
     Set<Long> selectDeployIdsByAppIds(@Param("appIds") Set<Long> appIds);
+
     Deploy getDeployById(@Param("deployId") Long deployId);
 }

@@ -15,12 +15,12 @@
  */
 package cn.odboy.modules.system.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import cn.odboy.modules.system.domain.Menu;
 import cn.odboy.modules.system.domain.vo.MenuQueryCriteria;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,11 +32,18 @@ import java.util.Set;
 @Mapper
 public interface MenuMapper extends BaseMapper<Menu> {
     List<Menu> selectMenus(@Param("criteria") MenuQueryCriteria criteria);
+
     int countByPid(@Param("pid") Long pid);
+
     void updateSubMenuCntById(@Param("count") int count, @Param("menuId") Long menuId);
+
     Menu getMenuByTitle(@Param("title") String title);
+
     Menu getMenuByComponentName(@Param("name") String name);
+
     LinkedHashSet<Menu> selectMenusByRoleIdsAndType(@Param("roleIds") Set<Long> roleIds, @Param("type") Integer type);
+
     List<Menu> selectMenusOrderByMenuSort();
+
     List<Menu> selectSubMenusByPid(@Param("pid") Long pid);
 }

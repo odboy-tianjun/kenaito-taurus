@@ -15,11 +15,11 @@
  */
 package cn.odboy.modules.system.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
+import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Dict;
 import cn.odboy.modules.system.domain.vo.DictQueryCriteria;
-import cn.odboy.model.PageResult;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -27,11 +27,10 @@ import java.util.List;
 import java.util.Set;
 
 /**
-* @author Zheng Jie
-* @date 2019-04-10
-*/
+ * @author Zheng Jie
+ * @date 2019-04-10
+ */
 public interface DictService extends IService<Dict> {
-
     /**
      * 分页查询
      *
@@ -43,6 +42,7 @@ public interface DictService extends IService<Dict> {
 
     /**
      * 查询全部数据
+     *
      * @param criteria /
      * @return /
      */
@@ -50,24 +50,28 @@ public interface DictService extends IService<Dict> {
 
     /**
      * 创建
+     *
      * @param resources /
      */
     void create(Dict resources);
 
     /**
      * 编辑
+     *
      * @param resources /
      */
     void update(Dict resources);
 
     /**
      * 删除
+     *
      * @param ids /
      */
     void delete(Set<Long> ids);
 
     /**
      * 导出数据
+     *
      * @param queryAll 待导出的数据
      * @param response /
      * @throws IOException /

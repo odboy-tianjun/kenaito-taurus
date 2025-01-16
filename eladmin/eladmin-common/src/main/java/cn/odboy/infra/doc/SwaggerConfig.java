@@ -13,8 +13,9 @@ package cn.odboy.infra.doc;/*
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-import lombok.RequiredArgsConstructor;
+
 import cn.odboy.util.AnonTagUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -42,15 +43,12 @@ import java.util.stream.Collectors;
 @EnableSwagger2
 @RequiredArgsConstructor
 public class SwaggerConfig {
-
     @Value("${server.servlet.context-path:}")
     private String apiPath;
     @Value("${jwt.header}")
     private String tokenHeader;
-
     @Value("${swagger.enabled}")
     private Boolean enabled;
-
     private final ApplicationContext applicationContext;
 
     @Bean

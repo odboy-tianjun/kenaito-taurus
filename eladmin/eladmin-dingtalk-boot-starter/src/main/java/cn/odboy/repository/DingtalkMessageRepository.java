@@ -1,8 +1,23 @@
+/*
+ *  Copyright 2022-2025 Tian Jun
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package cn.odboy.repository;
 
 import cn.hutool.core.lang.Assert;
 import cn.odboy.context.DingtalkAuthAdmin;
-import cn.odboy.util.DingtalkClientHelper;
+import cn.odboy.util.DingtalkClientConfigFactory;
 import com.aliyun.dingtalkrobot_1_0.models.RobotRecallDingResponse;
 import com.aliyun.dingtalkrobot_1_0.models.RobotSendDingResponse;
 import com.aliyun.dingtalkrobot_1_0.models.RobotSendDingResponseBody;
@@ -160,7 +175,7 @@ public class DingtalkMessageRepository {
         Assert.notEmpty(dingtalkUserIds, "接收人Dingtalk用户Id列表不能为空");
         Assert.checkBetween(dingtalkUserIds.size(), 1, 200, "接收人Dingtalk用户Id列表长度范围1~100");
         try {
-            com.aliyun.dingtalkrobot_1_0.Client client = DingtalkClientHelper.createRobotClient();
+            com.aliyun.dingtalkrobot_1_0.Client client = DingtalkClientConfigFactory.createRobotClient();
             com.aliyun.dingtalkrobot_1_0.models.RobotSendDingHeaders robotSendDingHeaders = new com.aliyun.dingtalkrobot_1_0.models.RobotSendDingHeaders();
             robotSendDingHeaders.xAcsDingtalkAccessToken = dingtalkAuthAdmin.auth();
             com.aliyun.dingtalkrobot_1_0.models.RobotSendDingRequest robotSendDingRequest = new com.aliyun.dingtalkrobot_1_0.models.RobotSendDingRequest()
@@ -201,7 +216,7 @@ public class DingtalkMessageRepository {
     public String revokeDingNotice(String openDingId) {
         Assert.notEmpty(openDingId, "openDingId不能为空");
         try {
-            com.aliyun.dingtalkrobot_1_0.Client client = DingtalkClientHelper.createRobotClient();
+            com.aliyun.dingtalkrobot_1_0.Client client = DingtalkClientConfigFactory.createRobotClient();
             com.aliyun.dingtalkrobot_1_0.models.RobotRecallDingHeaders robotRecallDingHeaders = new com.aliyun.dingtalkrobot_1_0.models.RobotRecallDingHeaders();
             robotRecallDingHeaders.xAcsDingtalkAccessToken = dingtalkAuthAdmin.auth();
             com.aliyun.dingtalkrobot_1_0.models.RobotRecallDingRequest robotRecallDingRequest = new com.aliyun.dingtalkrobot_1_0.models.RobotRecallDingRequest()

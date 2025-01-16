@@ -15,8 +15,8 @@
  */
 package cn.odboy.modules.security.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cn.odboy.infra.exception.handler.ApiError;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -31,7 +31,6 @@ import java.io.IOException;
  */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,

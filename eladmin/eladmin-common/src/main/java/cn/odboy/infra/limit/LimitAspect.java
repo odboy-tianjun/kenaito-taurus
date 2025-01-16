@@ -17,9 +17,9 @@ package cn.odboy.infra.limit;
 
 import cn.hutool.core.util.ObjUtil;
 import cn.odboy.infra.context.RequestHolder;
-import com.google.common.collect.ImmutableList;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.util.StringUtil;
+import com.google.common.collect.ImmutableList;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -31,6 +31,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 
@@ -40,11 +41,10 @@ import java.lang.reflect.Method;
 @Aspect
 @Component
 public class LimitAspect {
-
-    private final RedisTemplate<Object,Object> redisTemplate;
+    private final RedisTemplate<Object, Object> redisTemplate;
     private static final Logger logger = LoggerFactory.getLogger(LimitAspect.class);
 
-    public LimitAspect(RedisTemplate<Object,Object> redisTemplate) {
+    public LimitAspect(RedisTemplate<Object, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -67,9 +67,7 @@ public class LimitAspect {
                 key = signatureMethod.getName();
             }
         }
-
-        ImmutableList<Object> keys = ImmutableList.of(StringUtil.join(limit.prefix(), "_", key, "_", request.getRequestURI().replace("/","_")));
-
+        ImmutableList<Object> keys = ImmutableList.of(StringUtil.join(limit.prefix(), "_", key, "_", request.getRequestURI().replace("/", "_")));
         String luaScript = buildLuaScript();
         RedisScript<Long> redisScript = new DefaultRedisScript<>(luaScript, Long.class);
         Long count = redisTemplate.execute(redisScript, keys, limit.count(), limit.period());

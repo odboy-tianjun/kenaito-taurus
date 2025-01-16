@@ -17,29 +17,30 @@ package cn.odboy.modules.system.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.odboy.util.FileUtil;
-import cn.odboy.util.RedisUtil;
-import cn.odboy.util.StringUtil;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import cn.odboy.infra.context.CacheKey;
+import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.infra.exception.EntityExistException;
 import cn.odboy.modules.system.domain.Menu;
 import cn.odboy.modules.system.domain.Role;
 import cn.odboy.modules.system.domain.User;
 import cn.odboy.modules.system.domain.vo.MenuMetaVo;
+import cn.odboy.modules.system.domain.vo.MenuQueryCriteria;
 import cn.odboy.modules.system.domain.vo.MenuVo;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.infra.exception.EntityExistException;
 import cn.odboy.modules.system.mapper.MenuMapper;
 import cn.odboy.modules.system.mapper.RoleMenuMapper;
 import cn.odboy.modules.system.mapper.UserMapper;
 import cn.odboy.modules.system.service.MenuService;
 import cn.odboy.modules.system.service.RoleService;
-import cn.odboy.modules.system.domain.vo.MenuQueryCriteria;
+import cn.odboy.util.FileUtil;
+import cn.odboy.util.RedisUtil;
+import cn.odboy.util.StringUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -53,29 +54,27 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @CacheConfig(cacheNames = "menu")
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
-
     private final MenuMapper menuMapper;
     private final RoleMenuMapper roleMenuMapper;
     private final UserMapper userMapper;
     private final RoleService roleService;
     private final RedisUtil redisUtil;
-
     private static final String HTTP_PRE = "http://";
     private static final String HTTPS_PRE = "https://";
     private static final String YES_STR = "是";
     private static final String NO_STR = "否";
     private static final String BAD_REQUEST = "外链必须以http://或者https://开头";
-    
+
     @Override
     public List<Menu> queryAll(MenuQueryCriteria criteria, Boolean isQuery) throws Exception {
-        if(Boolean.TRUE.equals(isQuery)){
+        if (Boolean.TRUE.equals(isQuery)) {
             criteria.setPidIsNull(true);
             List<Field> fields = StringUtil.getAllFields(criteria.getClass(), new ArrayList<>());
             for (Field field : fields) {
                 //设置对象的访问权限，保证对private的属性的访问
                 field.setAccessible(true);
                 Object val = field.get(criteria);
-                if("pidIsNull".equals(field.getName())){
+                if ("pidIsNull".equals(field.getName())) {
                     continue;
                 }
                 // 如果有查询条件，则不指定pidIsNull
@@ -96,6 +95,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     /**
      * 用户角色改变时需清理缓存
+     *
      * @param currentUserId /
      * @return /
      */
@@ -111,19 +111,19 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(Menu resources) {
-        if(menuMapper.getMenuByTitle(resources.getTitle()) != null){
-            throw new EntityExistException(Menu.class,"title",resources.getTitle());
+        if (menuMapper.getMenuByTitle(resources.getTitle()) != null) {
+            throw new EntityExistException(Menu.class, "title", resources.getTitle());
         }
-        if(StringUtil.isNotBlank(resources.getComponentName())){
-            if(menuMapper.getMenuByComponentName(resources.getComponentName()) != null){
-                throw new EntityExistException(Menu.class,"componentName",resources.getComponentName());
+        if (StringUtil.isNotBlank(resources.getComponentName())) {
+            if (menuMapper.getMenuByComponentName(resources.getComponentName()) != null) {
+                throw new EntityExistException(Menu.class, "componentName", resources.getComponentName());
             }
         }
         if (Long.valueOf(0L).equals(resources.getPid())) {
             resources.setPid(null);
         }
-        if(resources.getIFrame()){
-            if (!(resources.getPath().toLowerCase().startsWith(HTTP_PRE)||resources.getPath().toLowerCase().startsWith(HTTPS_PRE))) {
+        if (resources.getIFrame()) {
+            if (!(resources.getPath().toLowerCase().startsWith(HTTP_PRE) || resources.getPath().toLowerCase().startsWith(HTTPS_PRE))) {
                 throw new BadRequestException(BAD_REQUEST);
             }
         }
@@ -137,33 +137,29 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(Menu resources) {
-        if(resources.getId().equals(resources.getPid())) {
+        if (resources.getId().equals(resources.getPid())) {
             throw new BadRequestException("上级不能为自己");
         }
         Menu menu = getById(resources.getId());
-        if(resources.getIFrame()){
-            if (!(resources.getPath().toLowerCase().startsWith(HTTP_PRE)||resources.getPath().toLowerCase().startsWith(HTTPS_PRE))) {
+        if (resources.getIFrame()) {
+            if (!(resources.getPath().toLowerCase().startsWith(HTTP_PRE) || resources.getPath().toLowerCase().startsWith(HTTPS_PRE))) {
                 throw new BadRequestException(BAD_REQUEST);
             }
         }
         Menu menu1 = menuMapper.getMenuByTitle(resources.getTitle());
-
-        if(menu1 != null && !menu1.getId().equals(menu.getId())){
-            throw new EntityExistException(Menu.class,"title",resources.getTitle());
+        if (menu1 != null && !menu1.getId().equals(menu.getId())) {
+            throw new EntityExistException(Menu.class, "title", resources.getTitle());
         }
-
-        if(resources.getPid().equals(0L)){
+        if (resources.getPid().equals(0L)) {
             resources.setPid(null);
         }
-
         // 记录的父节点ID
         Long oldPid = menu.getPid();
         Long newPid = resources.getPid();
-
-        if(StringUtil.isNotBlank(resources.getComponentName())){
+        if (StringUtil.isNotBlank(resources.getComponentName())) {
             menu1 = menuMapper.getMenuByComponentName(resources.getComponentName());
-            if(menu1 != null && !menu1.getId().equals(menu.getId())){
-                throw new EntityExistException(Menu.class,"componentName",resources.getComponentName());
+            if (menu1 != null && !menu1.getId().equals(menu.getId())) {
+                throw new EntityExistException(Menu.class, "componentName", resources.getComponentName());
             }
         }
         menu.setTitle(resources.getTitle());
@@ -191,7 +187,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         for (Menu menu : menuList) {
             menuSet.add(menu);
             List<Menu> menus = menuMapper.selectSubMenusByPid(menu.getId());
-            if(menus!=null && menus.size()!=0){
+            if (menus != null && menus.size() != 0) {
                 getChildMenus(menus, menuSet);
             }
         }
@@ -213,7 +209,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     public List<Menu> getMenus(Long pid) {
         List<Menu> menus;
-        if(pid != null && !pid.equals(0L)){
+        if (pid != null && !pid.equals(0L)) {
             menus = menuMapper.selectSubMenusByPid(pid);
         } else {
             menus = menuMapper.selectMenusOrderByMenuSort();
@@ -223,7 +219,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     @Override
     public List<Menu> getSuperior(Menu menu, List<Menu> menus) {
-        if(menu.getPid() == null){
+        if (menu.getPid() == null) {
             menus.addAll(menuMapper.selectMenusOrderByMenuSort());
             return menus;
         }
@@ -249,7 +245,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 }
             }
         }
-        if(trees.size() == 0){
+        if (trees.size() == 0) {
             trees = menus.stream().filter(s -> !ids.contains(s.getId())).collect(Collectors.toList());
         }
         return trees;
@@ -259,35 +255,35 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public List<MenuVo> buildMenus(List<Menu> menus) {
         List<MenuVo> list = new LinkedList<>();
         menus.forEach(menu -> {
-                    if (menu!=null){
+                    if (menu != null) {
                         List<Menu> menuList = menu.getChildren();
                         MenuVo menuVo = new MenuVo();
-                        menuVo.setName(ObjectUtil.isNotEmpty(menu.getComponentName())  ? menu.getComponentName() : menu.getTitle());
+                        menuVo.setName(ObjectUtil.isNotEmpty(menu.getComponentName()) ? menu.getComponentName() : menu.getTitle());
                         // 一级目录需要加斜杠，不然会报警告
-                        menuVo.setPath(menu.getPid() == null ? "/" + menu.getPath() :menu.getPath());
+                        menuVo.setPath(menu.getPid() == null ? "/" + menu.getPath() : menu.getPath());
                         menuVo.setHidden(menu.getHidden());
                         // 如果不是外链
-                        if(!menu.getIFrame()){
-                            if(menu.getPid() == null){
-                                menuVo.setComponent(StringUtil.isEmpty(menu.getComponent())?"Layout":menu.getComponent());
+                        if (!menu.getIFrame()) {
+                            if (menu.getPid() == null) {
+                                menuVo.setComponent(StringUtil.isEmpty(menu.getComponent()) ? "Layout" : menu.getComponent());
                                 // 如果不是一级菜单，并且菜单类型为目录，则代表是多级菜单
-                            }else if(menu.getType() == 0){
-                                menuVo.setComponent(StringUtil.isEmpty(menu.getComponent())?"ParentView":menu.getComponent());
-                            }else if(StringUtil.isNoneBlank(menu.getComponent())){
+                            } else if (menu.getType() == 0) {
+                                menuVo.setComponent(StringUtil.isEmpty(menu.getComponent()) ? "ParentView" : menu.getComponent());
+                            } else if (StringUtil.isNoneBlank(menu.getComponent())) {
                                 menuVo.setComponent(menu.getComponent());
                             }
                         }
-                        menuVo.setMeta(new MenuMetaVo(menu.getTitle(),menu.getIcon(),!menu.getCache()));
-                        if(CollectionUtil.isNotEmpty(menuList)){
+                        menuVo.setMeta(new MenuMetaVo(menu.getTitle(), menu.getIcon(), !menu.getCache()));
+                        if (CollectionUtil.isNotEmpty(menuList)) {
                             menuVo.setAlwaysShow(true);
                             menuVo.setRedirect("noredirect");
                             menuVo.setChildren(buildMenus(menuList));
                             // 处理是一级菜单并且没有子菜单的情况
-                        } else if(menu.getPid() == null){
+                        } else if (menu.getPid() == null) {
                             MenuVo menuVo1 = new MenuVo();
                             menuVo1.setMeta(menuVo.getMeta());
                             // 非外链
-                            if(!menu.getIFrame()){
+                            if (!menu.getIFrame()) {
                                 menuVo1.setPath("index");
                                 menuVo1.setName(menuVo.getName());
                                 menuVo1.setComponent(menuVo.getComponent());
@@ -312,7 +308,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     public void download(List<Menu> menus, HttpServletResponse response) throws IOException {
         List<Map<String, Object>> list = new ArrayList<>();
         for (Menu menu : menus) {
-            Map<String,Object> map = new LinkedHashMap<>();
+            Map<String, Object> map = new LinkedHashMap<>();
             map.put("菜单标题", menu.getTitle());
             map.put("菜单类型", menu.getType() == null ? "目录" : menu.getType() == 1 ? "菜单" : "按钮");
             map.put("权限标识", menu.getPermission());
@@ -325,8 +321,8 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         FileUtil.downloadExcel(list, response);
     }
 
-    private void updateSubCnt(Long menuId){
-        if(menuId != null){
+    private void updateSubCnt(Long menuId) {
+        if (menuId != null) {
             int count = menuMapper.countByPid(menuId);
             menuMapper.updateSubMenuCntById(count, menuId);
         }
@@ -334,9 +330,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     /**
      * 清理缓存
+     *
      * @param id 菜单ID
      */
-    public void delCaches(Long id){
+    public void delCaches(Long id) {
         List<User> users = userMapper.selectUsersByMenuId(id);
         redisUtil.del(CacheKey.MENU_ID + id);
         redisUtil.delByKeys(CacheKey.MENU_USER, users.stream().map(User::getId).collect(Collectors.toSet()));

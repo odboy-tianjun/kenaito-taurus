@@ -15,23 +15,25 @@
  */
 package cn.odboy.modules.system.mapper;
 
+import cn.odboy.modules.system.domain.Job;
+import cn.odboy.modules.system.domain.vo.JobQueryCriteria;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import cn.odboy.modules.system.domain.Job;
-import cn.odboy.modules.system.domain.vo.JobQueryCriteria;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+
 import java.util.List;
 
 /**
-* @author Zheng Jie
-* @date 2023-06-20
-*/
+ * @author Zheng Jie
+ * @date 2023-06-20
+ */
 @Mapper
 public interface JobMapper extends BaseMapper<Job> {
     Job getJobByName(@Param("name") String name);
+
     List<Job> selectJobs(@Param("criteria") JobQueryCriteria criteria);
+
     IPage<Job> selectJobs(@Param("criteria") JobQueryCriteria criteria, Page<Object> page);
 }

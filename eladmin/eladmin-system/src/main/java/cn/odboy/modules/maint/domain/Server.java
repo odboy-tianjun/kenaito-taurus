@@ -36,23 +36,17 @@ import java.util.Objects;
 @Setter
 @TableName("mnt_server")
 public class Server extends MyEntity implements Serializable {
-
     @TableId(value = "server_id", type = IdType.AUTO)
     @ApiModelProperty(value = "ID", hidden = true)
     private Long id;
-
     @ApiModelProperty(value = "服务器名称")
     private String name;
-
     @ApiModelProperty(value = "IP")
     private String ip;
-
     @ApiModelProperty(value = "端口")
     private Integer port;
-
     @ApiModelProperty(value = "账号")
     private String account;
-
     @ApiModelProperty(value = "密码")
     private String password;
 

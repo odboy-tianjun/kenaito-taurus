@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.odboy.modules.quartz.mapper.QuartzJobMapper">
-
     <resultMap id="BaseResultMap" type="cn.odboy.modules.quartz.domain.QuartzJob">
         <id column="job_id" property="id" jdbcType="BIGINT"/>
         <result column="job_name" property="jobName" jdbcType="VARCHAR"/>
@@ -20,11 +19,11 @@
         <result column="create_by" property="createBy" jdbcType="VARCHAR"/>
         <result column="update_by" property="updateBy" jdbcType="VARCHAR"/>
     </resultMap>
-
     <sql id="Base_Column_List">
-        job_id, job_name, bean_name, method_name, params, cron_expression, is_pause, person_in_charge, email, sub_task, pause_after_failure, description, create_time, update_time, create_by, update_by
+        job_id
+        , job_name, bean_name, method_name, params, cron_expression, is_pause, person_in_charge, email, sub_task,
+        pause_after_failure, description, create_time, update_time, create_by, update_by
     </sql>
-
     <select id="selectJobs" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
@@ -39,7 +38,6 @@
         </where>
         ORDER BY job_id DESC
     </select>
-
     <select id="selectActiveJobs" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>

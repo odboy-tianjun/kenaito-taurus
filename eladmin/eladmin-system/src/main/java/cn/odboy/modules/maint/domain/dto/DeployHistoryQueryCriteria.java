@@ -22,24 +22,19 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
-* @author zhanghouying
-* @date 2019-08-24
-*/
+ * @author zhanghouying
+ * @date 2019-08-24
+ */
 @Data
-public class DeployHistoryQueryCriteria{
-
-	@ApiModelProperty(value = "模糊查询")
-	private String blurry;
-
-	@ApiModelProperty(value = "部署ID")
-	private Long deployId;
-
-	@ApiModelProperty(value = "部署时间")
-	private List<Timestamp> deployDate;
-
-	@ApiModelProperty(value = "页码", example = "1")
-	private Integer page = 1;
-
-	@ApiModelProperty(value = "每页数据量", example = "10")
-	private Integer size = 10;
+public class DeployHistoryQueryCriteria {
+    @ApiModelProperty(value = "模糊查询")
+    private String blurry;
+    @ApiModelProperty(value = "部署ID")
+    private Long deployId;
+    @ApiModelProperty(value = "部署时间")
+    private List<Timestamp> deployDate;
+    @ApiModelProperty(value = "页码", example = "1")
+    private Integer page = 1;
+    @ApiModelProperty(value = "每页数据量", example = "10")
+    private Integer size = 10;
 }

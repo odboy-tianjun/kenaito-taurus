@@ -40,7 +40,6 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * @author Zheng Jie
  * @date 2018-11-24
@@ -51,7 +50,6 @@ import java.util.Map;
 @ConditionalOnClass(RedisOperations.class)
 @EnableConfigurationProperties(RedisProperties.class)
 public class RedisConfig extends CachingConfigurerSupport {
-
     /**
      * 设置 redis 数据默认过期时间，默认2小时
      * 设置@cacheable 序列化方式
@@ -98,7 +96,7 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Override
     public KeyGenerator keyGenerator() {
         return (target, method, params) -> {
-            Map<String, Object> container = new HashMap<>(8);
+            Map<String, Object> container = new HashMap<>();
             Class<?> targetClassClass = target.getClass();
             // 类地址
             container.put("class", targetClassClass.toGenericString());
@@ -145,8 +143,4 @@ public class RedisConfig extends CachingConfigurerSupport {
             }
         };
     }
-
 }
-
-
-

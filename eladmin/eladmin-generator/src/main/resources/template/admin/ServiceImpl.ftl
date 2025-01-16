@@ -14,13 +14,12 @@
 *  limitations under the License.
 */
 package ${package}.service.impl;
-
 import ${package}.domain.${className};
 <#if columns??>
     <#list columns as column>
         <#if column.columnKey = 'UNI'>
             <#if column_index = 1>
-import cn.odboy.infra.exception.EntityExistException;
+                import cn.odboy.infra.exception.EntityExistException;
             </#if>
         </#if>
     </#list>
@@ -42,7 +41,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import cn.odboy.model.PageResult;
-
 /**
 * @description 服务实现
 * @author ${author}
@@ -50,56 +48,56 @@ import cn.odboy.model.PageResult;
 **/
 @Service
 @RequiredArgsConstructor
-public class ${className}ServiceImpl extends ServiceImpl<${className}Mapper, ${className}> implements ${className}Service {
-
-    private final ${className}Mapper ${changeClassName}Mapper;
-
-    @Override
-    public PageResult<${className}> queryAll(${className}QueryCriteria criteria, Page<Object> page){
-        return PageUtil.toPage(${changeClassName}Mapper.findAll(criteria, page));
+public class ${className}ServiceImpl extends ServiceImpl
+<${className}Mapper, ${className}> implements ${className}Service {
+private final ${className}Mapper ${changeClassName}Mapper;
+@Override
+public PageResult<${className}> queryAll(${className}QueryCriteria criteria, Page
+<Object> page){
+    return PageUtil.toPage(${changeClassName}Mapper.findAll(criteria, page));
     }
-
     @Override
     public List<${className}> queryAll(${className}QueryCriteria criteria){
-        return ${changeClassName}Mapper.findAll(criteria);
+    return ${changeClassName}Mapper.findAll(criteria);
     }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void create(${className} resources) {
-        save(resources);
+    save(resources);
     }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(${className} resources) {
-        ${className} ${changeClassName} = getById(resources.get${pkCapitalColName}());
-        ${changeClassName}.copy(resources);
-        saveOrUpdate(${changeClassName});
+    ${className} ${changeClassName} = getById(resources.get${pkCapitalColName}());
+    ${changeClassName}.copy(resources);
+    saveOrUpdate(${changeClassName});
     }
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteAll(List<${pkColumnType}> ids) {
-        removeBatchByIds(ids);
+    removeBatchByIds(ids);
     }
-
     @Override
     public void download(List<${className}> all, HttpServletResponse response) throws IOException {
-        List<Map<String, Object>> list = new ArrayList<>();
+    List
+    <Map
+    <String
+            , Object>> list = new ArrayList<>();
         for (${className} ${changeClassName} : all) {
-            Map<String,Object> map = new LinkedHashMap<>();
-        <#list columns as column>
-            <#if column.columnKey != 'PRI'>
-            <#if column.remark != ''>
-            map.put("${column.remark}", ${changeClassName}.get${column.capitalColumnName}());
-            <#else>
-            map.put(" ${column.changeColumnName}",  ${changeClassName}.get${column.capitalColumnName}());
-            </#if>
-            </#if>
-        </#list>
+        Map
+        <String
+                ,Object> map = new LinkedHashMap<>();
+            <#list columns as column>
+                <#if column.columnKey != 'PRI'>
+                    <#if column.remark != ''>
+                        map.put("${column.remark}", ${changeClassName}.get${column.capitalColumnName}());
+                    <#else>
+                        map.put(" ${column.changeColumnName}",  ${changeClassName}.get${column.capitalColumnName}());
+                    </#if>
+                </#if>
+            </#list>
             list.add(map);
-        }
-        FileUtil.downloadExcel(list, response);
-    }
-}
+            }
+            FileUtil.downloadExcel(list, response);
+            }
+            }

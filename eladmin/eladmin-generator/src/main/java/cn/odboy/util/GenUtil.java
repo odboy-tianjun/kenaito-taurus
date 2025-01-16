@@ -21,12 +21,17 @@ import cn.odboy.domain.ColumnInfo;
 import cn.odboy.domain.GenConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static cn.odboy.util.FileUtil.SYS_TEM_DIR;
 
 /**
@@ -38,13 +43,9 @@ import static cn.odboy.util.FileUtil.SYS_TEM_DIR;
 @Slf4j
 @SuppressWarnings({"unchecked", "all"})
 public class GenUtil {
-
     private static final String TIMESTAMP = "Timestamp";
-
     private static final String BIGDECIMAL = "BigDecimal";
-
     public static final String PK = "PRI";
-
     public static final String EXTRA = "auto_increment";
 
     /**
@@ -83,7 +84,7 @@ public class GenUtil {
         List<String> templates = getAdminTemplateNames();
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));
         for (String templateName : templates) {
-            Map<String, Object> map = new HashMap<>(1);
+            Map<String, Object> map = new HashMap<>();
             Template template = engine.getTemplate("admin/" + templateName + ".ftl");
             map.put("content", template.render(genMap));
             map.put("name", templateName.replace("-xml", ".xml"));
@@ -92,7 +93,7 @@ public class GenUtil {
         // 获取前端模版
         templates = getFrontTemplateNames();
         for (String templateName : templates) {
-            Map<String, Object> map = new HashMap<>(1);
+            Map<String, Object> map = new HashMap<>();
             Template template = engine.getTemplate("front/" + templateName + ".ftl");
             map.put(templateName, template.render(genMap));
             map.put("content", template.render(genMap));
@@ -151,10 +152,8 @@ public class GenUtil {
             Template template = engine.getTemplate("admin/" + templateName + ".ftl");
             String rootPath = System.getProperty("user.dir");
             String filePath = getAdminFilePath(templateName, genConfig, genMap.get("className").toString(), rootPath);
-
             assert filePath != null;
             File file = new File(filePath);
-
             // 如果非覆盖生成
             if (!genConfig.getCover() && FileUtil.exist(file)) {
                 continue;
@@ -162,16 +161,13 @@ public class GenUtil {
             // 生成代码
             genFile(file, template, genMap);
         }
-
         // 生成前端代码
         templates = getFrontTemplateNames();
         for (String templateName : templates) {
             Template template = engine.getTemplate("front/" + templateName + ".ftl");
             String filePath = getFrontFilePath(templateName, genConfig.getApiPath(), genConfig.getPath(), genMap.get("changeClassName").toString());
-
             assert filePath != null;
             File file = new File(filePath);
-
             // 如果非覆盖生成
             if (!genConfig.getCover() && FileUtil.exist(file)) {
                 continue;
@@ -184,7 +180,7 @@ public class GenUtil {
     // 获取模版数据
     private static Map<String, Object> getGenMap(List<ColumnInfo> columnInfos, GenConfig genConfig) {
         // 存储模版字段数据
-        Map<String, Object> genMap = new HashMap<>(16);
+        Map<String, Object> genMap = new HashMap<>();
         // 接口别名
         genMap.put("apiAlias", genConfig.getApiAlias());
         // 包名称
@@ -241,9 +237,8 @@ public class GenUtil {
         List<Map<String, Object>> betweens = new ArrayList<>();
         // 存储不为空的字段信息
         List<Map<String, Object>> isNotNullColumns = new ArrayList<>();
-
         for (ColumnInfo column : columnInfos) {
-            Map<String, Object> listMap = new HashMap<>(16);
+            Map<String, Object> listMap = new HashMap<>();
             // 字段描述
             listMap.put("remark", column.getRemark());
             // 字段类型
@@ -279,10 +274,9 @@ public class GenUtil {
             // 主键存在字典
             if (StringUtil.isNotBlank(column.getDictName())) {
                 genMap.put("hasDict", true);
-                if(!dicts.contains(column.getDictName()))
+                if (!dicts.contains(column.getDictName()))
                     dicts.add(column.getDictName());
             }
-
             // 存储字段类型
             listMap.put("columnType", colType);
             // 存储字原始段名称
@@ -352,35 +346,27 @@ public class GenUtil {
         if (!ObjectUtils.isEmpty(genConfig.getPack())) {
             packagePath += genConfig.getPack().replace(".", File.separator) + File.separator;
         }
-
         if ("Entity".equals(templateName)) {
             return packagePath + "domain" + File.separator + className + ".java";
         }
-
         if ("Controller".equals(templateName)) {
             return packagePath + "rest" + File.separator + className + "Controller.java";
         }
-
         if ("Service".equals(templateName)) {
             return packagePath + "service" + File.separator + className + "Service.java";
         }
-
         if ("ServiceImpl".equals(templateName)) {
             return packagePath + "service" + File.separator + "impl" + File.separator + className + "ServiceImpl.java";
         }
-
         if ("QueryCriteria".equals(templateName)) {
             return packagePath + "domain" + File.separator + "vo" + File.separator + className + "QueryCriteria.java";
         }
-
         if ("Mapper".equals(templateName)) {
             return packagePath + "mapper" + File.separator + className + "Mapper.java";
         }
-
         if ("Mapper-xml".equals(templateName)) {
             return mpXmlPath + "mapper" + File.separator + className + "Mapper.xml";
         }
-
         return null;
     }
 
@@ -388,15 +374,12 @@ public class GenUtil {
      * 定义前端文件路径以及名称
      */
     private static String getFrontFilePath(String templateName, String apiPath, String path, String apiName) {
-
         if ("api".equals(templateName)) {
             return apiPath + File.separator + apiName + ".js";
         }
-
         if ("index".equals(templateName)) {
             return path + File.separator + "index.vue";
         }
-
         return null;
     }
 

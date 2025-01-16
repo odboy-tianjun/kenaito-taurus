@@ -26,17 +26,14 @@ public class ElConstant {
      * win 系统
      */
     public static final String WIN = "win";
-
     /**
      * mac 系统
      */
     public static final String MAC = "mac";
-
     /**
      * 管理员
      */
     public static final String ADMIN = "admin";
-
     /**
      * 应用名称
      */

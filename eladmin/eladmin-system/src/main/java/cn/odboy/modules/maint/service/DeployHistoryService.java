@@ -16,10 +16,11 @@
 package cn.odboy.modules.maint.service;
 
 import cn.odboy.model.PageResult;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import cn.odboy.modules.maint.domain.DeployHistory;
 import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryCriteria;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +30,6 @@ import java.util.Set;
  * @author zhanghouying
  */
 public interface DeployHistoryService extends IService<DeployHistory> {
-
     /**
      * 分页查询
      *
@@ -49,18 +49,21 @@ public interface DeployHistoryService extends IService<DeployHistory> {
 
     /**
      * 创建
+     *
      * @param resources /
      */
     void create(DeployHistory resources);
 
     /**
      * 删除
+     *
      * @param ids /
      */
     void delete(Set<String> ids);
 
     /**
      * 导出数据
+     *
      * @param queryAll /
      * @param response /
      * @throws IOException /

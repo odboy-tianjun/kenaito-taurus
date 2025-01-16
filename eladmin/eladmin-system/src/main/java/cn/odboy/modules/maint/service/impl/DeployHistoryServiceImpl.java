@@ -41,7 +41,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class DeployHistoryServiceImpl extends ServiceImpl<DeployHistoryMapper, DeployHistory> implements DeployHistoryService {
-
     private final DeployHistoryMapper deployhistoryMapper;
 
     @Override

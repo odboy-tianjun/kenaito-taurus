@@ -20,6 +20,7 @@ import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import cn.odboy.domain.vo.EmailVo;
+import cn.odboy.infra.context.SpringBeanHolder;
 import cn.odboy.infra.exception.util.ThrowableUtil;
 import cn.odboy.modules.quartz.domain.QuartzJob;
 import cn.odboy.modules.quartz.domain.QuartzLog;
@@ -27,7 +28,6 @@ import cn.odboy.modules.quartz.mapper.QuartzLogMapper;
 import cn.odboy.modules.quartz.service.QuartzJobService;
 import cn.odboy.service.EmailService;
 import cn.odboy.util.RedisUtil;
-import cn.odboy.infra.context.SpringBeanHolder;
 import cn.odboy.util.StringUtil;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
@@ -51,7 +51,6 @@ import java.util.concurrent.Future;
 @Async
 public class ExecutionJob extends QuartzJobBean {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     /**
      * 此处仅供参考，可根据任务执行情况自定义线程池参数
      */
@@ -65,9 +64,7 @@ public class ExecutionJob extends QuartzJobBean {
         QuartzLogMapper quartzLogMapper = SpringBeanHolder.getBean(QuartzLogMapper.class);
         QuartzJobService quartzJobService = SpringBeanHolder.getBean(QuartzJobService.class);
         RedisUtil redisUtil = SpringBeanHolder.getBean(RedisUtil.class);
-
         String uuid = quartzJob.getUuid();
-
         QuartzLog log = new QuartzLog();
         log.setJobName(quartzJob.getJobName());
         log.setBeanName(quartzJob.getBeanName());
@@ -126,7 +123,7 @@ public class ExecutionJob extends QuartzJobBean {
     private EmailVo taskAlarm(QuartzJob quartzJob, String msg) {
         EmailVo emailVo = new EmailVo();
         emailVo.setSubject("定时任务【" + quartzJob.getJobName() + "】执行失败，请尽快处理！");
-        Map<String, Object> data = new HashMap<>(16);
+        Map<String, Object> data = new HashMap<>();
         data.put("task", quartzJob);
         data.put("msg", msg);
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("template", TemplateConfig.ResourceMode.CLASSPATH));

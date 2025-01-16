@@ -2,11 +2,11 @@ package cn.odboy.util;
 
 import org.junit.jupiter.api.Test;
 
-import static cn.odboy.util.EncryptUtil.*;
+import static cn.odboy.util.EncryptUtil.desDecrypt;
+import static cn.odboy.util.EncryptUtil.desEncrypt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EncryptUtilTest {
-
     /**
      * 对称加密
      */

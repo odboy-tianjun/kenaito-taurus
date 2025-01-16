@@ -12,7 +12,8 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="Base_Column_List">
-        content_id, name, size, type, suffix, bucket, url, update_time
+        content_id
+        , name, size, type, suffix, bucket, url, update_time
     </sql>
     <select id="getByName" resultMap="BaseResultMap">
         SELECT

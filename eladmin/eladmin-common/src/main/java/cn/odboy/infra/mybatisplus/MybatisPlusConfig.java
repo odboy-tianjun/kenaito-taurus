@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019-2023 Zheng Jie
+ *  Copyright 2022-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,15 +22,17 @@ import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInt
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
- * @author Zheng Jie
- * @description
- * @date 2023-06-12
- **/
+ * MybatisPlus配置
+ *
+ * @author odboy
+ * @date 2025-01-16
+ */
 @Configuration
+@EnableTransactionManagement
 public class MybatisPlusConfig {
-
     @Bean
     public MybatisPlusInterceptor paginationInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();

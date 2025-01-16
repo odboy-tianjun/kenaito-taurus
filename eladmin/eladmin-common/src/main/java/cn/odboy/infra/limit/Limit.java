@@ -26,7 +26,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Limit {
-
     // 资源名称，用于描述接口功能
     String name() default "";
 
@@ -44,5 +43,4 @@ public @interface Limit {
 
     // 限制类型
     LimitType limitType() default LimitType.CUSTOMER;
-
 }

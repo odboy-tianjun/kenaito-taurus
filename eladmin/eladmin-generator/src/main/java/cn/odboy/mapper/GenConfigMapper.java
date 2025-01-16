@@ -26,6 +26,5 @@ import org.apache.ibatis.annotations.Param;
  */
 @Mapper
 public interface GenConfigMapper extends BaseMapper<GenConfig> {
-
     GenConfig getByTableName(@Param("tableName") String tableName);
 }

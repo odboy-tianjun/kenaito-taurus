@@ -15,12 +15,12 @@
  */
 package cn.odboy.modules.system.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import cn.odboy.modules.system.domain.Role;
 import cn.odboy.modules.system.domain.vo.RoleQueryCriteria;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+
 import java.util.List;
 import java.util.Set;
 
@@ -31,11 +31,18 @@ import java.util.Set;
 @Mapper
 public interface RoleMapper extends BaseMapper<Role> {
     List<Role> selectMetaRoles();
+
     Role getById(@Param("roleId") Long roleId);
+
     Role getByName(@Param("name") String name);
+
     List<Role> selectRoles(@Param("criteria") RoleQueryCriteria criteria);
+
     Long countByBlurry(@Param("criteria") RoleQueryCriteria criteria);
+
     List<Role> selectRolesByUserId(@Param("userId") Long userId);
+
     int countByDeptIds(@Param("deptIds") Set<Long> deptIds);
+
     List<Role> selectRolesByMenuId(@Param("menuId") Long menuId);
 }

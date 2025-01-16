@@ -3,9 +3,9 @@ kind: Service
 metadata:
   labels:
     appName: ${appName}
-    env: ${appEnv}
+    env: ${envCode}
     platform: kenaito-devops
-    resGroup: ${appName}-${appEnv}-srv
+    resGroup: ${appName}-${envCode}-srv
   name: ${serviceName}
   namespace: ${appName}
 spec:
@@ -20,11 +20,11 @@ spec:
   ports:
     - port: 80 # Service端口
       protocol: TCP # 协议
-      targetPort: 7001 # 容器端口
+      targetPort: 28001 # 容器端口
   # 通过标签关联pod
   selector:
     appName: ${appName}
-    resGroup:  ${appName}-${appEnv}-pod
+    resGroup: ${appName}-${envCode}-pod
   # 指定选择后端 Pod 的方法。当 spec.sessionAffinity 设置为 ClientIP 时，来自同一个客户端的请求会被转发到同一个后端 Pod
   sessionAffinity: None
   # 服务类型
