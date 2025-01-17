@@ -1,6 +1,7 @@
-<h1 style="text-align: center">ELADMIN 后台管理系统，首个二开项目</h1>
+<h1 style="text-align: center">ELADMIN 后台管理系统</h1>
 
 #### 项目简介
+
 一个基于 Spring Boot 2.7.18 、 Mybatis-Plus、 JWT、Spring Security、Redis、Vue的前后端分离的后台管理系统
 
 **开发文档：**  [https://eladmin.vip](https://eladmin.vip)
@@ -14,6 +15,18 @@
 |        | 后端源码(eladmin)                               | 前端源码(eladmin-web)                           |
 |--------|---------------------------------------------|---------------------------------------------|
 | github | https://github.com/odboy-tianjun/eladmin-mp | https://github.com/odboy-tianjun/eladmin-mp |
+
+#### 实验环境
+
+> Window10 x64 12核 128G
+
+| 虚拟系统    | 配置    | 平台     | 镜像/版本                                                   | 
+|---------|-------|--------|---------------------------------------------------------|
+| CentOS7 | 1核 4G | docker | registry.cn-hangzhou.aliyuncs.com/zhengqing/mysql:8.0   | 
+| CentOS7 | 1核 4G | docker | registry.cn-hangzhou.aliyuncs.com/zhengqing/redis:7.0.5 |
+| CentOS7 | 2核 6G | -      | GitLab Community Edition v17.7.0                        |
+| CentOS7 | 2核 4G | -      | GitLab Runner v17.7.0，已配置安装Jdk11、Maven3.9.9             |
+| CentOS7 | 6核 8G | -      | K8s v1.28.1，已配置安装Ingress V1.10.1、OpenKruise V1.6.4      |
 
 #### 系统启动效率
 
@@ -123,6 +136,23 @@
         - websocket WebSocket相关
     - modules 系统相关模块(登录授权、系统监控、定时任务等)
 ```
+
+#### Gitlab全自动化构建流程展示
+> 感兴趣的可以参考我的博客进行环境的搭建 https://blog.odboy.cn/%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%BF%90%E7%BB%B4%E5%B9%B3%E5%8F%B0/
+
+![AutoPipeline1](doc/gitlab/AutoPipeline1.png)
+
+![AutoPipeline2](doc/gitlab/AutoPipeline2.png)
+
+![AutoPipeline3](doc/gitlab/AutoPipeline3.png)
+
+![AutoPipeline4](doc/gitlab/AutoPipeline4.png)
+
+![AutoPipeline5](doc/gitlab/AutoPipeline5.png)
+
+![AutoPipeline6](doc/gitlab/AutoPipeline6.png)
+
+![AutoPipeline7](doc/gitlab/AutoPipeline7.png)
 
 #### 特别鸣谢
 
