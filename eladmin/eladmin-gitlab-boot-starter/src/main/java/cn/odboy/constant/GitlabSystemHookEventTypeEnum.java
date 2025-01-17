@@ -19,33 +19,26 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 应用配置
+ * 系统钩子类型
  *
  * @author odboy
- * @date 2024-11-15
+ * @date 2025-01-17
  */
 @Getter
 @AllArgsConstructor
-public enum AppConfigEnum {
-    DEFAULT_BRANCH("master", "仓库默认分支");
+public enum GitlabSystemHookEventTypeEnum {
+    RepositoryUpdate("repository_update", "仓库更新"),
+    Push("push", "提交推送"),
+    MergeRequest("merge_request", "合并请求");
     private final String code;
     private final String desc;
 
-    public static AppConfigEnum getByCode(String code) {
-        for (AppConfigEnum item : AppConfigEnum.values()) {
+    public static GitlabSystemHookEventTypeEnum getByCode(String code) {
+        for (GitlabSystemHookEventTypeEnum item : GitlabSystemHookEventTypeEnum.values()) {
             if (item.code.equals(code)) {
                 return item;
             }
         }
         return null;
-    }
-
-    public static String getDescByCode(String code) {
-        for (AppConfigEnum item : AppConfigEnum.values()) {
-            if (item.code.equals(code)) {
-                return item.getDesc();
-            }
-        }
-        return "";
     }
 }

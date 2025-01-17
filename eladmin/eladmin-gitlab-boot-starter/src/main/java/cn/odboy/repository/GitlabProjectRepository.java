@@ -16,19 +16,20 @@
 package cn.odboy.repository;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.odboy.constant.EnvEnum;
+import cn.odboy.context.GitlabCiFileAdmin;
+import cn.odboy.context.GitlabIgnoreFileAdmin;
 import cn.odboy.model.GitlabProject;
 import com.github.xiaoymin.knife4j.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.constant.GitlabConst;
+import cn.odboy.constant.GitlabBizConst;
 import cn.odboy.context.GitlabAuthAdmin;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.util.ValidationUtil;
 import org.gitlab4j.api.GitLabApi;
+import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.ProjectApi;
-import org.gitlab4j.api.models.AccessLevel;
-import org.gitlab4j.api.models.Namespace;
-import org.gitlab4j.api.models.Project;
-import org.gitlab4j.api.models.Visibility;
+import org.gitlab4j.api.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +50,11 @@ import java.util.stream.Collectors;
 @Component
 public class GitlabProjectRepository {
     @Autowired
-    private GitlabAuthAdmin repository;
+    private GitlabAuthAdmin gitlabAuthAdmin;
+    @Autowired
+    private GitlabIgnoreFileAdmin ignoreFileAdmin;
+    @Autowired
+    private GitlabCiFileAdmin ciFileAdmin;
 
     /**
      * 创建项目 -> ok
@@ -60,37 +65,37 @@ public class GitlabProjectRepository {
     public GitlabProject.CreateResp createProject(GitlabProject.CreateArgs args) {
         ValidationUtil.validate(args);
         String appName = args.getAppName();
-        String newAppName = appName.trim();
+        String newProjectName = appName.trim();
 //        字符串必须以小写字母开头。
 //        字符串中间可以包含小写字母和数字。
 //        - 符号可以出现多次，并且 - 的左右两边都必须是小写字母或数字
-        if (!Pattern.compile(GitlabConst.REGEX_APP_NAME).matcher(newAppName).matches()) {
+        if (!Pattern.compile(GitlabBizConst.REGEX_APP_NAME).matcher(newProjectName).matches()) {
             throw new BadRequestException("应用名称格式不正确, 只能由小写字母、数字与符号-组成");
         }
-        try (GitLabApi client = repository.auth()) {
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             Optional<Project> loadProjectOptional = projectApi.getProjectsStream().filter(f -> f.getPath().equals(args.getAppName())).findFirst();
             if (loadProjectOptional.isPresent()) {
                 throw new BadRequestException("应用名称已存在");
             }
             Project project = new Project();
-            project.setName(StrUtil.isBlank(args.getName()) ? newAppName : args.getName());
-            project.setPath(newAppName);
+            project.setName(StrUtil.isBlank(args.getName()) ? newProjectName : args.getName());
+            project.setPath(newProjectName);
             project.setDescription(args.getDescription());
             project.setVisibility(Visibility.PRIVATE);
             project.setInitializeWithReadme(true);
-            project.setDefaultBranch(GitlabConst.PROJECT_DEFAULT_BRANCH);
+            project.setDefaultBranch(GitlabBizConst.PROJECT_DEFAULT_BRANCH);
             Namespace namespace = client.getNamespaceApi().getNamespace(1L);
             project.setNamespace(namespace);
-            Project newProject = projectApi.createProject(GitlabConst.ROOT_NAMESPACE_ID, project);
-            return transformCreateResp(args, newProject, newAppName);
+            Project newProject = projectApi.createProject(GitlabBizConst.ROOT_NAMESPACE_ID, project);
+            return transformCreateResp(args, newProject, newProjectName);
         } catch (Exception e) {
             log.error("创建应用失败", e);
             throw new BadRequestException("创建应用失败, " + e.getMessage());
         }
     }
 
-    private GitlabProject.CreateResp transformCreateResp(GitlabProject.CreateArgs args, Project newProject, String newAppName) {
+    private GitlabProject.CreateResp transformCreateResp(GitlabProject.CreateArgs args, Project newProject, String newProjectName) {
         GitlabProject.CreateResp createResp = new GitlabProject.CreateResp();
         createResp.setCreatorId(newProject.getCreatorId());
         createResp.setCreatedAt(newProject.getCreatedAt());
@@ -100,7 +105,7 @@ public class GitlabProjectRepository {
         createResp.setVisibility(newProject.getVisibility().name());
         createResp.setHomeUrl(newProject.getWebUrl());
         createResp.setName(args.getName());
-        createResp.setAppName(newAppName);
+        createResp.setAppName(newProjectName);
         createResp.setDescription(args.getDescription());
         return createResp;
     }
@@ -113,7 +118,7 @@ public class GitlabProjectRepository {
      * @param accessLevel 访问级别
      */
     public void addProjectMember(Long projectId, Long userId, AccessLevel accessLevel) {
-        try (GitLabApi client = repository.auth()) {
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             projectApi.addMember(projectId, userId, accessLevel);
         } catch (Exception e) {
@@ -148,7 +153,7 @@ public class GitlabProjectRepository {
      * @param userId    用户id
      */
     public void deleteProjectMember(Long projectId, Long userId) {
-        try (GitLabApi client = repository.auth()) {
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             projectApi.removeMember(projectId, userId);
         } catch (Exception e) {
@@ -182,7 +187,7 @@ public class GitlabProjectRepository {
      * @return /
      */
     public Project describeProjectById(Long projectId) {
-        try (GitLabApi client = repository.auth()) {
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             return projectApi.getProjectsStream().filter(f -> f.getId().equals(projectId)).findFirst().orElse(null);
         } catch (Exception e) {
@@ -197,8 +202,8 @@ public class GitlabProjectRepository {
      * @param appName /
      * @return /
      */
-    public Project describeProjectByAppName(String appName) {
-        try (GitLabApi client = repository.auth()) {
+    public Project describeProjectByProjectName(String appName) {
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             return projectApi.getProjectsStream().filter(f -> f.getPath().equals(appName)).findFirst().orElse(null);
         } catch (Exception e) {
@@ -216,7 +221,7 @@ public class GitlabProjectRepository {
     public List<Project> listProjects(int page) {
         int newPage = page <= 0 ? 1 : page;
         List<Project> list = new ArrayList<>();
-        try (GitLabApi client = repository.auth()) {
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             return projectApi.getProjects(newPage, 100);
         } catch (Exception e) {
@@ -231,7 +236,7 @@ public class GitlabProjectRepository {
      * @param projectId /
      */
     public void deleteProjectById(Long projectId) {
-        try (GitLabApi client = repository.auth()) {
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             projectApi.deleteProject(projectId);
         } catch (Exception e) {
@@ -257,9 +262,9 @@ public class GitlabProjectRepository {
      *
      * @param appName /
      */
-    public void deleteProjectByAppName(String appName) {
-        try (GitLabApi client = repository.auth()) {
-            Project localProject = describeProjectByAppName(appName);
+    public void deleteProjectByProjectName(String appName) {
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
+            Project localProject = describeProjectByProjectName(appName);
             if (localProject == null) {
                 throw new BadRequestException("应用不存在");
             }
@@ -271,11 +276,11 @@ public class GitlabProjectRepository {
         }
     }
 
-    public void deleteProjectsByAppName(List<String> appNames) {
+    public void deleteProjectsByProjectName(List<String> appNames) {
         if (CollUtil.isNotEmpty(appNames)) {
             for (String appName : appNames) {
                 try {
-                    deleteProjectByAppName(appName);
+                    deleteProjectByProjectName(appName);
                 } catch (Exception e) {
                     log.error("根据appName删除应用失败", e);
                 }
@@ -289,14 +294,77 @@ public class GitlabProjectRepository {
      * @param key 关键字
      * @return /
      */
-    public List<Project> searchProject(String key) {
+    public List<Project> searchProjects(String key) {
         List<Project> list = new ArrayList<>();
-        try (GitLabApi client = repository.auth()) {
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             return projectApi.getProjects(key, 1, 20);
         } catch (Exception e) {
             log.error("根据关键字分页获取项目败", e);
             return list;
+        }
+    }
+
+    public void initGitIgnoreFile(Long projectId, String defaultBranchName, String language) {
+        String fileContent = ignoreFileAdmin.getContent(language);
+        if (cn.hutool.core.util.StrUtil.isBlank(language)) {
+            log.error("不支持的语言, 跳过 .gitignore 文件初始化");
+            return;
+        }
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
+            RepositoryFile gitlabAuthAdminFile = new RepositoryFile();
+            gitlabAuthAdminFile.setFilePath(".gitignore");
+            gitlabAuthAdminFile.setContent(fileContent);
+            client.getRepositoryFileApi().createFile(projectId, gitlabAuthAdminFile, defaultBranchName, "init .gitignore");
+            log.info("初始化 .gitignore 文件成功");
+        } catch (GitLabApiException e) {
+            log.error("初始化 .gitignore 文件失败", e);
+        }
+    }
+
+    public void initGitCiFile(Long projectId, String defaultBranch, String language, String appName) {
+        if (cn.hutool.core.util.StrUtil.isBlank(language)) {
+            log.error("不支持的语言, 跳过 .gitlab-ci.yml 文件初始化");
+            return;
+        }
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
+            String fileContent = ciFileAdmin.getCiFileContent(language);
+            RepositoryFile gitlabAuthAdminFile = new RepositoryFile();
+            gitlabAuthAdminFile.setFilePath(".gitlab-ci.yml");
+            gitlabAuthAdminFile.setContent(fileContent);
+            client.getRepositoryFileApi().createFile(projectId, gitlabAuthAdminFile, defaultBranch, "init .gitlab-ci.yml");
+            log.info("初始化 .gitlab-ci.yml 文件成功");
+        } catch (GitLabApiException e) {
+            log.error("初始化 .gitlab-ci.yml 文件失败", e);
+        }
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
+            EnvEnum[] allEnvList = new EnvEnum[]{EnvEnum.Daily, EnvEnum.Stage, EnvEnum.Online};
+            for (EnvEnum envEnum : allEnvList) {
+                String filePath = "Dockerfile_" + envEnum.getCode();
+                try {
+                    String dockerfileContent = ciFileAdmin.getDockerfileContent(language, envEnum);
+                    dockerfileContent = dockerfileContent.replaceAll("#APP_NAME#", appName);
+                    RepositoryFile gitlabAuthAdminFile = new RepositoryFile();
+                    gitlabAuthAdminFile.setFilePath(filePath);
+                    gitlabAuthAdminFile.setContent(dockerfileContent);
+                    client.getRepositoryFileApi().createFile(projectId, gitlabAuthAdminFile, defaultBranch, "init " + filePath);
+                    log.info("初始化 {} 文件成功", filePath);
+                } catch (GitLabApiException e) {
+                    log.error("初始化 {} 文件失败", filePath, e);
+                }
+            }
+        }
+        String releaseFileName = appName + ".release";
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
+            String dockerfileContent = ciFileAdmin.getReleaseFileContent(language);
+            dockerfileContent = dockerfileContent.replaceAll("#APP_NAME#", appName);
+            RepositoryFile gitlabAuthAdminFile = new RepositoryFile();
+            gitlabAuthAdminFile.setFilePath(releaseFileName);
+            gitlabAuthAdminFile.setContent(dockerfileContent);
+            client.getRepositoryFileApi().createFile(projectId, gitlabAuthAdminFile, defaultBranch, "init release");
+            log.info("初始化 release 文件成功");
+        } catch (GitLabApiException e) {
+            log.error("初始化 release 文件失败", e);
         }
     }
 }

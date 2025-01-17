@@ -26,7 +26,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum AppLanguageEnum {
+public enum GitlabProjectLanguageEnum {
     JAVA("java", "Java"),
     PYTHON("python", "Python"),
     GO("golang", "Go"),
@@ -36,8 +36,8 @@ public enum AppLanguageEnum {
     private final String code;
     private final String desc;
 
-    public static AppLanguageEnum getByCode(String code) {
-        for (AppLanguageEnum item : AppLanguageEnum.values()) {
+    public static GitlabProjectLanguageEnum getByCode(String code) {
+        for (GitlabProjectLanguageEnum item : GitlabProjectLanguageEnum.values()) {
             if (item.code.equals(code)) {
                 return item;
             }
@@ -46,7 +46,7 @@ public enum AppLanguageEnum {
     }
 
     public static String getDescByCode(String code) {
-        for (AppLanguageEnum item : AppLanguageEnum.values()) {
+        for (GitlabProjectLanguageEnum item : GitlabProjectLanguageEnum.values()) {
             if (item.code.equals(code)) {
                 return item.getDesc();
             }

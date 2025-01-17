@@ -26,15 +26,15 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum AppLevelEnum {
+public enum GitlabProjectLevelEnum {
     A("a", "核心应用"),
     B("b", "非核心应用"),
     C("c", "边缘应用");
     private final String code;
     private final String desc;
 
-    public static AppLevelEnum getByCode(String code) {
-        for (AppLevelEnum item : AppLevelEnum.values()) {
+    public static GitlabProjectLevelEnum getByCode(String code) {
+        for (GitlabProjectLevelEnum item : GitlabProjectLevelEnum.values()) {
             if (item.code.equals(code)) {
                 return item;
             }
@@ -43,7 +43,7 @@ public enum AppLevelEnum {
     }
 
     public static String getDescByCode(String code) {
-        for (AppLevelEnum item : AppLevelEnum.values()) {
+        for (GitlabProjectLevelEnum item : GitlabProjectLevelEnum.values()) {
             if (item.code.equals(code)) {
                 return item.getDesc();
             }

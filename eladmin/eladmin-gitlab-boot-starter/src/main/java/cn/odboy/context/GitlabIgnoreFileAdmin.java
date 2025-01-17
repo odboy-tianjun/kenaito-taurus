@@ -16,7 +16,7 @@
 package cn.odboy.context;
 
 import cn.hutool.core.io.IoUtil;
-import cn.odboy.constant.AppLanguageEnum;
+import cn.odboy.constant.GitlabProjectLanguageEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ClassPathResource;
@@ -40,10 +40,10 @@ public class GitlabIgnoreFileAdmin implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
-            innerMap.put(AppLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("ignorefile/java.ignore").getInputStream()));
-            innerMap.put(AppLanguageEnum.PYTHON.getCode(), IoUtil.readUtf8(new ClassPathResource("ignorefile/python.ignore").getInputStream()));
-            innerMap.put(AppLanguageEnum.VUE.getCode(), IoUtil.readUtf8(new ClassPathResource("ignorefile/vuejs.ignore").getInputStream()));
-            innerMap.put(AppLanguageEnum.GO.getCode(), IoUtil.readUtf8(new ClassPathResource("ignorefile/go.ignore").getInputStream()));
+            innerMap.put(GitlabProjectLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("ignorefile/java.ignore").getInputStream()));
+            innerMap.put(GitlabProjectLanguageEnum.PYTHON.getCode(), IoUtil.readUtf8(new ClassPathResource("ignorefile/python.ignore").getInputStream()));
+            innerMap.put(GitlabProjectLanguageEnum.VUE.getCode(), IoUtil.readUtf8(new ClassPathResource("ignorefile/vuejs.ignore").getInputStream()));
+            innerMap.put(GitlabProjectLanguageEnum.GO.getCode(), IoUtil.readUtf8(new ClassPathResource("ignorefile/go.ignore").getInputStream()));
             log.info("初始化Gitlab Ignore文件成功");
         } catch (IOException e) {
             log.error("初始化Gitlab Ignore文件失败", e);

@@ -52,18 +52,18 @@ public class LocalStorageServiceImpl extends ServiceImpl<LocalStorageMapper, Loc
     private final FileProperties properties;
 
     @Override
-    public PageResult<LocalStorage> queryAll(LocalStorageQueryCriteria criteria, Page<Object> page) {
+    public PageResult<LocalStorage> searchLocalStorages(LocalStorageQueryCriteria criteria, Page<Object> page) {
         return PageUtil.toPage(localStorageMapper.selectLocalStorages(criteria, page));
     }
 
     @Override
-    public List<LocalStorage> queryAll(LocalStorageQueryCriteria criteria) {
+    public List<LocalStorage> listLocalStorages(LocalStorageQueryCriteria criteria) {
         return localStorageMapper.selectLocalStorages(criteria);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public LocalStorage create(String name, MultipartFile multipartFile) {
+    public LocalStorage createLocalStorage(String name, MultipartFile multipartFile) {
         FileUtil.checkSize(properties.getMaxSize(), multipartFile.getSize());
         String suffix = FileUtil.getExtensionName(multipartFile.getOriginalFilename());
         String type = FileUtil.getFileType(suffix);
@@ -91,7 +91,7 @@ public class LocalStorageServiceImpl extends ServiceImpl<LocalStorageMapper, Loc
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void update(LocalStorage resources) {
+    public void updateLocalStorage(LocalStorage resources) {
         LocalStorage localStorage = getById(resources.getId());
         localStorage.copy(resources);
         saveOrUpdate(localStorage);
@@ -99,7 +99,7 @@ public class LocalStorageServiceImpl extends ServiceImpl<LocalStorageMapper, Loc
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteAll(Long[] ids) {
+    public void deleteLocalStorages(Long[] ids) {
         for (Long id : ids) {
             LocalStorage storage = getById(id);
             FileUtil.del(storage.getPath());

@@ -16,7 +16,7 @@
 package cn.odboy.context;
 
 import cn.hutool.core.io.IoUtil;
-import cn.odboy.constant.AppLanguageEnum;
+import cn.odboy.constant.GitlabProjectLanguageEnum;
 import cn.odboy.constant.EnvEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -45,11 +45,11 @@ public class GitlabCiFileAdmin implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
-            innerCiFileMap.put(AppLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/.gitlab-ci.yml").getInputStream()));
-            innerDockerDailyFileMap.put(AppLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/Dockerfile_daily").getInputStream()));
-            innerDockerStageFileMap.put(AppLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/Dockerfile_stage").getInputStream()));
-            innerDockerOnlineFileMap.put(AppLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/Dockerfile_online").getInputStream()));
-            innerReleaseFileMap.put(AppLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/app.release").getInputStream()));
+            innerCiFileMap.put(GitlabProjectLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/.gitlab-ci.yml").getInputStream()));
+            innerDockerDailyFileMap.put(GitlabProjectLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/Dockerfile_daily").getInputStream()));
+            innerDockerStageFileMap.put(GitlabProjectLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/Dockerfile_stage").getInputStream()));
+            innerDockerOnlineFileMap.put(GitlabProjectLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/Dockerfile_online").getInputStream()));
+            innerReleaseFileMap.put(GitlabProjectLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/app.release").getInputStream()));
             log.info("初始化Gitlab CI文件成功");
         } catch (IOException e) {
             log.error("初始化Gitlab CI文件失败", e);

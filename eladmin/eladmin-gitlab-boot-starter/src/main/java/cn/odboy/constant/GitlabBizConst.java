@@ -21,7 +21,7 @@ package cn.odboy.constant;
  * @author odboy
  * @date 2024-09-09
  */
-public interface GitlabConst {
+public interface GitlabBizConst {
     /**
      * 正则表达式
      */

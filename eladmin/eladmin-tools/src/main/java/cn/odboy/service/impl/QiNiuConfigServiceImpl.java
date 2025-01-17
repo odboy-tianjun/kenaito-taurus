@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class QiNiuConfigServiceImpl extends ServiceImpl<QiniuConfigMapper, QiniuConfig> implements QiNiuConfigService {
     @Override
     @Cacheable(key = "'config'")
-    public QiniuConfig getConfig() {
+    public QiniuConfig describeQiniuConfig() {
         QiniuConfig qiniuConfig = getById(1L);
         return qiniuConfig == null ? new QiniuConfig() : qiniuConfig;
     }
@@ -45,7 +45,7 @@ public class QiNiuConfigServiceImpl extends ServiceImpl<QiniuConfigMapper, Qiniu
     @Override
     @CacheEvict(key = "'config'")
     @Transactional(rollbackFor = Exception.class)
-    public void saveConfig(QiniuConfig qiniuConfig) {
+    public void saveQiniuConfig(QiniuConfig qiniuConfig) {
         qiniuConfig.setId(1L);
         String http = "http://", https = "https://";
         if (!(qiniuConfig.getHost().toLowerCase().startsWith(http) || qiniuConfig.getHost().toLowerCase().startsWith(https))) {
@@ -57,7 +57,7 @@ public class QiNiuConfigServiceImpl extends ServiceImpl<QiniuConfigMapper, Qiniu
     @Override
     @CacheEvict(key = "'config'")
     @Transactional(rollbackFor = Exception.class)
-    public void updateType(String type) {
+    public void modifyQiniuConfigType(String type) {
         QiniuConfig qiniuConfig = getById(1L);
         qiniuConfig.setType(type);
         saveOrUpdate(qiniuConfig);

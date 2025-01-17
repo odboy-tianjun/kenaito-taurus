@@ -19,8 +19,10 @@ import cn.odboy.domain.QiniuConfig;
 import cn.odboy.domain.QiniuContent;
 import cn.odboy.domain.vo.QiniuQueryCriteria;
 import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.mapper.QiniuConfigMapper;
 import cn.odboy.mapper.QiniuContentMapper;
 import cn.odboy.model.PageResult;
+import cn.odboy.service.QiNiuConfigService;
 import cn.odboy.service.QiniuContentService;
 import cn.odboy.util.FileUtil;
 import cn.odboy.util.PageUtil;
@@ -59,22 +61,24 @@ import java.util.Map;
 @CacheConfig(cacheNames = "qiNiu")
 public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, QiniuContent> implements QiniuContentService {
     private final QiniuContentMapper qiniuContentMapper;
+    private final QiNiuConfigService qiNiuConfigService;
     @Value("${qiniu.max-size}")
     private Long maxSize;
 
     @Override
-    public PageResult<QiniuContent> queryAll(QiniuQueryCriteria criteria, Page<Object> page) {
+    public PageResult<QiniuContent> searchQiniuContents(QiniuQueryCriteria criteria, Page<Object> page) {
         return PageUtil.toPage(qiniuContentMapper.selectQiniuContents(criteria, page));
     }
 
     @Override
-    public List<QiniuContent> queryAll(QiniuQueryCriteria criteria) {
+    public List<QiniuContent> listQiniuContents(QiniuQueryCriteria criteria) {
         return qiniuContentMapper.selectQiniuContents(criteria);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public QiniuContent upload(MultipartFile file, QiniuConfig qiniuConfig) {
+    public QiniuContent createQiniuContent(MultipartFile file) {
+        QiniuConfig qiniuConfig = qiNiuConfigService.describeQiniuConfig();
         FileUtil.checkSize(maxSize, file.getSize());
         if (qiniuConfig.getId() == null) {
             throw new BadRequestException("请先添加相应配置，再操作");
@@ -111,7 +115,9 @@ public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, Qin
     }
 
     @Override
-    public String download(QiniuContent content, QiniuConfig config) {
+    public String getDownloadUrl(Long id) {
+        QiniuContent content = getById(id);
+        QiniuConfig config = qiNiuConfigService.describeQiniuConfig();
         String finalUrl;
         String type = "公开";
         if (type.equals(content.getType())) {
@@ -127,8 +133,10 @@ public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, Qin
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void delete(QiniuContent content, QiniuConfig config) {
-        //构造一个带指定Zone对象的配置类
+    public void deleteQiniuContent(Long id) {
+        QiniuContent content = getById(id);
+        QiniuConfig config = qiNiuConfigService.describeQiniuConfig();
+        // 构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(QiNiuUtil.getRegion(config.getZone()));
         Auth auth = Auth.create(config.getAccessKey(), config.getSecretKey());
         BucketManager bucketManager = new BucketManager(auth, cfg);
@@ -143,21 +151,22 @@ public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, Qin
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void synchronize(QiniuConfig config) {
+    public void synchronize() {
+        QiniuConfig config = qiNiuConfigService.describeQiniuConfig();
         if (config.getId() == null) {
             throw new BadRequestException("请先添加相应配置，再操作");
         }
-        //构造一个带指定Zone对象的配置类
+        // 构造一个带指定Zone对象的配置类
         Configuration cfg = new Configuration(QiNiuUtil.getRegion(config.getZone()));
         Auth auth = Auth.create(config.getAccessKey(), config.getSecretKey());
         BucketManager bucketManager = new BucketManager(auth, cfg);
-        //文件名前缀
+        // 文件名前缀
         String prefix = "";
-        //每次迭代的长度限制，最大1000，推荐值 1000
+        // 每次迭代的长度限制，最大1000，推荐值 1000
         int limit = 1000;
-        //指定目录分隔符，列出所有公共前缀（模拟列出目录效果）。缺省值为空字符串
+        // 指定目录分隔符，列出所有公共前缀（模拟列出目录效果）。缺省值为空字符串
         String delimiter = "";
-        //列举空间文件列表
+        // 列举空间文件列表
         BucketManager.FileListIterator fileListIterator = bucketManager.createFileListIterator(config.getBucket(), prefix, limit, delimiter);
         while (fileListIterator.hasNext()) {
             //处理获取的file list结果
@@ -180,9 +189,9 @@ public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, Qin
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteAll(Long[] ids, QiniuConfig config) {
+    public void deleteQiniuContents(Long[] ids) {
         for (Long id : ids) {
-            delete(getById(id), config);
+            deleteQiniuContent(id);
         }
     }
 

@@ -1,68 +1,31 @@
-/*
- *  Copyright 2019-2020 Zheng Jie
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-package cn.odboy.service.impl;
+package cn.odboy.repository;
 
 import cn.hutool.extra.mail.Mail;
 import cn.hutool.extra.mail.MailAccount;
 import cn.odboy.domain.EmailConfig;
 import cn.odboy.domain.vo.EmailVo;
 import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.mapper.EmailConfigMapper;
-import cn.odboy.service.EmailService;
+import cn.odboy.service.EmailConfigService;
 import cn.odboy.util.EncryptUtil;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @author Zheng Jie
- * @date 2018-12-26
+ * 邮箱 控制器
+ *
+ * @author odboy
+ * @date 2025-01-17
  */
-@Service
+@Component
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "email")
-public class EmailServiceImpl extends ServiceImpl<EmailConfigMapper, EmailConfig> implements EmailService {
-    @Override
-    @CachePut(key = "'config'")
+public class EmailRepository {
+    private final EmailConfigService emailConfigService;
     @Transactional(rollbackFor = Exception.class)
-    public EmailConfig config(EmailConfig emailConfig, EmailConfig old) throws Exception {
-        emailConfig.setId(1L);
-        if (!emailConfig.getPass().equals(old.getPass())) {
-            // 对称加密
-            emailConfig.setPass(EncryptUtil.desEncrypt(emailConfig.getPass()));
-        }
-        saveOrUpdate(emailConfig);
-        return emailConfig;
-    }
-
-    @Override
-    @Cacheable(key = "'config'")
-    public EmailConfig find() {
-        EmailConfig emailConfig = getById(1L);
-        return emailConfig == null ? new EmailConfig() : emailConfig;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void send(EmailVo emailVo, EmailConfig emailConfig) {
-        if (emailConfig.getId() == null) {
+    public void send(EmailVo emailVo) {
+        EmailConfig emailConfig = emailConfigService.describeEmailConfig();
+        if (emailConfig.getPass() == null) {
             throw new BadRequestException("请先配置，再操作");
         }
         // 封装

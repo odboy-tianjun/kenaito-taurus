@@ -54,35 +54,35 @@ public class QiniuController {
     private final QiNiuConfigService qiNiuConfigService;
 
     @GetMapping(value = "/config")
-    public ResponseEntity<QiniuConfig> queryQiNiuConfig() {
-        return new ResponseEntity<>(qiNiuConfigService.getConfig(), HttpStatus.OK);
+    public ResponseEntity<QiniuConfig> describeQiniuConfig() {
+        return new ResponseEntity<>(qiNiuConfigService.describeQiniuConfig(), HttpStatus.OK);
     }
 
     @Log("配置七牛云存储")
     @ApiOperation("配置七牛云存储")
     @PutMapping(value = "/config")
-    public ResponseEntity<Object> updateQiNiuConfig(@Validated @RequestBody QiniuConfig qiniuConfig) {
-        qiNiuConfigService.saveConfig(qiniuConfig);
-        qiNiuConfigService.updateType(qiniuConfig.getType());
+    public ResponseEntity<Object> modifyQiniuConfigType(@Validated @RequestBody QiniuConfig qiniuConfig) {
+        qiNiuConfigService.saveQiniuConfig(qiniuConfig);
+        qiNiuConfigService.modifyQiniuConfigType(qiniuConfig.getType());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
-    public void exportQiNiu(HttpServletResponse response, QiniuQueryCriteria criteria) throws IOException {
-        qiniuContentService.downloadList(qiniuContentService.queryAll(criteria), response);
+    public void listQiniuContents(HttpServletResponse response, QiniuQueryCriteria criteria) throws IOException {
+        qiniuContentService.downloadList(qiniuContentService.listQiniuContents(criteria), response);
     }
 
     @ApiOperation("查询文件")
     @GetMapping
-    public ResponseEntity<PageResult<QiniuContent>> queryQiNiu(QiniuQueryCriteria criteria, Page<Object> page) {
-        return new ResponseEntity<>(qiniuContentService.queryAll(criteria, page), HttpStatus.OK);
+    public ResponseEntity<PageResult<QiniuContent>> searchQiniuContents(QiniuQueryCriteria criteria, Page<Object> page) {
+        return new ResponseEntity<>(qiniuContentService.searchQiniuContents(criteria, page), HttpStatus.OK);
     }
 
     @ApiOperation("上传文件")
     @PostMapping
-    public ResponseEntity<Object> uploadQiNiu(@RequestParam MultipartFile file) {
-        QiniuContent qiniuContent = qiniuContentService.upload(file, qiNiuConfigService.getConfig());
+    public ResponseEntity<Object> createQiniuContent(@RequestParam MultipartFile file) {
+        QiniuContent qiniuContent = qiniuContentService.createQiniuContent(file);
         Map<String, Object> map = new HashMap<>();
         map.put("id", qiniuContent.getId());
         map.put("errno", 0);
@@ -93,33 +93,33 @@ public class QiniuController {
     @Log("同步七牛云数据")
     @ApiOperation("同步七牛云数据")
     @PostMapping(value = "/synchronize")
-    public ResponseEntity<Object> synchronizeQiNiu() {
-        qiniuContentService.synchronize(qiNiuConfigService.getConfig());
+    public ResponseEntity<Object> synchronize() {
+        qiniuContentService.synchronize();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Log("下载文件")
     @ApiOperation("下载文件")
     @GetMapping(value = "/download/{id}")
-    public ResponseEntity<Object> downloadQiNiu(@PathVariable Long id) {
+    public ResponseEntity<Object> getDownloadUrl(@PathVariable Long id) {
         Map<String, Object> map = new HashMap<>();
-        map.put("url", qiniuContentService.download(qiniuContentService.getById(id), qiNiuConfigService.getConfig()));
+        map.put("url", qiniuContentService.getDownloadUrl(id));
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @Log("删除文件")
     @ApiOperation("删除文件")
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Object> deleteQiNiu(@PathVariable Long id) {
-        qiniuContentService.delete(qiniuContentService.getById(id), qiNiuConfigService.getConfig());
+    public ResponseEntity<Object> deleteQiniuContent(@PathVariable Long id) {
+        qiniuContentService.deleteQiniuContent(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Log("删除多张图片")
     @ApiOperation("删除多张图片")
     @DeleteMapping
-    public ResponseEntity<Object> deleteAllQiNiu(@RequestBody Long[] ids) {
-        qiniuContentService.deleteAll(ids, qiNiuConfigService.getConfig());
+    public ResponseEntity<Object> deleteQiniuContents(@RequestBody Long[] ids) {
+        qiniuContentService.deleteQiniuContents(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

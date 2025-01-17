@@ -28,19 +28,19 @@ public interface QiNiuConfigService extends IService<QiniuConfig> {
      *
      * @return QiniuConfig
      */
-    QiniuConfig getConfig();
+    QiniuConfig describeQiniuConfig();
 
     /**
      * 保存
      *
      * @param type 类型
      */
-    void saveConfig(QiniuConfig type);
+    void saveQiniuConfig(QiniuConfig type);
 
     /**
      * 更新
      *
      * @param type 类型
      */
-    void updateType(String type);
+    void modifyQiniuConfigType(String type);
 }

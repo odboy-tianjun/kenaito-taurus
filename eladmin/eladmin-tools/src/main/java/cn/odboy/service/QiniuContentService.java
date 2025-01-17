@@ -39,7 +39,7 @@ public interface QiniuContentService extends IService<QiniuContent> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<QiniuContent> queryAll(QiniuQueryCriteria criteria, Page<Object> page);
+    PageResult<QiniuContent> searchQiniuContents(QiniuQueryCriteria criteria, Page<Object> page);
 
     /**
      * 查询全部
@@ -47,48 +47,43 @@ public interface QiniuContentService extends IService<QiniuContent> {
      * @param criteria 条件
      * @return /
      */
-    List<QiniuContent> queryAll(QiniuQueryCriteria criteria);
+    List<QiniuContent> listQiniuContents(QiniuQueryCriteria criteria);
 
     /**
      * 上传文件
      *
      * @param file        文件
-     * @param qiniuConfig 配置
      * @return QiniuContent
      */
-    QiniuContent upload(MultipartFile file, QiniuConfig qiniuConfig);
+    QiniuContent createQiniuContent(MultipartFile file);
 
     /**
      * 下载文件
      *
-     * @param content 文件信息
-     * @param config  配置
+     * @param id 文件id
      * @return String
      */
-    String download(QiniuContent content, QiniuConfig config);
+    String getDownloadUrl(Long id);
 
     /**
      * 删除文件
      *
-     * @param content 文件
-     * @param config  配置
+     * @param id 文件id
      */
-    void delete(QiniuContent content, QiniuConfig config);
+    void deleteQiniuContent(Long id);
 
     /**
      * 同步数据
      *
-     * @param config 配置
      */
-    void synchronize(QiniuConfig config);
+    void synchronize();
 
     /**
      * 删除文件
      *
      * @param ids    文件ID数组
-     * @param config 配置
      */
-    void deleteAll(Long[] ids, QiniuConfig config);
+    void deleteQiniuContents(Long[] ids);
 
     /**
      * 导出数据

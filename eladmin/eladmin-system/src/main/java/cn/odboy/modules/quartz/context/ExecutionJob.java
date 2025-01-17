@@ -26,7 +26,8 @@ import cn.odboy.modules.quartz.domain.QuartzJob;
 import cn.odboy.modules.quartz.domain.QuartzLog;
 import cn.odboy.modules.quartz.mapper.QuartzLogMapper;
 import cn.odboy.modules.quartz.service.QuartzJobService;
-import cn.odboy.service.EmailService;
+import cn.odboy.repository.EmailRepository;
+import cn.odboy.service.EmailConfigService;
 import cn.odboy.util.RedisUtil;
 import cn.odboy.util.StringUtil;
 import org.quartz.JobExecutionContext;
@@ -108,11 +109,11 @@ public class ExecutionJob extends QuartzJobBean {
                 quartzJobService.updateIsPause(quartzJob);
             }
             if (quartzJob.getEmail() != null) {
-                EmailService emailService = SpringBeanHolder.getBean(EmailService.class);
+                EmailRepository emailRepository = SpringBeanHolder.getBean(EmailRepository.class);
                 // 邮箱报警
                 if (StringUtil.isNoneBlank(quartzJob.getEmail())) {
                     EmailVo emailVo = taskAlarm(quartzJob, ThrowableUtil.getStackTrace(e));
-                    emailService.send(emailVo, emailService.find());
+                    emailRepository.send(emailVo);
                 }
             }
         } finally {

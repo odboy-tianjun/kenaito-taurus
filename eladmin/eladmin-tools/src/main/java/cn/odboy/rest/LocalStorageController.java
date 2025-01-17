@@ -51,21 +51,21 @@ public class LocalStorageController {
     @ApiOperation("查询文件")
     @PreAuthorize("@el.check('storage:list')")
     public ResponseEntity<PageResult<LocalStorage>> queryFile(LocalStorageQueryCriteria criteria, Page<Object> page) {
-        return new ResponseEntity<>(localStorageService.queryAll(criteria, page), HttpStatus.OK);
+        return new ResponseEntity<>(localStorageService.searchLocalStorages(criteria, page), HttpStatus.OK);
     }
 
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('storage:list')")
     public void exportFile(HttpServletResponse response, LocalStorageQueryCriteria criteria) throws IOException {
-        localStorageService.download(localStorageService.queryAll(criteria), response);
+        localStorageService.download(localStorageService.listLocalStorages(criteria), response);
     }
 
     @PostMapping
     @ApiOperation("上传文件")
     @PreAuthorize("@el.check('storage:add')")
     public ResponseEntity<Object> createFile(@RequestParam String name, @RequestParam("file") MultipartFile file) {
-        localStorageService.create(name, file);
+        localStorageService.createLocalStorage(name, file);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -77,7 +77,7 @@ public class LocalStorageController {
         if (!FileUtil.IMAGE.equals(FileUtil.getFileType(suffix))) {
             throw new BadRequestException("只能上传图片");
         }
-        LocalStorage localStorage = localStorageService.create(null, file);
+        LocalStorage localStorage = localStorageService.createLocalStorage(null, file);
         return new ResponseEntity<>(localStorage, HttpStatus.OK);
     }
 
@@ -86,7 +86,7 @@ public class LocalStorageController {
     @ApiOperation("修改文件")
     @PreAuthorize("@el.check('storage:edit')")
     public ResponseEntity<Object> updateFile(@Validated @RequestBody LocalStorage resources) {
-        localStorageService.update(resources);
+        localStorageService.updateLocalStorage(resources);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -94,7 +94,7 @@ public class LocalStorageController {
     @DeleteMapping
     @ApiOperation("多选删除")
     public ResponseEntity<Object> deleteFile(@RequestBody Long[] ids) {
-        localStorageService.deleteAll(ids);
+        localStorageService.deleteLocalStorages(ids);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

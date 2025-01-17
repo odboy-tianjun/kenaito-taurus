@@ -19,7 +19,8 @@ import cn.odboy.constant.CodeBiEnum;
 import cn.odboy.constant.CodeEnum;
 import cn.odboy.domain.vo.EmailVo;
 import cn.odboy.modules.system.service.VerifyService;
-import cn.odboy.service.EmailService;
+import cn.odboy.repository.EmailRepository;
+import cn.odboy.service.EmailConfigService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -39,13 +40,13 @@ import java.util.Objects;
 @Api(tags = "系统：验证码管理")
 public class VerifyController {
     private final VerifyService verificationCodeService;
-    private final EmailService emailService;
+    private final EmailRepository emailRepository;
 
     @PostMapping(value = "/resetEmail")
     @ApiOperation("重置邮箱，发送验证码")
     public ResponseEntity<Object> resetEmail(@RequestParam String email) {
         EmailVo emailVo = verificationCodeService.sendEmail(email, CodeEnum.EMAIL_RESET_EMAIL_CODE.getKey());
-        emailService.send(emailVo, emailService.find());
+        emailRepository.send(emailVo);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -53,7 +54,7 @@ public class VerifyController {
     @ApiOperation("重置密码，发送验证码")
     public ResponseEntity<Object> resetPass(@RequestParam String email) {
         EmailVo emailVo = verificationCodeService.sendEmail(email, CodeEnum.EMAIL_RESET_PWD_CODE.getKey());
-        emailService.send(emailVo, emailService.find());
+        emailRepository.send(emailVo);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

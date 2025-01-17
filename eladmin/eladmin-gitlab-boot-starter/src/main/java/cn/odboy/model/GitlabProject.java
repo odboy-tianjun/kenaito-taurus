@@ -22,7 +22,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
- * Gitlab项目
+ * Gitlab 仓库
  *
  * @author odboy
  * @date 2024-09-09

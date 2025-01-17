@@ -38,7 +38,7 @@ public interface LocalStorageService extends IService<LocalStorage> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<LocalStorage> queryAll(LocalStorageQueryCriteria criteria, Page<Object> page);
+    PageResult<LocalStorage> searchLocalStorages(LocalStorageQueryCriteria criteria, Page<Object> page);
 
     /**
      * 查询全部数据
@@ -46,7 +46,7 @@ public interface LocalStorageService extends IService<LocalStorage> {
      * @param criteria 条件
      * @return /
      */
-    List<LocalStorage> queryAll(LocalStorageQueryCriteria criteria);
+    List<LocalStorage> listLocalStorages(LocalStorageQueryCriteria criteria);
 
     /**
      * 上传
@@ -55,21 +55,21 @@ public interface LocalStorageService extends IService<LocalStorage> {
      * @param file 文件
      * @return /
      */
-    LocalStorage create(String name, MultipartFile file);
+    LocalStorage createLocalStorage(String name, MultipartFile file);
 
     /**
      * 编辑
      *
      * @param resources 文件信息
      */
-    void update(LocalStorage resources);
+    void updateLocalStorage(LocalStorage resources);
 
     /**
      * 多选删除
      *
      * @param ids /
      */
-    void deleteAll(Long[] ids);
+    void deleteLocalStorages(Long[] ids);
 
     /**
      * 导出数据
