@@ -155,13 +155,13 @@ public class CmdGenHelper {
                 .mapper("mapper")
                 .serviceImpl("service.impl")
                 .controller("rest")
-                .pathInfo(Collections.singletonMap(OutputFile.xml, "CodeGen\\resources\\mapper"));
+                .pathInfo(Collections.singletonMap(OutputFile.xml, (System.getProperty("os.name").toLowerCase().contains("win") ? "C:\\CodeGen\\resources\\mapper" : "/tmp/CodeGen/resources/mapper")));
     }
 
     private static Consumer<GlobalConfig.Builder> getGlobalConfigConsumer() {
         return globalConfigBuilder -> globalConfigBuilder
                 .enableSwagger()
-                .outputDir(System.getProperty("os.name").toLowerCase().contains("win") ? "C:\\CodeGen" : "/tmp/CodeGen")
+                .outputDir((System.getProperty("os.name").toLowerCase().contains("win") ? "C:\\CodeGen" : "/tmp/CodeGen"))
                 .author("codegen")
                 .commentDate("yyyy-MM-dd")
                 .dateType(DateType.TIME_PACK);

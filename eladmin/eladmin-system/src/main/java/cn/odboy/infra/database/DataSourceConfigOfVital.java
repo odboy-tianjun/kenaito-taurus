@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
@@ -43,37 +42,34 @@ import java.sql.SQLException;
  * 配置数据源
  *
  * @author odboy
- * @date 2025-01-15
+ * @date 2025-01-20
  */
 @Slf4j
 @Configuration
 @MapperScan(
         basePackages = {
-                "cn.odboy.mapper",
-                "cn.odboy.modules.maint.mapper",
-                "cn.odboy.modules.quartz.mapper",
-                "cn.odboy.modules.system.mapper",
+                "cn.odboy.modules.vital.mapper",
         },
-        sqlSessionFactoryRef = "sqlSystemSessionFactorySystem"
+        sqlSessionFactoryRef = "sqlSystemSessionFactoryVital"
 )
-public class DataSourceConfigOfSystem {
-    @Value("${spring.datasource.system.url}")
+public class DataSourceConfigOfVital {
+    @Value("${spring.datasource.vital.url}")
     private String url;
-    @Value("${spring.datasource.system.username}")
+    @Value("${spring.datasource.vital.username}")
     private String username;
-    @Value("${spring.datasource.system.password}")
+    @Value("${spring.datasource.vital.password}")
     private String password;
-    @Value("${spring.datasource.system.driverClassName}")
-    private String driverClasName;
+    @Value("${spring.datasource.vital.driverClassName}")
+    private String driverClassName;
     @Autowired
     private MybatisPlusInterceptor interceptor;
     @Autowired
     private MyMetaObjectHandler metaObjectHandler;
 
     @Bean
-    public DataSource dataSourceSystem() {
+    public DataSource dataSourceVital() {
         DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setDriverClassName(driverClasName);
+        dataSource.setDriverClassName(driverClassName);
         dataSource.setDbType(DbType.mysql);
         dataSource.setUrl(url);
         dataSource.setUsername(username);
@@ -113,7 +109,7 @@ public class DataSourceConfigOfSystem {
     }
 
     @Bean
-    public SqlSessionFactory sqlSystemSessionFactorySystem() throws Exception {
+    public SqlSessionFactory sqlSystemSessionFactoryVital() throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         MybatisConfiguration configuration = new MybatisConfiguration();
         // 开启 Mybatis 二级缓存，默认为 true
@@ -126,7 +122,7 @@ public class DataSourceConfigOfSystem {
         configuration.setMapUnderscoreToCamelCase(true);
         factoryBean.setConfiguration(configuration);
         // 配置数据源
-        factoryBean.setDataSource(dataSourceSystem());
+        factoryBean.setDataSource(dataSourceVital());
         // MyBatis Mapper 所对应的 XML 文件位置
         // Maven 多模块项目的扫描路径需以 classpath*: 开头 （即加载多个 jar 包下的 XML 文件）
         factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/mapper/**/*.xml"));
@@ -148,18 +144,17 @@ public class DataSourceConfigOfSystem {
         globalConfig.setDbConfig(dbConfig);
         factoryBean.setGlobalConfig(globalConfig);
         // 配置插件
-        factoryBean.addPlugins(interceptor);
+        factoryBean.setPlugins(interceptor);
         return factoryBean.getObject();
     }
 
     @Bean
-    public SqlSessionTemplate sqlSessionTemplateSystem() throws Exception {
-        return new SqlSessionTemplate(sqlSystemSessionFactorySystem());
+    public SqlSessionTemplate sqlSessionTemplateVital() throws Exception {
+        return new SqlSessionTemplate(sqlSystemSessionFactoryVital());
     }
 
     @Bean
-    @Primary
-    public DataSourceTransactionManager dataSourceTransactionManagerSystem() {
-        return new DataSourceTransactionManager(dataSourceSystem());
+    public DataSourceTransactionManager dataSourceTransactionManagerVital() {
+        return new DataSourceTransactionManager(dataSourceVital());
     }
 }

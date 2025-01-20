@@ -53,14 +53,14 @@ import java.sql.SQLException;
         sqlSessionFactoryRef = "sqlSystemSessionFactoryDevops"
 )
 public class DataSourceConfigOfDevops {
-    @Value("${spring.profiles.active}")
-    private String activeEnv;
     @Value("${spring.datasource.devops.url}")
     private String url;
     @Value("${spring.datasource.devops.username}")
     private String username;
     @Value("${spring.datasource.devops.password}")
     private String password;
+    @Value("${spring.datasource.devops.driverClassName}")
+    private String driverClasName;
     @Autowired
     private MybatisPlusInterceptor interceptor;
     @Autowired
@@ -69,11 +69,7 @@ public class DataSourceConfigOfDevops {
     @Bean
     public DataSource dataSourceDevops() {
         DruidDataSource dataSource = new DruidDataSource();
-        if (activeEnv.contains(DataSourceConst.DEV)) {
-            dataSource.setDriverClassName(DataSourceConst.SPY_DRIVER_CLASS_NAME);
-        } else {
-            dataSource.setDriverClassName(DataSourceConst.DRIVER_CLASS_NAME);
-        }
+        dataSource.setDriverClassName(driverClasName);
         dataSource.setDbType(DbType.mysql);
         dataSource.setUrl(url);
         dataSource.setUsername(username);

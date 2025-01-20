@@ -30,13 +30,13 @@ import java.util.List;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CodeGenApplicationTests {
-    @Value("${spring.datasource.druid.url}")
+    @Value("${spring.datasource.vital.url}")
     private String databaseUrl;
-    @Value("${spring.datasource.druid.username}")
+    @Value("${spring.datasource.vital.username}")
     private String databaseUsername;
-    @Value("${spring.datasource.druid.password}")
+    @Value("${spring.datasource.vital.password}")
     private String databasePassword;
-    @Value("${spring.datasource.druid.driverClassName}")
+    @Value("${spring.datasource.vital.driverClassName}")
     private String driverClassName;
 
     @Test
@@ -46,9 +46,12 @@ public class CodeGenApplicationTests {
         generator.setDatabaseUsername(databaseUsername);
         generator.setDatabasePassword(databasePassword);
         generator.setDriverClassName(driverClassName);
-        generator.gen("mnt_", List.of(
-                "mnt_app",
-                "mnt_deploy"
+        generator.gen("vital_", List.of(
+                "vital_birth_date",
+                "vital_calendar_dict",
+                "vital_contact_info",
+                "vital_favor_dealing",
+                "vital_pwd_info"
         ));
     }
 
