@@ -17,6 +17,7 @@ package cn.odboy.infra.database;
 
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,14 @@ import org.springframework.context.annotation.Configuration;
  * @date 2025-01-15
  */
 @Configuration
+@MapperScan(basePackages = {
+        "cn.odboy.mapper",
+        "cn.odboy.modules.maint.mapper",
+        "cn.odboy.modules.quartz.mapper",
+        "cn.odboy.modules.system.mapper",
+        "cn.odboy.modules.devops.mapper",
+        "cn.odboy.modules.vital.mapper",
+})
 public class DataSourceDruidMonitor {
     @Bean
     public ServletRegistrationBean<StatViewServlet> statViewServlet() {
