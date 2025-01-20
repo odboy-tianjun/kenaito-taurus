@@ -16,7 +16,7 @@
 package cn.odboy.modules.system.mapper;
 
 import cn.odboy.modules.system.domain.Dict;
-import cn.odboy.modules.system.domain.vo.DictQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DictQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -29,7 +29,7 @@ import java.util.List;
  */
 @Mapper
 public interface DictMapper extends BaseMapper<Dict> {
-    List<Dict> selectDicts(@Param("criteria") DictQueryCriteria criteria);
+    List<Dict> selectDicts(@Param("criteria") DictQueryArgs criteria);
 
-    Long countByBlurry(@Param("criteria") DictQueryCriteria criteria);
+    Long countByBlurry(@Param("criteria") DictQueryArgs criteria);
 }

@@ -17,7 +17,7 @@ package cn.odboy.modules.maint.service.impl;
 
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.Server;
-import cn.odboy.modules.maint.domain.dto.ServerQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.ServerQueryArgs;
 import cn.odboy.modules.maint.mapper.DeployServerMapper;
 import cn.odboy.modules.maint.mapper.ServerMapper;
 import cn.odboy.modules.maint.service.ServerService;
@@ -45,12 +45,12 @@ public class ServerServiceImpl extends ServiceImpl<ServerMapper, Server> impleme
     private final DeployServerMapper deployServerMapper;
 
     @Override
-    public PageResult<Server> queryAll(ServerQueryCriteria criteria, Page<Object> page) {
+    public PageResult<Server> queryAll(ServerQueryArgs criteria, Page<Object> page) {
         return PageUtil.toPage(serverMapper.selectServers(criteria, page));
     }
 
     @Override
-    public List<Server> queryAll(ServerQueryCriteria criteria) {
+    public List<Server> queryAll(ServerQueryArgs criteria) {
         return serverMapper.selectServers(criteria);
     }
 

@@ -59,7 +59,7 @@ public class MybatisHelper {
         try {
             List<Field> fields = getAllFields(clazz, new ArrayList<>());
             for (Field field : fields) {
-                if (!field.isAccessible()) {
+                if (!field.canAccess(clazz)){
                     field.setAccessible(true);
                     MpQuery q = field.getAnnotation(MpQuery.class);
                     if (q != null) {

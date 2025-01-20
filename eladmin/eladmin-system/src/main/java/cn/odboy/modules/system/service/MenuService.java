@@ -16,7 +16,7 @@
 package cn.odboy.modules.system.service;
 
 import cn.odboy.modules.system.domain.Menu;
-import cn.odboy.modules.system.domain.vo.MenuQueryCriteria;
+import cn.odboy.modules.system.domain.vo.MenuQueryArgs;
 import cn.odboy.modules.system.domain.vo.MenuVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -38,7 +38,7 @@ public interface MenuService extends IService<Menu> {
      * @return /
      * @throws Exception /
      */
-    List<Menu> queryAll(MenuQueryCriteria criteria, Boolean isQuery) throws Exception;
+    List<Menu> queryAll(MenuQueryArgs criteria, Boolean isQuery) throws Exception;
 
     /**
      * 根据ID查询

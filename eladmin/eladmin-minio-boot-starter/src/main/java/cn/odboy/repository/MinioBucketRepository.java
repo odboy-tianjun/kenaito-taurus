@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package cn.odboy.repository;
 import cn.odboy.constant.MinioConst;
 import cn.odboy.context.MinioClientAdmin;
 import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.infra.exception.util.MessageFormatterUtil;
+import cn.odboy.infra.exception.util.LoggerFmtUtil;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -62,7 +62,7 @@ public class MinioBucketRepository {
         } catch (Exception e) {
             String message = "创建region={}，bucket={}失败";
             log.error(message, region, bucketName, e);
-            throw new BadRequestException(MessageFormatterUtil.format(message, region, bucketName));
+            throw new BadRequestException(LoggerFmtUtil.format(message, region, bucketName));
         }
     }
 

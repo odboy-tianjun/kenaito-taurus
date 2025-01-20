@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,13 +29,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 public class MinioClientAdmin {
     @Autowired
-    private MinioProperties minioProperties;
+    private MinioProperties properties;
 
     public MinioClient auth() throws Exception {
         try {
+            if (properties.getEnable() == null || !properties.getEnable()) {
+                log.info("================== 未启用Minio功能 ==================");
+                throw new BadRequestException("未启用Minio功能");
+            }
             MinioClient client = MinioClient.builder()
-                    .endpoint(minioProperties.getEndpoint())
-                    .credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
+                    .endpoint(properties.getEndpoint())
+                    .credentials(properties.getAccessKey(), properties.getSecretKey())
                     .build();
             log.info("构建Minio客户端成功");
             return client;

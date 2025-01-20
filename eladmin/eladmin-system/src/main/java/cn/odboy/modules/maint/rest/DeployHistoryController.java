@@ -18,7 +18,7 @@ package cn.odboy.modules.maint.rest;
 import cn.odboy.annotation.Log;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.DeployHistory;
-import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryArgs;
 import cn.odboy.modules.maint.service.DeployHistoryService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -47,14 +47,14 @@ public class DeployHistoryController {
     @ApiOperation("导出部署历史数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('deployHistory:list')")
-    public void exportDeployHistory(HttpServletResponse response, DeployHistoryQueryCriteria criteria) throws IOException {
+    public void exportDeployHistory(HttpServletResponse response, DeployHistoryQueryArgs criteria) throws IOException {
         deployhistoryService.download(deployhistoryService.queryAll(criteria), response);
     }
 
     @ApiOperation(value = "查询部署历史")
     @GetMapping
     @PreAuthorize("@el.check('deployHistory:list')")
-    public ResponseEntity<PageResult<DeployHistory>> queryDeployHistory(DeployHistoryQueryCriteria criteria) {
+    public ResponseEntity<PageResult<DeployHistory>> queryDeployHistory(DeployHistoryQueryArgs criteria) {
         Page<Object> page = new Page<>(criteria.getPage(), criteria.getSize());
         return new ResponseEntity<>(deployhistoryService.queryAll(criteria, page), HttpStatus.OK);
     }

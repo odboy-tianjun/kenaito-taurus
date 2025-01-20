@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package cn.odboy.util;
 
 import cn.odboy.model.MetaOption;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;

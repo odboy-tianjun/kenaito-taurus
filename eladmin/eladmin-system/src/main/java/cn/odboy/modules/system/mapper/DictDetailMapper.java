@@ -16,7 +16,7 @@
 package cn.odboy.modules.system.mapper;
 
 import cn.odboy.modules.system.domain.DictDetail;
-import cn.odboy.modules.system.domain.vo.DictDetailQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DictDetailQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -34,7 +34,7 @@ import java.util.Set;
 public interface DictDetailMapper extends BaseMapper<DictDetail> {
     List<DictDetail> selectDictDetailsByName(@Param("name") String name);
 
-    IPage<DictDetail> selectDictDetails(@Param("criteria") DictDetailQueryCriteria criteria, Page<Object> page);
+    IPage<DictDetail> selectDictDetails(@Param("criteria") DictDetailQueryArgs criteria, Page<Object> page);
 
     void deleteByDictIds(@Param("dictIds") Set<Long> dictIds);
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "minio")
 public class MinioProperties {
+    /**
+     * 是否启用
+     */
+    private Boolean enable;
     /**
      * 客户端连接到 MinIO 服务器的 URL
      */

@@ -16,17 +16,17 @@
 package cn.odboy.service.impl;
 
 import cn.hutool.core.lang.Dict;
+import cn.hutool.core.util.StrUtil;
 import cn.odboy.annotation.Log;
 import cn.odboy.domain.SysLog;
-import cn.odboy.domain.vo.SysLogQueryCriteria;
 import cn.odboy.mapper.SysLogMapper;
 import cn.odboy.model.PageResult;
 import cn.odboy.service.SysLogService;
 import cn.odboy.util.FileUtil;
 import cn.odboy.util.PageUtil;
 import cn.odboy.util.StringUtil;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +35,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -52,47 +52,63 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> implements SysLogService {
     private final SysLogMapper sysLogMapper;
+    /**
+     * 定义敏感字段常量数组
+     */
+    private static final String[] SENSITIVE_KEYS = {"password"};
+
 
     @Override
-    public PageResult<SysLog> queryAll(SysLogQueryCriteria criteria, Page<SysLog> page) {
+    public PageResult<SysLog> queryAll(SysLog.QueryArgs criteria, Page<SysLog> page) {
         return PageUtil.toPage(sysLogMapper.selectLogs(criteria, page));
     }
 
     @Override
-    public List<SysLog> queryAll(SysLogQueryCriteria criteria) {
+    public List<SysLog> queryAll(SysLog.QueryArgs criteria) {
         return sysLogMapper.selectLogs(criteria);
     }
 
     @Override
-    public PageResult<SysLog> queryAllByUser(SysLogQueryCriteria criteria, Page<SysLog> page) {
+    public PageResult<SysLog> queryAllByUser(SysLog.QueryArgs criteria, Page<SysLog> page) {
         return PageUtil.toPage(sysLogMapper.selectLogsByUser(criteria, page));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(String username, String browser, String ip, ProceedingJoinPoint joinPoint, SysLog sysLog) {
+        // 完整的参数校验
         if (sysLog == null) {
             throw new IllegalArgumentException("Log 不能为 null!");
         }
+        if (joinPoint == null) {
+            throw new IllegalArgumentException("JoinPoint 不能为 null!");
+        }
+        
+        // 使用默认值处理空用户名
+        String finalUsername = StrUtil.blankToDefault(username, "anonymous");
+        sysLog.setUsername(finalUsername);
+        
+        // 获取方法签名
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         Log aopLog = method.getAnnotation(Log.class);
         // 方法路径
         String methodName = joinPoint.getTarget().getClass().getName() + "." + signature.getName() + "()";
-        // 描述
-        sysLog.setDescription(aopLog.value());
+        // 获取参数
+        JSONObject params = getParameter(method, joinPoint.getArgs());
+        // 填充基本信息
         sysLog.setRequestIp(ip);
         sysLog.setAddress(StringUtil.getCityInfo(sysLog.getRequestIp()));
         sysLog.setMethod(methodName);
-        sysLog.setUsername(username);
-        sysLog.setParams(getParameter(method, joinPoint.getArgs()));
-        // 记录登录用户，隐藏密码信息
-        if ("login".equals(signature.getName()) && StringUtil.isNotEmpty(sysLog.getParams())) {
-            JSONObject obj = JSON.parseObject(sysLog.getParams());
-            sysLog.setUsername(obj.getString("username"));
-            sysLog.setParams(JSON.toJSONString(Dict.create().set("username", sysLog.getUsername())));
-        }
+        sysLog.setParams(JSON.toJSONString(params));
         sysLog.setBrowser(browser);
+        sysLog.setDescription(aopLog.value());
+
+        // 如果没有获取到用户名，尝试从参数中获取
+        if(StrUtil.isBlank(sysLog.getUsername())){
+            sysLog.setUsername(params.getString("username"));
+        }
+
         // 保存
         save(sysLog);
     }
@@ -100,35 +116,40 @@ public class SysLogServiceImpl extends ServiceImpl<SysLogMapper, SysLog> impleme
     /**
      * 根据方法和传入的参数获取请求参数
      */
-    private String getParameter(Method method, Object[] args) {
-        List<Object> argList = new ArrayList<>();
+    private JSONObject getParameter(Method method, Object[] args) {
+        JSONObject params = new JSONObject();
         Parameter[] parameters = method.getParameters();
         for (int i = 0; i < parameters.length; i++) {
-            // 过滤掉不能序列化的类型: MultiPartFile
+            // 过滤掉 MultiPartFile
             if (args[i] instanceof MultipartFile) {
                 continue;
             }
-            //将RequestBody注解修饰的参数作为请求参数
+            // 过滤掉 HttpServletResponse
+            if (args[i] instanceof HttpServletResponse) {
+                continue;
+            }
+            // 过滤掉 HttpServletRequest
+            if (args[i] instanceof HttpServletRequest) {
+                continue;
+            }
+            // 将RequestBody注解修饰的参数作为请求参数
             RequestBody requestBody = parameters[i].getAnnotation(RequestBody.class);
             if (requestBody != null) {
-                argList.add(args[i]);
-            }
-            //将RequestParam注解修饰的参数作为请求参数
-            RequestParam requestParam = parameters[i].getAnnotation(RequestParam.class);
-            if (requestParam != null) {
-                Map<String, Object> map = new HashMap<>();
+                params.putAll((JSONObject) JSON.toJSON(args[i]));
+            } else {
                 String key = parameters[i].getName();
-                if (!StringUtil.isEmpty(requestParam.value())) {
-                    key = requestParam.value();
-                }
-                map.put(key, args[i]);
-                argList.add(map);
+                params.put(key, args[i]);
             }
         }
-        if (argList.isEmpty()) {
-            return "";
+        // 遍历敏感字段数组并替换值
+        Set<String> keys = params.keySet();
+        for (String key : SENSITIVE_KEYS) {
+            if (keys.contains(key)) {
+                params.put(key, "******");
+            }
         }
-        return argList.size() == 1 ? JSON.toJSONString(argList.get(0)) : JSON.toJSONString(argList);
+        // 返回参数
+        return params;
     }
 
     @Override

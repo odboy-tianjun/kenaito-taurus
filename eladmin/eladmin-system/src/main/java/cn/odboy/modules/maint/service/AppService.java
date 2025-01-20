@@ -17,7 +17,7 @@ package cn.odboy.modules.maint.service;
 
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.App;
-import cn.odboy.modules.maint.domain.dto.AppQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.AppQueryArgs;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -38,7 +38,7 @@ public interface AppService extends IService<App> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<App> queryAll(AppQueryCriteria criteria, Page<Object> page);
+    PageResult<App> queryAll(AppQueryArgs criteria, Page<Object> page);
 
     /**
      * 查询全部数据
@@ -46,7 +46,7 @@ public interface AppService extends IService<App> {
      * @param criteria 条件
      * @return /
      */
-    List<App> queryAll(AppQueryCriteria criteria);
+    List<App> queryAll(AppQueryArgs criteria);
 
     /**
      * 创建

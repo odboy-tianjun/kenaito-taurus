@@ -67,19 +67,20 @@ public class LocalStorageServiceImpl extends ServiceImpl<LocalStorageMapper, Loc
         FileUtil.checkSize(properties.getMaxSize(), multipartFile.getSize());
         String suffix = FileUtil.getExtensionName(multipartFile.getOriginalFilename());
         String type = FileUtil.getFileType(suffix);
+        String size = FileUtil.getSize(multipartFile.getSize());
+        String filename = StringUtil.isBlank(name) ? FileUtil.getFileNameNoEx(multipartFile.getOriginalFilename()) : name;
         File file = FileUtil.upload(multipartFile, properties.getPath().getPath() + type + File.separator);
         if (ObjectUtil.isNull(file)) {
             throw new BadRequestException("上传失败");
         }
         try {
-            name = StringUtil.isBlank(name) ? FileUtil.getFileNameNoEx(multipartFile.getOriginalFilename()) : name;
             LocalStorage localStorage = new LocalStorage(
                     file.getName(),
-                    name,
+                    filename,
                     suffix,
                     file.getPath(),
                     type,
-                    FileUtil.getSize(multipartFile.getSize())
+                    size
             );
             save(localStorage);
             return localStorage;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import cn.odboy.constant.DingtalkProcessInstanceResultEnum;
 import cn.odboy.context.DingtalkAuthAdmin;
 import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.infra.exception.util.MessageFormatterUtil;
+import cn.odboy.infra.exception.util.LoggerFmtUtil;
 import cn.odboy.model.DingtalkWorkflow;
 import cn.odboy.util.DingtalkClientConfigFactory;
 import cn.odboy.util.ValidationUtil;
@@ -83,7 +83,7 @@ public class DingtalkWorkflowRepository {
             if (!com.aliyun.teautil.Common.empty(teaException.code) && !com.aliyun.teautil.Common.empty(teaException.message)) {
                 String exceptionMessage = "创建审批流失败, code={}, message={}";
                 log.error(exceptionMessage, teaException.code, teaException.message, teaException);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, teaException.code, teaException.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, teaException.code, teaException.message));
             }
             String exceptionMessage = "创建审批流失败";
             log.error(exceptionMessage, teaException);
@@ -93,7 +93,7 @@ public class DingtalkWorkflowRepository {
             if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
                 String exceptionMessage = "创建审批流失败, code={}, message={}";
                 log.error(exceptionMessage, err.code, err.message, err);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, err.code, err.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, err.code, err.message));
             }
             String exceptionMessage = "创建审批流失败";
             log.error(exceptionMessage, exception);
@@ -122,7 +122,7 @@ public class DingtalkWorkflowRepository {
             if (!com.aliyun.teautil.Common.empty(teaException.code) && !com.aliyun.teautil.Common.empty(teaException.message)) {
                 String exceptionMessage = "获取审批流实例详情失败, code={}, message={}";
                 log.error(exceptionMessage, teaException.code, teaException.message, teaException);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, teaException.code, teaException.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, teaException.code, teaException.message));
             }
             String exceptionMessage = "获取审批流实例详情失败";
             log.error(exceptionMessage, teaException);
@@ -132,7 +132,7 @@ public class DingtalkWorkflowRepository {
             if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
                 String exceptionMessage = "获取审批流实例详情失败, code={}, message={}";
                 log.error(exceptionMessage, err.code, err.message, err);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, err.code, err.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, err.code, err.message));
             }
             String exceptionMessage = "获取审批流实例详情失败";
             log.error(exceptionMessage, exception);
@@ -170,7 +170,7 @@ public class DingtalkWorkflowRepository {
             if (!com.aliyun.teautil.Common.empty(teaException.code) && !com.aliyun.teautil.Common.empty(teaException.message)) {
                 String exceptionMessage = "改变审批流节点审批状态失败, code={}, message={}";
                 log.error(exceptionMessage, teaException.code, teaException.message, teaException);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, teaException.code, teaException.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, teaException.code, teaException.message));
             }
             String exceptionMessage = "改变审批流节点审批状态失败";
             log.error(exceptionMessage, teaException);
@@ -180,7 +180,7 @@ public class DingtalkWorkflowRepository {
             if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
                 String exceptionMessage = "撤回ding消息失败, code={}, message={}";
                 log.error(exceptionMessage, err.code, err.message, err);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, err.code, err.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, err.code, err.message));
             }
             String exceptionMessage = "改变审批流节点审批状态失败";
             log.error(exceptionMessage, exception);
@@ -212,7 +212,7 @@ public class DingtalkWorkflowRepository {
             if (!com.aliyun.teautil.Common.empty(teaException.code) && !com.aliyun.teautil.Common.empty(teaException.message)) {
                 String exceptionMessage = "撤销审批流实例失败, code={}, message={}";
                 log.error(exceptionMessage, teaException.code, teaException.message, teaException);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, teaException.code, teaException.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, teaException.code, teaException.message));
             }
             String exceptionMessage = "撤销审批流实例失败";
             log.error(exceptionMessage, teaException);
@@ -222,7 +222,7 @@ public class DingtalkWorkflowRepository {
             if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
                 String exceptionMessage = "撤销审批流实例失败, code={}, message={}";
                 log.error(exceptionMessage, err.code, err.message, err);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, err.code, err.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, err.code, err.message));
             }
             String exceptionMessage = "撤销审批流实例失败";
             log.error(exceptionMessage, exception);

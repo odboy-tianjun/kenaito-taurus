@@ -19,7 +19,7 @@ import cn.odboy.annotation.Log;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Job;
-import cn.odboy.modules.system.domain.vo.JobQueryCriteria;
+import cn.odboy.modules.system.domain.vo.JobQueryArgs;
 import cn.odboy.modules.system.service.JobService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -50,14 +50,14 @@ public class JobController {
     @ApiOperation("导出岗位数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('job:list')")
-    public void exportJob(HttpServletResponse response, JobQueryCriteria criteria) throws IOException {
+    public void exportJob(HttpServletResponse response, JobQueryArgs criteria) throws IOException {
         jobService.download(jobService.queryAll(criteria), response);
     }
 
     @ApiOperation("查询岗位")
     @GetMapping
     @PreAuthorize("@el.check('job:list','user:list')")
-    public ResponseEntity<PageResult<Job>> queryJob(JobQueryCriteria criteria, Page<Object> page) {
+    public ResponseEntity<PageResult<Job>> queryJob(JobQueryArgs criteria, Page<Object> page) {
         return new ResponseEntity<>(jobService.queryAll(criteria, page), HttpStatus.OK);
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,23 +30,23 @@ import java.util.Map;
  */
 public class K8sResourceNameUtil {
     public static String getStatefulSetName(String appName, String envCode) {
-        return String.format("%s-%s-sts", appName, envCode);
+        return String.format("devops-sts-%s-%s", appName, envCode);
     }
 
     public static String getDeploymentName(String appName, String envCode) {
-        return String.format("%s-%s-dep", appName, envCode);
+        return String.format("devops-dep-%s-%s", appName, envCode);
     }
 
     public static String getServiceName(String appName, String envCode) {
-        return String.format("%s-%s-svc", appName, envCode);
+        return String.format("devops-svc-%s-%s", appName, envCode);
     }
 
     public static String getIngressName(String appName, String envCode) {
-        return String.format("%s-%s-ing", appName, envCode);
+        return String.format("devops-ing-%s-%s", appName, envCode);
     }
 
     public static String getPodName(String appName, String envCode) {
-        return String.format("%s-%s-pod", appName, envCode);
+        return String.format("devops-pod-%s-%s", appName, envCode);
     }
 
     public static String genLabelSelectorExpression(Map<String, String> labelSelector) {
@@ -68,7 +68,7 @@ public class K8sResourceNameUtil {
     }
 
     public static Map<String, String> getLabelsMap(String appName) {
-        return new HashMap<String, String>(1) {{
+        return new HashMap<>(1) {{
             put(K8sAppLabelEnum.AppName.getCode(), appName);
         }};
     }

@@ -19,7 +19,7 @@ import cn.odboy.model.PageResult;
 import cn.odboy.modules.security.service.dto.AuthorityDto;
 import cn.odboy.modules.system.domain.Role;
 import cn.odboy.modules.system.domain.User;
-import cn.odboy.modules.system.domain.vo.RoleQueryCriteria;
+import cn.odboy.modules.system.domain.vo.RoleQueryArgs;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -99,7 +99,7 @@ public interface RoleService extends IService<Role> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<Role> queryAll(RoleQueryCriteria criteria, Page<Object> page);
+    PageResult<Role> queryAll(RoleQueryArgs criteria, Page<Object> page);
 
     /**
      * 查询全部
@@ -107,7 +107,7 @@ public interface RoleService extends IService<Role> {
      * @param criteria 条件
      * @return /
      */
-    List<Role> queryAll(RoleQueryCriteria criteria);
+    List<Role> queryAll(RoleQueryArgs criteria);
 
     /**
      * 导出数据

@@ -19,7 +19,7 @@ import cn.odboy.annotation.Log;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.Database;
-import cn.odboy.modules.maint.domain.dto.DatabaseQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DatabaseQueryArgs;
 import cn.odboy.modules.maint.service.DatabaseService;
 import cn.odboy.modules.maint.util.SqlUtil;
 import cn.odboy.util.FileUtil;
@@ -55,14 +55,14 @@ public class DatabaseController {
     @ApiOperation("导出数据库数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('database:list')")
-    public void exportDatabase(HttpServletResponse response, DatabaseQueryCriteria criteria) throws IOException {
+    public void exportDatabase(HttpServletResponse response, DatabaseQueryArgs criteria) throws IOException {
         databaseService.download(databaseService.queryAll(criteria), response);
     }
 
     @ApiOperation(value = "查询数据库")
     @GetMapping
     @PreAuthorize("@el.check('database:list')")
-    public ResponseEntity<PageResult<Database>> queryDatabase(DatabaseQueryCriteria criteria) {
+    public ResponseEntity<PageResult<Database>> queryDatabase(DatabaseQueryArgs criteria) {
         Page<Object> page = new Page<>(criteria.getPage(), criteria.getSize());
         return new ResponseEntity<>(databaseService.queryAll(criteria, page), HttpStatus.OK);
     }

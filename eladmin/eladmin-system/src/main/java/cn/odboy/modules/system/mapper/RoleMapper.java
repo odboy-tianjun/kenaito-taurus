@@ -16,7 +16,7 @@
 package cn.odboy.modules.system.mapper;
 
 import cn.odboy.modules.system.domain.Role;
-import cn.odboy.modules.system.domain.vo.RoleQueryCriteria;
+import cn.odboy.modules.system.domain.vo.RoleQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -36,9 +36,9 @@ public interface RoleMapper extends BaseMapper<Role> {
 
     Role getByName(@Param("name") String name);
 
-    List<Role> selectRoles(@Param("criteria") RoleQueryCriteria criteria);
+    List<Role> selectRoles(@Param("criteria") RoleQueryArgs criteria);
 
-    Long countByBlurry(@Param("criteria") RoleQueryCriteria criteria);
+    Long countByBlurry(@Param("criteria") RoleQueryArgs criteria);
 
     List<Role> selectRolesByUserId(@Param("userId") Long userId);
 

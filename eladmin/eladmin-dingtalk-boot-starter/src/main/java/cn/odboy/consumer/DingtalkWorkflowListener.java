@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.dingtalk.open.app.api.GenericEventListener;
 import com.dingtalk.open.app.api.OpenDingTalkStreamClientBuilder;
 import com.dingtalk.open.app.api.security.AuthClientCredential;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 
 /**
  * 审批流 Stream监听
@@ -35,10 +36,15 @@ import lombok.extern.slf4j.Slf4j;
 public class DingtalkWorkflowListener {
     private final DingtalkProperties dingtalkProperties;
 
-    public DingtalkWorkflowListener(DingtalkProperties dingtalkProperties, GenericEventListener listener) {
+    public DingtalkWorkflowListener(DingtalkProperties dingtalkProperties, Environment environment, GenericEventListener listener) {
         this.dingtalkProperties = dingtalkProperties;
         if (listener == null) {
-            log.warn("listener为空，不连接DingtalkStream服务");
+            log.info("listener为空，不连接DingtalkStream服务");
+            return;
+        }
+        String propertyValue = environment.getProperty("spring.profiles.active");
+        if (propertyValue == null || !"prod".equals(propertyValue)) {
+            log.info("非生产环境，不连接DingtalkStream服务");
             return;
         }
         int maxRetryCnt = 30;

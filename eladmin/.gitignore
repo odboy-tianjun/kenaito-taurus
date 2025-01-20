@@ -5,4 +5,5 @@
 */target/*
 */*.iml
 /.gradle/
-/application.pid
+.DS_Store
+application.pid

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import cn.odboy.constant.GitlabSystemHookEventTypeEnum;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.infra.security.annotation.AnonymousAccess;
 import cn.odboy.model.GitlabSystemHook;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import org.gitlab4j.api.webhook.MergeRequestEvent;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

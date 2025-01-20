@@ -19,7 +19,7 @@ import cn.odboy.annotation.Log;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.Deploy;
 import cn.odboy.modules.maint.domain.DeployHistory;
-import cn.odboy.modules.maint.domain.dto.DeployQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DeployQueryArgs;
 import cn.odboy.modules.maint.service.DeployService;
 import cn.odboy.util.FileUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -57,14 +57,14 @@ public class DeployController {
     @ApiOperation("导出部署数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('database:list')")
-    public void exportDeployData(HttpServletResponse response, DeployQueryCriteria criteria) throws IOException {
+    public void exportDeployData(HttpServletResponse response, DeployQueryArgs criteria) throws IOException {
         deployService.download(deployService.queryAll(criteria), response);
     }
 
     @ApiOperation(value = "查询部署")
     @GetMapping
     @PreAuthorize("@el.check('deploy:list')")
-    public ResponseEntity<PageResult<Deploy>> queryDeployData(DeployQueryCriteria criteria) {
+    public ResponseEntity<PageResult<Deploy>> queryDeployData(DeployQueryArgs criteria) {
         Page<Object> page = new Page<>(criteria.getPage(), criteria.getSize());
         return new ResponseEntity<>(deployService.queryAll(criteria, page), HttpStatus.OK);
     }

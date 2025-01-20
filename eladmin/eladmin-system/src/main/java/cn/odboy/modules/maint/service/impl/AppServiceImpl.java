@@ -19,7 +19,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.App;
-import cn.odboy.modules.maint.domain.dto.AppQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.AppQueryArgs;
 import cn.odboy.modules.maint.mapper.AppMapper;
 import cn.odboy.modules.maint.mapper.DeployMapper;
 import cn.odboy.modules.maint.mapper.DeployServerMapper;
@@ -48,12 +48,12 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     private final DeployServerMapper deployServerMapper;
 
     @Override
-    public PageResult<App> queryAll(AppQueryCriteria criteria, Page<Object> page) {
+    public PageResult<App> queryAll(AppQueryArgs criteria, Page<Object> page) {
         return PageUtil.toPage(appMapper.selectApps(criteria, page));
     }
 
     @Override
-    public List<App> queryAll(AppQueryCriteria criteria) {
+    public List<App> queryAll(AppQueryArgs criteria) {
         return appMapper.selectApps(criteria);
     }
 

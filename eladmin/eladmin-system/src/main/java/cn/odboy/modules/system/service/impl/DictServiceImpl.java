@@ -20,7 +20,7 @@ import cn.odboy.infra.context.CacheKey;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Dict;
 import cn.odboy.modules.system.domain.DictDetail;
-import cn.odboy.modules.system.domain.vo.DictQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DictQueryArgs;
 import cn.odboy.modules.system.mapper.DictDetailMapper;
 import cn.odboy.modules.system.mapper.DictMapper;
 import cn.odboy.modules.system.service.DictService;
@@ -51,7 +51,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     private final DictDetailMapper deleteDetail;
 
     @Override
-    public PageResult<Dict> queryAll(DictQueryCriteria criteria, Page<Object> page) {
+    public PageResult<Dict> queryAll(DictQueryArgs criteria, Page<Object> page) {
         criteria.setOffset(page.offset());
         List<Dict> dicts = dictMapper.selectDicts(criteria);
         Long total = dictMapper.countByBlurry(criteria);
@@ -59,7 +59,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     }
 
     @Override
-    public List<Dict> queryAll(DictQueryCriteria criteria) {
+    public List<Dict> queryAll(DictQueryArgs criteria) {
         return dictMapper.selectDicts(criteria);
     }
 

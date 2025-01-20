@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,29 @@
  */
 package cn.odboy.modules.devops.service.impl;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.Dict;
+import cn.hutool.core.util.StrUtil;
+import cn.odboy.constant.K8sClusterStatusEnum;
+import cn.odboy.context.K8sClientAdmin;
+import cn.odboy.context.K8sConfigHelper;
+import cn.odboy.context.K8sHealthChecker;
 import cn.odboy.infra.mybatisplus.impl.EasyServiceImpl;
+import cn.odboy.model.CommonModel;
 import cn.odboy.model.MetaOption;
+import cn.odboy.model.PageResult;
 import cn.odboy.modules.devops.domain.K8sClusterConfig;
 import cn.odboy.modules.devops.mapper.K8sClusterConfigMapper;
 import cn.odboy.modules.devops.service.K8sClusterConfigService;
+import cn.odboy.util.PageUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.kubernetes.client.openapi.ApiClient;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +50,23 @@ import java.util.stream.Collectors;
  * @since 2025-01-12
  */
 @Service
+@RequiredArgsConstructor
 public class K8sClusterConfigServiceImpl extends EasyServiceImpl<K8sClusterConfigMapper, K8sClusterConfig> implements K8sClusterConfigService {
+    private final K8sClientAdmin k8sClientAdmin;
+    private final K8sHealthChecker k8sHealthChecker;
+    private final K8sConfigHelper k8sConfigHelper;
+
+    @Override
+    public PageResult<K8sClusterConfig> searchClusterConfigs(K8sClusterConfig args, Page<K8sClusterConfig> page) {
+        LambdaQueryWrapper<K8sClusterConfig> wrapper = new LambdaQueryWrapper<>();
+        if (args != null) {
+            wrapper.like(StrUtil.isNotBlank(args.getClusterCode()), K8sClusterConfig::getClusterCode, args.getClusterCode());
+            wrapper.like(StrUtil.isNotBlank(args.getClusterName()), K8sClusterConfig::getClusterName, args.getClusterName());
+            wrapper.eq(StrUtil.isNotBlank(args.getEnvCode()), K8sClusterConfig::getEnvCode, args.getEnvCode());
+        }
+        return PageUtil.toPage(baseMapper.selectPage(page, wrapper));
+    }
+
     @Override
     public List<MetaOption> listClusterCodes() {
         return quickList(null).stream()
@@ -48,5 +79,36 @@ public class K8sClusterConfigServiceImpl extends EasyServiceImpl<K8sClusterConfi
                         )
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteClusterConfigs(CommonModel.IdsArgs args) {
+        Long id = args.getIds().stream().findFirst().get();
+        K8sClusterConfig localClusterConfig = getById(id);
+        Assert.notNull(localClusterConfig, "非法操作");
+        removeById(id);
+        k8sClientAdmin.deleteClient(localClusterConfig.getClusterCode());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void createClusterConfig(K8sClusterConfig.CreateArgs args) {
+        ApiClient apiClient = k8sConfigHelper.loadFormContent(args.getConfigContent());
+        k8sHealthChecker.checkConfigContent(apiClient);
+
+        String clusterCode = args.getClusterCode();
+        boolean exists = lambdaQuery().eq(K8sClusterConfig::getClusterCode, clusterCode).exists();
+        Assert.isFalse(exists, "集群编码已存在");
+
+        K8sClusterConfig record = new K8sClusterConfig();
+        record.setEnvCode(args.getEnvCode());
+        record.setClusterCode(args.getClusterCode());
+        record.setClusterName(args.getClusterName());
+        record.setConfigContent(args.getConfigContent().getBytes(StandardCharsets.UTF_8));
+        record.setStatus(K8sClusterStatusEnum.HEALTH.getCode());
+        save(record);
+
+        k8sClientAdmin.putClientEnv(clusterCode, args.getEnvCode(), apiClient);
     }
 }

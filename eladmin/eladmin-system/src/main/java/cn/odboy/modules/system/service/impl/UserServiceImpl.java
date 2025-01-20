@@ -25,7 +25,6 @@ import cn.odboy.modules.security.service.OnlineUserService;
 import cn.odboy.modules.system.domain.Job;
 import cn.odboy.modules.system.domain.Role;
 import cn.odboy.modules.system.domain.User;
-import cn.odboy.modules.system.domain.vo.UserQueryCriteria;
 import cn.odboy.modules.system.mapper.UserJobMapper;
 import cn.odboy.modules.system.mapper.UserMapper;
 import cn.odboy.modules.system.mapper.UserRoleMapper;
@@ -63,7 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final OnlineUserService onlineUserService;
 
     @Override
-    public PageResult<User> queryAll(UserQueryCriteria criteria, Page<Object> page) {
+    public PageResult<User> queryAll(User.QueryArgs criteria, Page<Object> page) {
         criteria.setOffset(page.offset());
         List<User> users = userMapper.selectUsers(criteria);
         Long total = userMapper.countByBlurry(criteria);
@@ -71,7 +70,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public List<User> queryAll(UserQueryCriteria criteria) {
+    public List<User> queryAll(User.QueryArgs criteria) {
         return userMapper.selectUsers(criteria);
     }
 
@@ -123,6 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             redisUtil.del(CacheKey.DATA_USER + resources.getId());
             redisUtil.del(CacheKey.MENU_USER + resources.getId());
             redisUtil.del(CacheKey.ROLE_AUTH + resources.getId());
+            redisUtil.del(CacheKey.ROLE_USER + resources.getId());
         }
         // 修改部门会影响 数据权限
         if (!Objects.equals(resources.getDept(), user.getDept())) {
@@ -209,6 +209,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void resetPwd(Set<Long> ids, String pwd) {
+        List<User> users = userMapper.selectByIds(ids);
+        // 清除缓存
+        users.forEach(user -> {
+            // 清除缓存
+            flushCache(user.getUsername());
+            // 强制退出
+            onlineUserService.kickOutForUsername(user.getUsername());
+        });
+        // 重置密码
         userMapper.updatePwdByUserIds(ids, pwd);
     }
 

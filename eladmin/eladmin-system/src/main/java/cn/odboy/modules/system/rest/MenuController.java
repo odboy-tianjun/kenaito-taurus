@@ -20,7 +20,7 @@ import cn.odboy.annotation.Log;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Menu;
-import cn.odboy.modules.system.domain.vo.MenuQueryCriteria;
+import cn.odboy.modules.system.domain.vo.MenuQueryArgs;
 import cn.odboy.modules.system.domain.vo.MenuVo;
 import cn.odboy.modules.system.service.MenuService;
 import cn.odboy.util.PageUtil;
@@ -53,7 +53,7 @@ public class MenuController {
     @ApiOperation("导出菜单数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('menu:list')")
-    public void exportMenu(HttpServletResponse response, MenuQueryCriteria criteria) throws Exception {
+    public void exportMenu(HttpServletResponse response, MenuQueryArgs criteria) throws Exception {
         menuService.download(menuService.queryAll(criteria, false), response);
     }
 
@@ -87,7 +87,7 @@ public class MenuController {
     @GetMapping
     @ApiOperation("查询菜单")
     @PreAuthorize("@el.check('menu:list')")
-    public ResponseEntity<PageResult<Menu>> queryMenu(MenuQueryCriteria criteria) throws Exception {
+    public ResponseEntity<PageResult<Menu>> queryMenu(MenuQueryArgs criteria) throws Exception {
         List<Menu> menuList = menuService.queryAll(criteria, true);
         return new ResponseEntity<>(PageUtil.toPage(menuList), HttpStatus.OK);
     }

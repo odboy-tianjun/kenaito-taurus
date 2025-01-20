@@ -16,7 +16,7 @@
 package cn.odboy.modules.system.mapper;
 
 import cn.odboy.modules.system.domain.Dept;
-import cn.odboy.modules.system.domain.vo.DeptQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DeptQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,7 +30,7 @@ import java.util.Set;
  */
 @Mapper
 public interface DeptMapper extends BaseMapper<Dept> {
-    List<Dept> selectDepts(@Param("criteria") DeptQueryCriteria criteria);
+    List<Dept> selectDepts(@Param("criteria") DeptQueryArgs criteria);
 
     List<Dept> selectDeptsByPid(@Param("pid") Long pid);
 

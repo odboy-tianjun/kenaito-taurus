@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,15 +17,15 @@ package cn.odboy.repository;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.odboy.constant.EnvEnum;
-import cn.odboy.context.GitlabCiFileAdmin;
-import cn.odboy.context.GitlabIgnoreFileAdmin;
-import cn.odboy.model.GitlabProject;
-import com.github.xiaoymin.knife4j.core.util.StrUtil;
-import lombok.extern.slf4j.Slf4j;
 import cn.odboy.constant.GitlabBizConst;
 import cn.odboy.context.GitlabAuthAdmin;
+import cn.odboy.context.GitlabCiFileAdmin;
+import cn.odboy.context.GitlabIgnoreFileAdmin;
 import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.model.GitlabProject;
 import cn.odboy.util.ValidationUtil;
+import com.github.xiaoymin.knife4j.core.util.StrUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.ProjectApi;
@@ -85,9 +85,10 @@ public class GitlabProjectRepository {
             project.setVisibility(Visibility.PRIVATE);
             project.setInitializeWithReadme(true);
             project.setDefaultBranch(GitlabBizConst.PROJECT_DEFAULT_BRANCH);
-            Namespace namespace = client.getNamespaceApi().getNamespace(1L);
+            // Groups Or Users -> namespace id
+            Namespace namespace = client.getNamespaceApi().getNamespace(args.getGroupOrUserId());
             project.setNamespace(namespace);
-            Project newProject = projectApi.createProject(GitlabBizConst.ROOT_NAMESPACE_ID, project);
+            Project newProject = projectApi.createProject(args.getGroupOrUserId(), project);
             return transformCreateResp(args, newProject, newProjectName);
         } catch (Exception e) {
             log.error("创建应用失败", e);
@@ -102,6 +103,7 @@ public class GitlabProjectRepository {
         createResp.setDefaultBranch(newProject.getDefaultBranch());
         createResp.setHttpUrlToRepo(newProject.getHttpUrlToRepo());
         createResp.setProjectId(newProject.getId());
+        createResp.setProjectName(newProject.getName());
         createResp.setVisibility(newProject.getVisibility().name());
         createResp.setHomeUrl(newProject.getWebUrl());
         createResp.setName(args.getName());
@@ -224,6 +226,23 @@ public class GitlabProjectRepository {
         try (GitLabApi client = gitlabAuthAdmin.auth()) {
             ProjectApi projectApi = client.getProjectApi();
             return projectApi.getProjects(newPage, 100);
+        } catch (Exception e) {
+            log.error("分页获取应用失败", e);
+            return list;
+        }
+    }
+
+    /**
+     * 分页获取项目 -> ok
+     *
+     * @param appName 应用名称
+     * @return /
+     */
+    public List<Project> listProjectsByAppName(String appName) {
+        List<Project> list = new ArrayList<>();
+        try (GitLabApi client = gitlabAuthAdmin.auth()) {
+            ProjectApi projectApi = client.getProjectApi();
+            return projectApi.getProjectsStream(appName).collect(Collectors.toList());
         } catch (Exception e) {
             log.error("分页获取应用失败", e);
             return list;

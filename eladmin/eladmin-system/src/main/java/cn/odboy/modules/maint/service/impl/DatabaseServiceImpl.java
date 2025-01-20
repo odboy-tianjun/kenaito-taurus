@@ -18,7 +18,7 @@ package cn.odboy.modules.maint.service.impl;
 import cn.hutool.core.util.IdUtil;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.Database;
-import cn.odboy.modules.maint.domain.dto.DatabaseQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DatabaseQueryArgs;
 import cn.odboy.modules.maint.mapper.DatabaseMapper;
 import cn.odboy.modules.maint.service.DatabaseService;
 import cn.odboy.modules.maint.util.SqlUtil;
@@ -46,12 +46,12 @@ public class DatabaseServiceImpl extends ServiceImpl<DatabaseMapper, Database> i
     private final DatabaseMapper databaseMapper;
 
     @Override
-    public PageResult<Database> queryAll(DatabaseQueryCriteria criteria, Page<Object> page) {
+    public PageResult<Database> queryAll(DatabaseQueryArgs criteria, Page<Object> page) {
         return PageUtil.toPage(databaseMapper.selectDatabases(criteria, page));
     }
 
     @Override
-    public List<Database> queryAll(DatabaseQueryCriteria criteria) {
+    public List<Database> queryAll(DatabaseQueryArgs criteria) {
         return databaseMapper.selectDatabases(criteria);
     }
 

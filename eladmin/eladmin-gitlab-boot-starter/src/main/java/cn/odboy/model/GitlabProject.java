@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -39,6 +40,8 @@ public class GitlabProject {
          */
         @NotBlank(message = "应用名称不能为空")
         private String appName;
+        @NotNull(message = "GitGroup不能为空")
+        private Long groupOrUserId;
         /**
          * 项目描述
          */
@@ -68,6 +71,10 @@ public class GitlabProject {
          * 项目id
          */
         private Long projectId;
+        /**
+         * 项目名称
+         */
+        private String projectName;
         /**
          * 可见级别
          */

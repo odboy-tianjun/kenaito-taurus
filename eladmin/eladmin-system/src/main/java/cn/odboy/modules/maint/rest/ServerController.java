@@ -18,7 +18,7 @@ package cn.odboy.modules.maint.rest;
 import cn.odboy.annotation.Log;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.Server;
-import cn.odboy.modules.maint.domain.dto.ServerQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.ServerQueryArgs;
 import cn.odboy.modules.maint.service.ServerService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -48,14 +48,14 @@ public class ServerController {
     @ApiOperation("导出服务器数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('serverDeploy:list')")
-    public void exportServerDeploy(HttpServletResponse response, ServerQueryCriteria criteria) throws IOException {
+    public void exportServerDeploy(HttpServletResponse response, ServerQueryArgs criteria) throws IOException {
         serverService.download(serverService.queryAll(criteria), response);
     }
 
     @ApiOperation(value = "查询服务器")
     @GetMapping
     @PreAuthorize("@el.check('serverDeploy:list')")
-    public ResponseEntity<PageResult<Server>> queryServerDeploy(ServerQueryCriteria criteria) {
+    public ResponseEntity<PageResult<Server>> queryServerDeploy(ServerQueryArgs criteria) {
         Page<Object> page = new Page<>(criteria.getPage(), criteria.getSize());
         return new ResponseEntity<>(serverService.queryAll(criteria, page), HttpStatus.OK);
     }

@@ -16,7 +16,7 @@
 package cn.odboy.modules.security.service.dto;
 
 import cn.odboy.modules.system.domain.User;
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.userdetails.UserDetails;

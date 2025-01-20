@@ -19,7 +19,7 @@ import cn.odboy.annotation.Log;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Dict;
-import cn.odboy.modules.system.domain.vo.DictQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DictQueryArgs;
 import cn.odboy.modules.system.service.DictService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -51,7 +51,7 @@ public class DictController {
     @ApiOperation("导出字典数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('dict:list')")
-    public void exportDict(HttpServletResponse response, DictQueryCriteria criteria) throws IOException {
+    public void exportDict(HttpServletResponse response, DictQueryArgs criteria) throws IOException {
         dictService.download(dictService.queryAll(criteria), response);
     }
 
@@ -59,13 +59,13 @@ public class DictController {
     @GetMapping(value = "/all")
     @PreAuthorize("@el.check('dict:list')")
     public ResponseEntity<List<Dict>> queryAllDict() {
-        return new ResponseEntity<>(dictService.queryAll(new DictQueryCriteria()), HttpStatus.OK);
+        return new ResponseEntity<>(dictService.queryAll(new DictQueryArgs()), HttpStatus.OK);
     }
 
     @ApiOperation("查询字典")
     @GetMapping
     @PreAuthorize("@el.check('dict:list')")
-    public ResponseEntity<PageResult<Dict>> queryDict(DictQueryCriteria resources, Page<Object> page) {
+    public ResponseEntity<PageResult<Dict>> queryDict(DictQueryArgs resources, Page<Object> page) {
         return new ResponseEntity<>(dictService.queryAll(resources, page), HttpStatus.OK);
     }
 

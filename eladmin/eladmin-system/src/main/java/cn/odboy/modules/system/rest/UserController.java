@@ -25,7 +25,6 @@ import cn.odboy.modules.system.domain.Dept;
 import cn.odboy.modules.system.domain.Role;
 import cn.odboy.modules.system.domain.User;
 import cn.odboy.modules.system.domain.vo.UserPassVo;
-import cn.odboy.modules.system.domain.vo.UserQueryCriteria;
 import cn.odboy.modules.system.service.*;
 import cn.odboy.util.PageUtil;
 import cn.odboy.util.RsaUtil;
@@ -70,14 +69,14 @@ public class UserController {
     @ApiOperation("导出用户数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('user:list')")
-    public void exportUser(HttpServletResponse response, UserQueryCriteria criteria) throws IOException {
+    public void exportUser(HttpServletResponse response, User.QueryArgs criteria) throws IOException {
         userService.download(userService.queryAll(criteria), response);
     }
 
     @ApiOperation("查询用户")
     @GetMapping
     @PreAuthorize("@el.check('user:list')")
-    public ResponseEntity<PageResult<User>> queryUser(UserQueryCriteria criteria, Page<Object> page) {
+    public ResponseEntity<PageResult<User>> queryUser(User.QueryArgs criteria, Page<Object> page) {
         if (!ObjectUtils.isEmpty(criteria.getDeptId())) {
             criteria.getDeptIds().add(criteria.getDeptId());
             // 先查找是否存在子节点

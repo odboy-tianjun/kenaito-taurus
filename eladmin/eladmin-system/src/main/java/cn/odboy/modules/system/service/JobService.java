@@ -17,7 +17,7 @@ package cn.odboy.modules.system.service;
 
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Job;
-import cn.odboy.modules.system.domain.vo.JobQueryCriteria;
+import cn.odboy.modules.system.domain.vo.JobQueryArgs;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -67,7 +67,7 @@ public interface JobService extends IService<Job> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<Job> queryAll(JobQueryCriteria criteria, Page<Object> page);
+    PageResult<Job> queryAll(JobQueryArgs criteria, Page<Object> page);
 
     /**
      * 查询全部数据
@@ -75,7 +75,7 @@ public interface JobService extends IService<Job> {
      * @param criteria /
      * @return /
      */
-    List<Job> queryAll(JobQueryCriteria criteria);
+    List<Job> queryAll(JobQueryArgs criteria);
 
     /**
      * 导出数据

@@ -38,6 +38,7 @@ public interface CacheKey {
      * 角色授权
      */
     String ROLE_AUTH = "role::auth:";
+    String ROLE_USER = "role::user:";
     /**
      * 角色信息
      */

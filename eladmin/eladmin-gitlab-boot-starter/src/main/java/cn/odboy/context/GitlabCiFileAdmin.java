@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import cn.odboy.constant.GitlabProjectLanguageEnum;
 import cn.odboy.constant.EnvEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -42,8 +43,15 @@ public class GitlabCiFileAdmin implements InitializingBean {
     private final Map<String, String> innerDockerOnlineFileMap = new HashMap<>();
     private final Map<String, String> innerReleaseFileMap = new HashMap<>();
 
+    @Autowired
+    private GitlabProperties properties;
+
     @Override
     public void afterPropertiesSet() throws Exception {
+        if (properties.getEnable() == null || !properties.getEnable()) {
+            log.info("================== 未启用Gitlab功能，不初始化CI文件 ==================");
+            return;
+        }
         try {
             innerCiFileMap.put(GitlabProjectLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/.gitlab-ci.yml").getInputStream()));
             innerDockerDailyFileMap.put(GitlabProjectLanguageEnum.JAVA.getCode(), IoUtil.readUtf8(new ClassPathResource("cifile/java/Dockerfile_daily").getInputStream()));

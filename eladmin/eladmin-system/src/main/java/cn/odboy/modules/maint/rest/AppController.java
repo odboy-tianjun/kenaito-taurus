@@ -18,7 +18,7 @@ package cn.odboy.modules.maint.rest;
 import cn.odboy.annotation.Log;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.App;
-import cn.odboy.modules.maint.domain.dto.AppQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.AppQueryArgs;
 import cn.odboy.modules.maint.service.AppService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -48,14 +48,14 @@ public class AppController {
     @ApiOperation("导出应用数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('app:list')")
-    public void exportApp(HttpServletResponse response, AppQueryCriteria criteria) throws IOException {
+    public void exportApp(HttpServletResponse response, AppQueryArgs criteria) throws IOException {
         appService.download(appService.queryAll(criteria), response);
     }
 
     @ApiOperation(value = "查询应用")
     @GetMapping
     @PreAuthorize("@el.check('app:list')")
-    public ResponseEntity<PageResult<App>> queryApp(AppQueryCriteria criteria) {
+    public ResponseEntity<PageResult<App>> queryApp(AppQueryArgs criteria) {
         Page<Object> page = new Page<>(criteria.getPage(), criteria.getSize());
         return new ResponseEntity<>(appService.queryAll(criteria, page), HttpStatus.OK);
     }

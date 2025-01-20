@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019-2020 Zheng Jie
+ *  Copyright 2019-2025 Zheng Jie
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package cn.odboy.modules.security.service;
 
-import cn.hutool.core.util.RandomUtil;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.security.config.SecurityProperties;
 import cn.odboy.modules.security.security.TokenProvider;
@@ -41,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @AllArgsConstructor
 public class OnlineUserService {
+
     private final SecurityProperties properties;
     private final TokenProvider tokenProvider;
     private final RedisUtil redisUtil;
@@ -55,25 +55,17 @@ public class OnlineUserService {
     public void save(JwtUserDto jwtUserDto, String token, HttpServletRequest request) {
         String dept = jwtUserDto.getUser().getDept().getName();
         String ip = StringUtil.getIp(request);
+        String id = tokenProvider.getId(token);
         String browser = StringUtil.getBrowser(request);
         String address = StringUtil.getCityInfo(ip);
         OnlineUserDto onlineUserDto = null;
         try {
-            onlineUserDto = new OnlineUserDto();
-            onlineUserDto.setUserName(jwtUserDto.getUsername());
-            onlineUserDto.setNickName(jwtUserDto.getUser().getNickName());
-            onlineUserDto.setDept(dept);
-            onlineUserDto.setBrowser(browser);
-            onlineUserDto.setIp(ip);
-            onlineUserDto.setAddress(address);
-            onlineUserDto.setKey(EncryptUtil.desEncrypt(token));
-            onlineUserDto.setLoginTime(new Date());
+            onlineUserDto = new OnlineUserDto(id, jwtUserDto.getUsername(), jwtUserDto.getUser().getNickName(), dept, browser, ip, address, EncryptUtil.desEncrypt(token), new Date());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
         String loginKey = tokenProvider.loginKey(token);
         redisUtil.set(loginKey, onlineUserDto, properties.getTokenValidityInSeconds(), TimeUnit.MILLISECONDS);
-        redisUtil.set(String.format("user:token:%s", token), jwtUserDto.getUsername());
     }
 
     /**
@@ -84,10 +76,10 @@ public class OnlineUserService {
      * @return /
      */
     public PageResult<OnlineUserDto> getAll(String username, Pageable pageable) {
-        List<OnlineUserDto> onlineUsers = getAll(username);
+        List<OnlineUserDto> onlineUserDtos = getAll(username);
         return PageUtil.toPage(
-                PageUtil.paging(pageable.getPageNumber(), pageable.getPageSize(), onlineUsers),
-                onlineUsers.size()
+                PageUtil.paging(pageable.getPageNumber(), pageable.getPageSize(), onlineUserDtos),
+                onlineUserDtos.size()
         );
     }
 
@@ -98,15 +90,16 @@ public class OnlineUserService {
      * @return /
      */
     public List<OnlineUserDto> getAll(String username) {
-        String loginKey = properties.getOnlineKey() + (StringUtil.isBlank(username) ? "" : "*" + username);
+        String loginKey = properties.getOnlineKey() +
+                (StringUtil.isBlank(username) ? "" : "*" + username);
         List<String> keys = redisUtil.scan(loginKey + "*");
         Collections.reverse(keys);
-        List<OnlineUserDto> onlineUsers = new ArrayList<>();
+        List<OnlineUserDto> onlineUserDtos = new ArrayList<>();
         for (String key : keys) {
-            onlineUsers.add(redisUtil.get(key, OnlineUserDto.class));
+            onlineUserDtos.add(redisUtil.get(key, OnlineUserDto.class));
         }
-        onlineUsers.sort((o1, o2) -> o2.getLoginTime().compareTo(o1.getLoginTime()));
-        return onlineUsers;
+        onlineUserDtos.sort((o1, o2) -> o2.getLoginTime().compareTo(o1.getLoginTime()));
+        return onlineUserDtos;
     }
 
     /**
@@ -117,8 +110,6 @@ public class OnlineUserService {
     public void logout(String token) {
         String loginKey = tokenProvider.loginKey(token);
         redisUtil.del(loginKey);
-        String username = redisUtil.get(String.format("user:token:%s", token), String.class);
-        redisUtil.del(String.format("user:login:%s", username));
     }
 
     /**
@@ -161,16 +152,5 @@ public class OnlineUserService {
     public void kickOutForUsername(String username) {
         String loginKey = properties.getOnlineKey() + username + "*";
         redisUtil.scanDel(loginKey);
-        redisUtil.del(String.format("user:login:%s", username));
-    }
-
-    public void addUserCache(String username, JwtUserDto jwtUserDto) {
-        int randomInt = RandomUtil.randomInt(900, 7200);
-        redisUtil.set(String.format("user:login:%s", username), jwtUserDto, randomInt);
-    }
-
-    public JwtUserDto getUserCache(String username) {
-        String loginKey = String.format("user:login:%s", username);
-        return redisUtil.get(loginKey, JwtUserDto.class);
     }
 }

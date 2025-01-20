@@ -41,8 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class LogAspect {
     private final SysLogService sysLogService;
-    ThreadLocal<Long> currentTime = new ThreadLocal<>();
-
+    private final ThreadLocal<Long> currentTime = ThreadLocal.withInitial(System::currentTimeMillis);
     public LogAspect(SysLogService sysLogService) {
         this.sysLogService = sysLogService;
     }
@@ -62,13 +61,22 @@ public class LogAspect {
      */
     @Around("logPointcut()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        currentTime.set(System.currentTimeMillis());
-        Object result = joinPoint.proceed();
-        SysLog sysLog = new SysLog("INFO", System.currentTimeMillis() - currentTime.get());
-        currentTime.remove();
-        HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        sysLogService.save(SecurityUtil.safeGetCurrentUsername(), StringUtil.getBrowser(request), StringUtil.getIp(request), joinPoint, sysLog);
-        return result;
+        try {
+            currentTime.set(System.currentTimeMillis());
+            return joinPoint.proceed();
+        } finally {
+            try {
+                SysLog sysLog = new SysLog("INFO", System.currentTimeMillis() - currentTime.get());
+                HttpServletRequest request = RequestHolder.getHttpServletRequest();
+                sysLogService.save(SecurityUtil.safeGetCurrentUsername(), 
+                                 StringUtil.getBrowser(request), 
+                                 StringUtil.getIp(request), 
+                                 joinPoint, 
+                                 sysLog);
+            } finally {
+                currentTime.remove();
+            }
+        }
     }
 
     /**
@@ -79,10 +87,21 @@ public class LogAspect {
      */
     @AfterThrowing(pointcut = "logPointcut()", throwing = "e")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable e) {
-        SysLog sysLog = new SysLog("ERROR", System.currentTimeMillis() - currentTime.get());
-        currentTime.remove();
-        sysLog.setExceptionDetail(new String(ThrowableUtil.getStackTrace(e).getBytes()));
-        HttpServletRequest request = RequestHolder.getHttpServletRequest();
-        sysLogService.save(SecurityUtil.safeGetCurrentUsername(), StringUtil.getBrowser(request), StringUtil.getIp(request), (ProceedingJoinPoint) joinPoint, sysLog);
+        try {
+            if (!(joinPoint instanceof ProceedingJoinPoint)) {
+                log.error("JoinPoint类型转换失败");
+                return;
+            }
+            SysLog sysLog = new SysLog("ERROR", System.currentTimeMillis() - currentTime.get());
+            sysLog.setExceptionDetail(ThrowableUtil.getStackTrace(e));
+            HttpServletRequest request = RequestHolder.getHttpServletRequest();
+            sysLogService.save(SecurityUtil.safeGetCurrentUsername(),
+                             StringUtil.getBrowser(request),
+                             StringUtil.getIp(request),
+                             (ProceedingJoinPoint) joinPoint,
+                             sysLog);
+        } finally {
+            currentTime.remove();
+        }
     }
 }

@@ -15,8 +15,8 @@
 ### 安装依赖
 
 ``` bash
-# 安装依赖
-npm install --registry https://registry.npmmirror.com
+# 安装依赖（依赖python）
+npm install --registry https://registry.npmmirror.com --save
 ```
 
 ### 启动服务

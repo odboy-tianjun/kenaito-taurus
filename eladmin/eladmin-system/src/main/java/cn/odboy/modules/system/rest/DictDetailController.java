@@ -19,7 +19,7 @@ import cn.odboy.annotation.Log;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.DictDetail;
-import cn.odboy.modules.system.domain.vo.DictDetailQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DictDetailQueryArgs;
 import cn.odboy.modules.system.service.DictDetailService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -49,7 +49,7 @@ public class DictDetailController {
 
     @ApiOperation("查询字典详情")
     @GetMapping
-    public ResponseEntity<PageResult<DictDetail>> queryDictDetail(DictDetailQueryCriteria criteria, Page<Object> page) {
+    public ResponseEntity<PageResult<DictDetail>> queryDictDetail(DictDetailQueryArgs criteria, Page<Object> page) {
         return new ResponseEntity<>(dictDetailService.queryAll(criteria, page), HttpStatus.OK);
     }
 

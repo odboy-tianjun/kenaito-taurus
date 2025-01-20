@@ -19,7 +19,7 @@ import cn.odboy.infra.context.CacheKey;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Dict;
 import cn.odboy.modules.system.domain.DictDetail;
-import cn.odboy.modules.system.domain.vo.DictDetailQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DictDetailQueryArgs;
 import cn.odboy.modules.system.mapper.DictDetailMapper;
 import cn.odboy.modules.system.mapper.DictMapper;
 import cn.odboy.modules.system.service.DictDetailService;
@@ -48,7 +48,7 @@ public class DictDetailServiceImpl extends ServiceImpl<DictDetailMapper, DictDet
     private final RedisUtil redisUtil;
 
     @Override
-    public PageResult<DictDetail> queryAll(DictDetailQueryCriteria criteria, Page<Object> page) {
+    public PageResult<DictDetail> queryAll(DictDetailQueryArgs criteria, Page<Object> page) {
         return PageUtil.toPage(dictDetailMapper.selectDictDetails(criteria, page));
     }
 

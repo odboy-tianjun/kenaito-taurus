@@ -96,10 +96,10 @@ public class AuthorizationController {
                 new UsernamePasswordAuthenticationToken(authUser.getUsername(), password);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = tokenProvider.createToken(authentication);
         final JwtUserDto jwtUserDto = (JwtUserDto) authentication.getPrincipal();
+        String token = tokenProvider.createToken(jwtUserDto);
         // 返回 token 与 用户信息
-        Map<String, Object> authInfo = new HashMap<String, Object>(2) {{
+        Map<String, Object> authInfo = new HashMap<>(2) {{
             put("token", properties.getTokenStartWith() + token);
             put("user", jwtUserDto);
         }};
@@ -124,8 +124,8 @@ public class AuthorizationController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(authUser.getUsername());
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = tokenProvider.createToken(authentication);
         final JwtUserDto jwtUserDto = (JwtUserDto) authentication.getPrincipal();
+        String token = tokenProvider.createToken(jwtUserDto);
         // 返回 token 与 用户信息
         Map<String, Object> authInfo = new HashMap<>(2) {{
             put("token", properties.getTokenStartWith() + token);

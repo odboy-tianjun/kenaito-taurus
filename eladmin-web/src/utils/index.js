@@ -6,7 +6,7 @@
  * Parse the time to string
  * @param {(Object|string|number)} time
  * @param {string} cFormat
- * @returns {string}
+ * @returns {string|null}
  */
 export function parseTime(time, cFormat) {
   if (arguments.length === 0) {
@@ -36,16 +36,17 @@ export function parseTime(time, cFormat) {
     s: date.getSeconds(),
     a: date.getDay()
   }
-  const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+  return format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
     let value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') {
+      return ['日', '一', '二', '三', '四', '五', '六'][value]
+    }
     if (result.length > 0 && value < 10) {
       value = '0' + value
     }
     return value || 0
   })
-  return time_str
 }
 
 /**
@@ -281,27 +282,27 @@ export function debounce(func, wait, immediate) {
   }
 }
 
-/**
- * This is just a simple version of deep copy
- * Has a lot of edge cases bug
- * If you want to use a perfect deep copy, use lodash's _.cloneDeep
- * @param {Object} source
- * @returns {Object}
- */
-export function deepClone(source) {
-  if (!source && typeof source !== 'object') {
-    throw new Error('error arguments', 'deepClone')
-  }
-  const targetObj = source.constructor === Array ? [] : {}
-  Object.keys(source).forEach(keys => {
-    if (source[keys] && typeof source[keys] === 'object') {
-      targetObj[keys] = deepClone(source[keys])
-    } else {
-      targetObj[keys] = source[keys]
-    }
-  })
-  return targetObj
-}
+// /**
+//  * This is just a simple version of deep copy
+//  * Has a lot of edge cases bug
+//  * If you want to use a perfect deep copy, use lodash's _.cloneDeep
+//  * @param {Object} source
+//  * @returns {Object}
+//  */
+// export function deepClone(source) {
+//   if (!source && typeof source !== 'object') {
+//     throw new Error('error arguments', 'deepClone')
+//   }
+//   const targetObj = source.constructor === Array ? [] : {}
+//   Object.keys(source).forEach(keys => {
+//     if (source[keys] && typeof source[keys] === 'object') {
+//       targetObj[keys] = deepClone(source[keys])
+//     } else {
+//       targetObj[keys] = source[keys]
+//     }
+//   })
+//   return targetObj
+// }
 
 /**
  * @param {Array} arr
@@ -386,3 +387,12 @@ export function downloadFile(obj, name, suffix) {
   link.click()
   document.body.removeChild(link)
 }
+
+// 数组去重
+export const uniqueArrays = (arr) => [...new Set(arr)]
+
+// 获取变量类型
+export const type = (value) => Object.prototype.toString.call(value).slice(8, -1).toLowerCase()
+
+// 深拷贝对象
+export const deepClone = (obj) => JSON.parse(JSON.stringify(obj))

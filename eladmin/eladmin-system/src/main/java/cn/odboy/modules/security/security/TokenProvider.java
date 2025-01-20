@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019-2020 Zheng Jie
+ *  Copyright 2019-2025 Zheng Jie
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,23 +18,22 @@ package cn.odboy.modules.security.security;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.crypto.digest.DigestUtil;
 import cn.odboy.modules.security.config.SecurityProperties;
+import cn.odboy.modules.security.service.dto.JwtUserDto;
 import cn.odboy.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
-
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,18 +41,15 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class TokenProvider implements InitializingBean {
-    public static final String AUTHORITIES_KEY = "user";
-    public static final String AUTHORITIES_UID = "uid";
-    private final SecurityProperties properties;
-    private final RedisUtil redisUtil;
+
     private JwtParser jwtParser;
     private JwtBuilder jwtBuilder;
-
-    public TokenProvider(SecurityProperties properties, RedisUtil redisUtil) {
-        this.properties = properties;
-        this.redisUtil = redisUtil;
-    }
+    private final RedisUtil redisUtil;
+    private final SecurityProperties properties;
+    public static final String AUTHORITIES_UUID_KEY = "uid";
+    public static final String AUTHORITIES_UID_KEY = "userId";
 
     @Override
     public void afterPropertiesSet() {
@@ -69,17 +65,19 @@ public class TokenProvider implements InitializingBean {
     /**
      * 创建Token 设置永不过期，
      * Token 的时间有效性转到Redis 维护
-     *
-     * @param authentication /
+     * @param user /
      * @return /
      */
-    public String createToken(Authentication authentication) {
+    public String createToken(JwtUserDto user) {
+        // 设置参数
+        Map<String, Object> claims = new HashMap<>(6);
+        // 设置用户ID
+        claims.put(AUTHORITIES_UID_KEY, user.getUser().getId());
+        // 设置UUID，确保每次Token不一样
+        claims.put(AUTHORITIES_UUID_KEY, IdUtil.simpleUUID());
         return jwtBuilder
-                // 加入ID确保生成的 Token 都不一致
-                .setId(IdUtil.simpleUUID())
-                .claim(AUTHORITIES_KEY, authentication.getName())
-                .claim(AUTHORITIES_UID, IdUtil.objectId())
-                .setSubject(authentication.getName())
+                .setClaims(claims)
+                .setSubject(user.getUsername())
                 .compact();
     }
 
@@ -128,13 +126,21 @@ public class TokenProvider implements InitializingBean {
 
     /**
      * 获取登录用户RedisKey
-     *
      * @param token /
      * @return key
      */
     public String loginKey(String token) {
         Claims claims = getClaims(token);
-        String md5Token = DigestUtil.md5Hex(token);
-        return properties.getOnlineKey() + claims.getSubject() + "-" + md5Token;
+        return properties.getOnlineKey() + claims.getSubject() + ":" + getId(token);
+    }
+
+    /**
+     * 获取会话编号
+     * @param token /
+     * @return /
+     */
+    public String getId(String token) {
+        Claims claims = getClaims(token);
+        return claims.get(AUTHORITIES_UUID_KEY, String.class);
     }
 }

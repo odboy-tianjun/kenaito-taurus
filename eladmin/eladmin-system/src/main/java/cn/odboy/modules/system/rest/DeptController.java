@@ -20,7 +20,7 @@ import cn.odboy.annotation.Log;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Dept;
-import cn.odboy.modules.system.domain.vo.DeptQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DeptQueryArgs;
 import cn.odboy.modules.system.service.DeptService;
 import cn.odboy.util.PageUtil;
 import io.swagger.annotations.Api;
@@ -51,14 +51,14 @@ public class DeptController {
     @ApiOperation("导出部门数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('dept:list')")
-    public void exportDept(HttpServletResponse response, DeptQueryCriteria criteria) throws Exception {
+    public void exportDept(HttpServletResponse response, DeptQueryArgs criteria) throws Exception {
         deptService.download(deptService.queryAll(criteria, false), response);
     }
 
     @ApiOperation("查询部门")
     @GetMapping
     @PreAuthorize("@el.check('user:list','dept:list')")
-    public ResponseEntity<PageResult<Dept>> queryDept(DeptQueryCriteria criteria) throws Exception {
+    public ResponseEntity<PageResult<Dept>> queryDept(DeptQueryArgs criteria) throws Exception {
         List<Dept> depts = deptService.queryAll(criteria, true);
         return new ResponseEntity<>(PageUtil.toPage(depts), HttpStatus.OK);
     }

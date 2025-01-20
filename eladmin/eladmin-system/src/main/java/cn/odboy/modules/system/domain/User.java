@@ -16,11 +16,14 @@
 package cn.odboy.modules.system.domain;
 
 import cn.odboy.base.MyEntity;
+import cn.odboy.model.MyObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,9 +31,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * @author Zheng Jie
@@ -101,5 +103,18 @@ public class User extends MyEntity implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(id, username);
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = false)
+    public static class QueryArgs extends MyObject {
+        private Long id;
+        private Set<Long> deptIds = new HashSet<>();
+        private String blurry;
+        private Boolean enabled;
+        private Long deptId;
+        private List<Timestamp> createTime;
+        private Long offset;
+        private Long size;
     }
 }

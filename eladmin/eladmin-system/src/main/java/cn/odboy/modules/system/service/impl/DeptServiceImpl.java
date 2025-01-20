@@ -22,7 +22,7 @@ import cn.odboy.infra.context.CacheKey;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.modules.system.domain.Dept;
 import cn.odboy.modules.system.domain.User;
-import cn.odboy.modules.system.domain.vo.DeptQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DeptQueryArgs;
 import cn.odboy.modules.system.mapper.DeptMapper;
 import cn.odboy.modules.system.mapper.RoleMapper;
 import cn.odboy.modules.system.mapper.UserMapper;
@@ -58,7 +58,7 @@ public class DeptServiceImpl extends ServiceImpl<DeptMapper, Dept> implements De
     private final RoleMapper roleMapper;
 
     @Override
-    public List<Dept> queryAll(DeptQueryCriteria criteria, Boolean isQuery) throws Exception {
+    public List<Dept> queryAll(DeptQueryArgs criteria, Boolean isQuery) throws Exception {
         String dataScopeType = SecurityUtil.getDataScopeType();
         if (isQuery) {
             if (dataScopeType.equals(DataScopeEnum.ALL.getValue())) {

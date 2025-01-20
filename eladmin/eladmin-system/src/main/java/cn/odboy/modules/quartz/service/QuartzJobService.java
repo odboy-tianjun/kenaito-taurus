@@ -18,7 +18,7 @@ package cn.odboy.modules.quartz.service;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.quartz.domain.QuartzJob;
 import cn.odboy.modules.quartz.domain.QuartzLog;
-import cn.odboy.modules.quartz.domain.vo.QuartzJobQueryCriteria;
+import cn.odboy.modules.quartz.domain.vo.QuartzJobQueryArgs;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -39,7 +39,7 @@ public interface QuartzJobService extends IService<QuartzJob> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<QuartzJob> queryAll(QuartzJobQueryCriteria criteria, Page<Object> page);
+    PageResult<QuartzJob> queryAll(QuartzJobQueryArgs criteria, Page<Object> page);
 
     /**
      * 查询全部
@@ -47,7 +47,7 @@ public interface QuartzJobService extends IService<QuartzJob> {
      * @param criteria 条件
      * @return /
      */
-    List<QuartzJob> queryAll(QuartzJobQueryCriteria criteria);
+    List<QuartzJob> queryAll(QuartzJobQueryArgs criteria);
 
     /**
      * 分页查询日志
@@ -56,7 +56,7 @@ public interface QuartzJobService extends IService<QuartzJob> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<QuartzLog> queryAllLog(QuartzJobQueryCriteria criteria, Page<Object> page);
+    PageResult<QuartzLog> queryAllLog(QuartzJobQueryArgs criteria, Page<Object> page);
 
     /**
      * 查询全部
@@ -64,7 +64,7 @@ public interface QuartzJobService extends IService<QuartzJob> {
      * @param criteria 条件
      * @return /
      */
-    List<QuartzLog> queryAllLog(QuartzJobQueryCriteria criteria);
+    List<QuartzLog> queryAllLog(QuartzJobQueryArgs criteria);
 
     /**
      * 创建

@@ -20,7 +20,7 @@ import cn.odboy.annotation.Log;
 import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Role;
-import cn.odboy.modules.system.domain.vo.RoleQueryCriteria;
+import cn.odboy.modules.system.domain.vo.RoleQueryArgs;
 import cn.odboy.modules.system.service.RoleService;
 import cn.odboy.util.SecurityUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -62,7 +62,7 @@ public class RoleController {
     @ApiOperation("导出角色数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check('role:list')")
-    public void exportRole(HttpServletResponse response, RoleQueryCriteria criteria) throws IOException {
+    public void exportRole(HttpServletResponse response, RoleQueryArgs criteria) throws IOException {
         roleService.download(roleService.queryAll(criteria), response);
     }
 
@@ -76,7 +76,7 @@ public class RoleController {
     @ApiOperation("查询角色")
     @GetMapping
     @PreAuthorize("@el.check('roles:list')")
-    public ResponseEntity<PageResult<Role>> queryRole(RoleQueryCriteria criteria, Page<Object> page) {
+    public ResponseEntity<PageResult<Role>> queryRole(RoleQueryArgs criteria, Page<Object> page) {
         return new ResponseEntity<>(roleService.queryAll(criteria, page), HttpStatus.OK);
     }
 

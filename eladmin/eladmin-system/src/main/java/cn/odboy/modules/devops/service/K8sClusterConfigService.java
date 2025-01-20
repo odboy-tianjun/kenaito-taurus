@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,12 @@
 package cn.odboy.modules.devops.service;
 
 import cn.odboy.infra.mybatisplus.EasyService;
+import cn.odboy.model.CommonModel;
 import cn.odboy.model.MetaOption;
+import cn.odboy.model.PageResult;
 import cn.odboy.modules.devops.domain.K8sClusterConfig;
+import cn.odboy.modules.vital.domain.BirthDate;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import java.util.List;
 
@@ -36,4 +40,7 @@ public interface K8sClusterConfigService extends EasyService<K8sClusterConfig> {
      * @return /
      */
     List<MetaOption> listClusterCodes();
+    void deleteClusterConfigs(CommonModel.IdsArgs args);
+    void createClusterConfig(K8sClusterConfig.CreateArgs args);
+    PageResult<K8sClusterConfig> searchClusterConfigs(K8sClusterConfig args, Page<K8sClusterConfig> page);
 }

@@ -16,7 +16,6 @@
 package cn.odboy.modules.system.mapper;
 
 import cn.odboy.modules.system.domain.User;
-import cn.odboy.modules.system.domain.vo.UserQueryCriteria;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,9 +30,9 @@ import java.util.Set;
  */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
-    List<User> selectUsers(@Param("criteria") UserQueryCriteria criteria);
+    List<User> selectUsers(@Param("criteria") User.QueryArgs criteria);
 
-    Long countByBlurry(@Param("criteria") UserQueryCriteria criteria);
+    Long countByBlurry(@Param("criteria") User.QueryArgs criteria);
 
     User getByUsername(@Param("username") String username);
 

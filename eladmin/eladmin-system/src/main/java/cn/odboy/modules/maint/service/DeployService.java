@@ -18,7 +18,7 @@ package cn.odboy.modules.maint.service;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.Deploy;
 import cn.odboy.modules.maint.domain.DeployHistory;
-import cn.odboy.modules.maint.domain.dto.DeployQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DeployQueryArgs;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -39,7 +39,7 @@ public interface DeployService extends IService<Deploy> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<Deploy> queryAll(DeployQueryCriteria criteria, Page<Object> page);
+    PageResult<Deploy> queryAll(DeployQueryArgs criteria, Page<Object> page);
 
     /**
      * 查询全部数据
@@ -47,7 +47,7 @@ public interface DeployService extends IService<Deploy> {
      * @param criteria 条件
      * @return /
      */
-    List<Deploy> queryAll(DeployQueryCriteria criteria);
+    List<Deploy> queryAll(DeployQueryArgs criteria);
 
     /**
      * 创建

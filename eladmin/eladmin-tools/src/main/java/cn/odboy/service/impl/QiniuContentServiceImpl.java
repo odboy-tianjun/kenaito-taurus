@@ -27,7 +27,7 @@ import cn.odboy.service.QiniuContentService;
 import cn.odboy.util.FileUtil;
 import cn.odboy.util.PageUtil;
 import cn.odboy.util.QiNiuUtil;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qiniu.common.QiniuException;
@@ -143,7 +143,7 @@ public class QiniuContentServiceImpl extends ServiceImpl<QiniuContentMapper, Qin
         try {
             bucketManager.delete(content.getBucket(), content.getKey() + "." + content.getSuffix());
         } catch (QiniuException ex) {
-            ex.printStackTrace();
+            log.error("删除七牛云文件失败", ex);
         } finally {
             removeById(content);
         }

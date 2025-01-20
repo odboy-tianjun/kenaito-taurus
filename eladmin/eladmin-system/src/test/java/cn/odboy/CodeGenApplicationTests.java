@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@ import java.util.List;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CodeGenApplicationTests {
-    @Value("${spring.datasource.vital.url}")
+    @Value("${spring.datasource.url}")
     private String databaseUrl;
-    @Value("${spring.datasource.vital.username}")
+    @Value("${spring.datasource.username}")
     private String databaseUsername;
-    @Value("${spring.datasource.vital.password}")
+    @Value("${spring.datasource.password}")
     private String databasePassword;
-    @Value("${spring.datasource.vital.driverClassName}")
+    @Value("${spring.datasource.driver-class-name}")
     private String driverClassName;
 
     @Test
@@ -46,12 +46,8 @@ public class CodeGenApplicationTests {
         generator.setDatabaseUsername(databaseUsername);
         generator.setDatabasePassword(databasePassword);
         generator.setDriverClassName(driverClassName);
-        generator.gen("vital_", List.of(
-                "vital_birth_date",
-                "vital_calendar_dict",
-                "vital_contact_info",
-                "vital_favor_dealing",
-                "vital_pwd_info"
+        generator.gen("devops_", List.of(
+                "devops_cmdb_app"
         ));
     }
 

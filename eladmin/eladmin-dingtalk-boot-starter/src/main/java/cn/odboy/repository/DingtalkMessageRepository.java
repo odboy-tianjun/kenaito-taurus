@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import com.dingtalk.api.response.OapiMessageCorpconversationRecallResponse;
 import lombok.extern.slf4j.Slf4j;
 import cn.odboy.context.DingtalkProperties;
 import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.infra.exception.util.MessageFormatterUtil;
+import cn.odboy.infra.exception.util.LoggerFmtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -189,7 +189,7 @@ public class DingtalkMessageRepository {
             if (!com.aliyun.teautil.Common.empty(teaException.code) && !com.aliyun.teautil.Common.empty(teaException.message)) {
                 String exceptionMessage = "发送ding消息失败, code={}, message={}";
                 log.error(exceptionMessage, teaException.code, teaException.message, teaException);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, teaException.code, teaException.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, teaException.code, teaException.message));
             }
             String exceptionMessage = "发送ding消息失败";
             log.error(exceptionMessage, teaException);
@@ -199,7 +199,7 @@ public class DingtalkMessageRepository {
             if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
                 String exceptionMessage = "发送ding消息失败, code={}, message={}";
                 log.error(exceptionMessage, err.code, err.message, err);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, err.code, err.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, err.code, err.message));
             }
             String exceptionMessage = "发送ding消息失败";
             log.error(exceptionMessage, exception);
@@ -228,7 +228,7 @@ public class DingtalkMessageRepository {
             if (!com.aliyun.teautil.Common.empty(teaException.code) && !com.aliyun.teautil.Common.empty(teaException.message)) {
                 String exceptionMessage = "撤回ding消息失败, code={}, message={}";
                 log.error(exceptionMessage, teaException.code, teaException.message, teaException);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, teaException.code, teaException.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, teaException.code, teaException.message));
             }
             String exceptionMessage = "撤回ding消息失败";
             log.error(exceptionMessage, teaException);
@@ -238,7 +238,7 @@ public class DingtalkMessageRepository {
             if (!com.aliyun.teautil.Common.empty(err.code) && !com.aliyun.teautil.Common.empty(err.message)) {
                 String exceptionMessage = "撤回ding消息失败, code={}, message={}";
                 log.error(exceptionMessage, err.code, err.message, err);
-                throw new BadRequestException(MessageFormatterUtil.format(exceptionMessage, err.code, err.message));
+                throw new BadRequestException(LoggerFmtUtil.format(exceptionMessage, err.code, err.message));
             }
             String exceptionMessage = "撤回ding消息失败";
             log.error(exceptionMessage, exception);

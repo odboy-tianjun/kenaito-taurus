@@ -16,7 +16,7 @@
 package cn.odboy.modules.maint.mapper;
 
 import cn.odboy.modules.maint.domain.DeployHistory;
-import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -32,7 +32,7 @@ import java.util.List;
  **/
 @Mapper
 public interface DeployHistoryMapper extends BaseMapper<DeployHistory> {
-    IPage<DeployHistory> selectDeployHistory(@Param("criteria") DeployHistoryQueryCriteria criteria, Page<Object> page);
+    IPage<DeployHistory> selectDeployHistory(@Param("criteria") DeployHistoryQueryArgs criteria, Page<Object> page);
 
-    List<DeployHistory> selectDeployHistory(@Param("criteria") DeployHistoryQueryCriteria criteria);
+    List<DeployHistory> selectDeployHistory(@Param("criteria") DeployHistoryQueryArgs criteria);
 }

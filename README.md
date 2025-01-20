@@ -145,19 +145,19 @@
 #### Gitlab全自动化构建流程展示
 > 感兴趣的可以参考我的博客进行环境的搭建 https://blog.odboy.cn/%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%BF%90%E7%BB%B4%E5%B9%B3%E5%8F%B0/
 
-![AutoPipeline1](doc/gitlab/AutoPipeline1.png)
+![AutoPipeline1](eladmin/doc/gitlab/AutoPipeline1.png)
 
-![AutoPipeline2](doc/gitlab/AutoPipeline2.png)
+![AutoPipeline2](eladmin/doc/gitlab/AutoPipeline2.png)
 
-![AutoPipeline3](doc/gitlab/AutoPipeline3.png)
+![AutoPipeline3](eladmin/doc/gitlab/AutoPipeline3.png)
 
-![AutoPipeline4](doc/gitlab/AutoPipeline4.png)
+![AutoPipeline4](eladmin/doc/gitlab/AutoPipeline4.png)
 
-![AutoPipeline5](doc/gitlab/AutoPipeline5.png)
+![AutoPipeline5](eladmin/doc/gitlab/AutoPipeline5.png)
 
-![AutoPipeline6](doc/gitlab/AutoPipeline6.png)
+![AutoPipeline6](eladmin/doc/gitlab/AutoPipeline6.png)
 
-![AutoPipeline7](doc/gitlab/AutoPipeline7.png)
+![AutoPipeline7](eladmin/doc/gitlab/AutoPipeline7.png)
 
 #### 特别鸣谢
 

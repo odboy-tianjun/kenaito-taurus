@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,15 @@
  */
 package cn.odboy.context;
 
+import cn.hutool.core.lang.Assert;
+import cn.odboy.model.response.K8sResource;
 import cn.odboy.repository.K8sTestRepository;
 import io.kubernetes.client.openapi.ApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * k8s健康检查，检查配置文件内容
@@ -34,6 +38,7 @@ public class K8sHealthChecker {
     private K8sTestRepository k8sTestRepository;
 
     public void checkConfigContent(ApiClient apiClient) {
-        k8sTestRepository.listNamespaces(apiClient);
+        List<K8sResource.Namespace> namespaces = k8sTestRepository.listNamespaces(apiClient);
+        Assert.notEmpty(namespaces, "无效配置");
     }
 }

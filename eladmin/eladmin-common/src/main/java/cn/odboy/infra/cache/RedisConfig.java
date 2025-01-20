@@ -15,12 +15,15 @@
  */
 package cn.odboy.infra.cache;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.MurmurHash3;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.Cache;
@@ -28,9 +31,11 @@ import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.cache.interceptor.KeyGenerator;
+import org.springframework.cache.interceptor.SimpleCacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -49,7 +54,16 @@ import java.util.Map;
 @EnableCaching
 @ConditionalOnClass(RedisOperations.class)
 @EnableConfigurationProperties(RedisProperties.class)
+@AutoConfigureBefore(RedisAutoConfiguration.class)
 public class RedisConfig extends CachingConfigurerSupport {
+    /**
+     * 自动识别json对象白名单配置（仅允许解析的包名，范围越小越安全）
+     */
+    private static final String[] WHITELIST_STR = {
+            "org.springframework",
+            "cn.odboy"
+    };
+
     /**
      * 设置 redis 数据默认过期时间，默认2小时
      * 设置@cacheable 序列化方式
@@ -65,23 +79,17 @@ public class RedisConfig extends CachingConfigurerSupport {
 
     @SuppressWarnings("all")
     @Bean(name = "redisTemplate")
-    @ConditionalOnMissingBean(name = "redisTemplate")
     public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
-        //序列化
+        // 指定 key 和 value 的序列化方案
         FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<>(Object.class);
         // value值的序列化采用fastJsonRedisSerializer
         template.setValueSerializer(fastJsonRedisSerializer);
         template.setHashValueSerializer(fastJsonRedisSerializer);
-        // fastjson 升级到 1.2.83 后需要指定序列化白名单
-        ParserConfig.getGlobalInstance().addAccept("cn.odboy.domain");
-        ParserConfig.getGlobalInstance().addAccept("cn.odboy.model");
-        ParserConfig.getGlobalInstance().addAccept("cn.odboy.infra.websocket.model");
-        ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.mnt.domain");
-        ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.quartz.domain");
-        ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.maint.domain");
-        ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.system.domain");
-        ParserConfig.getGlobalInstance().addAccept("cn.odboy.modules.security.service.dto");
+        // 设置fastJson的序列化白名单
+        for (String pack : WHITELIST_STR) {
+            JSONFactory.getDefaultObjectReaderProvider().addAutoTypeAccept(pack);
+        }
         // key的序列化采用StringRedisSerializer
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
@@ -90,56 +98,67 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     /**
-     * 自定义缓存key生成策略，默认将使用该策略
+     * 缓存管理器
+     * @param redisConnectionFactory /
+     * @return 缓存管理器
      */
     @Bean
+    public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+        RedisCacheConfiguration config = redisCacheConfiguration();
+        return RedisCacheManager.builder(redisConnectionFactory)
+                .cacheDefaults(config)
+                .build();
+    }
+
+    /**
+     * 自定义缓存key生成策略
+     */
     @Override
+    @Bean
     public KeyGenerator keyGenerator() {
         return (target, method, params) -> {
-            Map<String, Object> container = new HashMap<>();
+            Map<String,Object> container = new HashMap<>(8);
             Class<?> targetClassClass = target.getClass();
             // 类地址
-            container.put("class", targetClassClass.toGenericString());
+            container.put("class",targetClassClass.toGenericString());
             // 方法名称
-            container.put("methodName", method.getName());
+            container.put("methodName",method.getName());
             // 包名称
-            container.put("package", targetClassClass.getPackage());
+            container.put("package",targetClassClass.getPackage());
             // 参数列表
             for (int i = 0; i < params.length; i++) {
-                container.put(String.valueOf(i), params[i]);
+                container.put(String.valueOf(i),params[i]);
             }
             // 转为JSON字符串
             String jsonString = JSON.toJSONString(container);
-            // 做SHA256 Hash计算，得到一个SHA256摘要作为Key
-            return DigestUtils.sha256Hex(jsonString);
+            // 使用 MurmurHash 生成 hash
+            return Integer.toHexString(MurmurHash3.hash32x86(jsonString.getBytes()));
         };
     }
 
-    @Bean
     @Override
-    @SuppressWarnings("all")
+    @Bean
     public CacheErrorHandler errorHandler() {
-        // 异常处理，当Redis发生异常时，打印日志，但是程序正常走
-        log.info("初始化 -> [{}]", "Redis CacheErrorHandler");
-        return new CacheErrorHandler() {
+        return new SimpleCacheErrorHandler() {
             @Override
-            public void handleCacheGetError(RuntimeException e, Cache cache, Object key) {
-                log.error("Redis occur handleCacheGetError：key -> [{}]", key, e);
+            public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
+                // 处理缓存读取错误
+                log.error("Cache Get Error: {}",exception.getMessage());
             }
-
             @Override
-            public void handleCachePutError(RuntimeException e, Cache cache, Object key, Object value) {
-                log.error("Redis occur handleCachePutError：key -> [{}]；value -> [{}]", key, value, e);
+            public void handleCachePutError(RuntimeException exception, Cache cache, Object key, Object value) {
+                // 处理缓存写入错误
+                log.error("Cache Put Error: {}",exception.getMessage());
             }
-
             @Override
-            public void handleCacheEvictError(RuntimeException e, Cache cache, Object key) {
-                log.error("Redis occur handleCacheEvictError：key -> [{}]", key, e);
+            public void handleCacheEvictError(RuntimeException exception, Cache cache, Object key) {
+                // 处理缓存删除错误
+                log.error("Cache Evict Error: {}",exception.getMessage());
             }
-
             @Override
-            public void handleCacheClearError(RuntimeException e, Cache cache) {
-                log.error("Redis occur handleCacheClearError：", e);
+            public void handleCacheClearError(RuntimeException exception, Cache cache) {
+                // 处理缓存清除错误
+                log.error("Cache Clear Error: {}",exception.getMessage());
             }
         };
     }

@@ -16,7 +16,7 @@
 package cn.odboy.modules.system.service;
 
 import cn.odboy.modules.system.domain.Dept;
-import cn.odboy.modules.system.domain.vo.DeptQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DeptQueryArgs;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +37,7 @@ public interface DeptService extends IService<Dept> {
      * @return /
      * @throws Exception /
      */
-    List<Dept> queryAll(DeptQueryCriteria criteria, Boolean isQuery) throws Exception;
+    List<Dept> queryAll(DeptQueryArgs criteria, Boolean isQuery) throws Exception;
 
     /**
      * 根据ID查询

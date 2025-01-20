@@ -16,7 +16,7 @@
 package cn.odboy.modules.maint.mapper;
 
 import cn.odboy.modules.maint.domain.Deploy;
-import cn.odboy.modules.maint.domain.dto.DeployQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DeployQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,9 +31,9 @@ import java.util.Set;
  **/
 @Mapper
 public interface DeployMapper extends BaseMapper<Deploy> {
-    Long countByAppName(@Param("criteria") DeployQueryCriteria criteria);
+    Long countByAppName(@Param("criteria") DeployQueryArgs criteria);
 
-    List<Deploy> selectDeploys(@Param("criteria") DeployQueryCriteria criteria);
+    List<Deploy> selectDeploys(@Param("criteria") DeployQueryArgs criteria);
 
     Set<Long> selectDeployIdsByAppIds(@Param("appIds") Set<Long> appIds);
 

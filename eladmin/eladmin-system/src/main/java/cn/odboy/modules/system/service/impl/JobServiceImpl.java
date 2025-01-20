@@ -20,7 +20,7 @@ import cn.odboy.infra.exception.BadRequestException;
 import cn.odboy.infra.exception.EntityExistException;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.Job;
-import cn.odboy.modules.system.domain.vo.JobQueryCriteria;
+import cn.odboy.modules.system.domain.vo.JobQueryArgs;
 import cn.odboy.modules.system.mapper.JobMapper;
 import cn.odboy.modules.system.mapper.UserMapper;
 import cn.odboy.modules.system.service.JobService;
@@ -53,12 +53,12 @@ public class JobServiceImpl extends ServiceImpl<JobMapper, Job> implements JobSe
     private final UserMapper userMapper;
 
     @Override
-    public PageResult<Job> queryAll(JobQueryCriteria criteria, Page<Object> page) {
+    public PageResult<Job> queryAll(JobQueryArgs criteria, Page<Object> page) {
         return PageUtil.toPage(jobMapper.selectJobs(criteria, page));
     }
 
     @Override
-    public List<Job> queryAll(JobQueryCriteria criteria) {
+    public List<Job> queryAll(JobQueryArgs criteria) {
         return jobMapper.selectJobs(criteria);
     }
 

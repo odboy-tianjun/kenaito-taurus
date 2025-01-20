@@ -15,14 +15,14 @@
  */
 package cn.odboy.domain;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import cn.odboy.model.MyObject;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @author Zheng Jie
@@ -85,5 +85,14 @@ public class SysLog implements Serializable {
     public SysLog(String logType, Long time) {
         this.logType = logType;
         this.time = time;
+    }
+
+    @Data
+    @EqualsAndHashCode(callSuper = false)
+    public static class QueryArgs extends MyObject {
+        private String blurry;
+        private String username;
+        private String logType;
+        private List<Timestamp> createTime;
     }
 }

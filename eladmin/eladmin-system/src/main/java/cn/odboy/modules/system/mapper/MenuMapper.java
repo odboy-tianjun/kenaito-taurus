@@ -16,7 +16,7 @@
 package cn.odboy.modules.system.mapper;
 
 import cn.odboy.modules.system.domain.Menu;
-import cn.odboy.modules.system.domain.vo.MenuQueryCriteria;
+import cn.odboy.modules.system.domain.vo.MenuQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -31,7 +31,7 @@ import java.util.Set;
  */
 @Mapper
 public interface MenuMapper extends BaseMapper<Menu> {
-    List<Menu> selectMenus(@Param("criteria") MenuQueryCriteria criteria);
+    List<Menu> selectMenus(@Param("criteria") MenuQueryArgs criteria);
 
     int countByPid(@Param("pid") Long pid);
 

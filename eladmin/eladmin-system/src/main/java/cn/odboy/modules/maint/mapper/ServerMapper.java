@@ -16,7 +16,7 @@
 package cn.odboy.modules.maint.mapper;
 
 import cn.odboy.modules.maint.domain.Server;
-import cn.odboy.modules.maint.domain.dto.ServerQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.ServerQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -34,7 +34,7 @@ import java.util.List;
 public interface ServerMapper extends BaseMapper<Server> {
     Server getByIp(@Param("ip") String ip);
 
-    IPage<Server> selectServers(@Param("criteria") ServerQueryCriteria criteria, Page<Object> page);
+    IPage<Server> selectServers(@Param("criteria") ServerQueryArgs criteria, Page<Object> page);
 
-    List<Server> selectServers(@Param("criteria") ServerQueryCriteria criteria);
+    List<Server> selectServers(@Param("criteria") ServerQueryArgs criteria);
 }

@@ -17,7 +17,6 @@ package cn.odboy.rest;
 
 import cn.odboy.annotation.Log;
 import cn.odboy.domain.SysLog;
-import cn.odboy.domain.vo.SysLogQueryCriteria;
 import cn.odboy.model.PageResult;
 import cn.odboy.service.SysLogService;
 import cn.odboy.util.SecurityUtil;
@@ -48,7 +47,7 @@ public class SysLogController {
     @ApiOperation("导出数据")
     @GetMapping(value = "/download")
     @PreAuthorize("@el.check()")
-    public void exportLog(HttpServletResponse response, SysLogQueryCriteria criteria) throws IOException {
+    public void exportLog(HttpServletResponse response, SysLog.QueryArgs criteria) throws IOException {
         criteria.setLogType("INFO");
         sysLogService.download(sysLogService.queryAll(criteria), response);
     }
@@ -57,7 +56,7 @@ public class SysLogController {
     @ApiOperation("导出错误数据")
     @GetMapping(value = "/error/download")
     @PreAuthorize("@el.check()")
-    public void exportErrorLog(HttpServletResponse response, SysLogQueryCriteria criteria) throws IOException {
+    public void exportErrorLog(HttpServletResponse response, SysLog.QueryArgs criteria) throws IOException {
         criteria.setLogType("ERROR");
         sysLogService.download(sysLogService.queryAll(criteria), response);
     }
@@ -65,14 +64,14 @@ public class SysLogController {
     @GetMapping
     @ApiOperation("日志查询")
     @PreAuthorize("@el.check()")
-    public ResponseEntity<PageResult<SysLog>> queryLog(SysLogQueryCriteria criteria, Page<SysLog> page) {
+    public ResponseEntity<PageResult<SysLog>> queryLog(SysLog.QueryArgs criteria, Page<SysLog> page) {
         criteria.setLogType("INFO");
         return new ResponseEntity<>(sysLogService.queryAll(criteria, page), HttpStatus.OK);
     }
 
     @GetMapping(value = "/user")
     @ApiOperation("用户日志查询")
-    public ResponseEntity<PageResult<SysLog>> queryUserLog(SysLogQueryCriteria criteria, Page<SysLog> page) {
+    public ResponseEntity<PageResult<SysLog>> queryUserLog(SysLog.QueryArgs criteria, Page<SysLog> page) {
         criteria.setLogType("INFO");
         criteria.setUsername(SecurityUtil.getCurrentUsername());
         return new ResponseEntity<>(sysLogService.queryAllByUser(criteria, page), HttpStatus.OK);
@@ -81,7 +80,7 @@ public class SysLogController {
     @GetMapping(value = "/error")
     @ApiOperation("错误日志查询")
     @PreAuthorize("@el.check()")
-    public ResponseEntity<PageResult<SysLog>> queryErrorLog(SysLogQueryCriteria criteria, Page<SysLog> page) {
+    public ResponseEntity<PageResult<SysLog>> queryErrorLog(SysLog.QueryArgs criteria, Page<SysLog> page) {
         criteria.setLogType("ERROR");
         return new ResponseEntity<>(sysLogService.queryAll(criteria, page), HttpStatus.OK);
     }

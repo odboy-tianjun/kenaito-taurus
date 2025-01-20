@@ -24,7 +24,7 @@ import cn.odboy.modules.system.domain.Menu;
 import cn.odboy.modules.system.domain.Role;
 import cn.odboy.modules.system.domain.User;
 import cn.odboy.modules.system.domain.vo.MenuMetaVo;
-import cn.odboy.modules.system.domain.vo.MenuQueryCriteria;
+import cn.odboy.modules.system.domain.vo.MenuQueryArgs;
 import cn.odboy.modules.system.domain.vo.MenuVo;
 import cn.odboy.modules.system.mapper.MenuMapper;
 import cn.odboy.modules.system.mapper.RoleMenuMapper;
@@ -66,7 +66,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     private static final String BAD_REQUEST = "外链必须以http://或者https://开头";
 
     @Override
-    public List<Menu> queryAll(MenuQueryCriteria criteria, Boolean isQuery) throws Exception {
+    public List<Menu> queryAll(MenuQueryArgs criteria, Boolean isQuery) throws Exception {
         if (Boolean.TRUE.equals(isQuery)) {
             criteria.setPidIsNull(true);
             List<Field> fields = StringUtil.getAllFields(criteria.getClass(), new ArrayList<>());

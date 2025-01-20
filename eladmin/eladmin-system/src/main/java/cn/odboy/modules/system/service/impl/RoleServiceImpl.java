@@ -25,7 +25,7 @@ import cn.odboy.modules.security.service.dto.AuthorityDto;
 import cn.odboy.modules.system.domain.Menu;
 import cn.odboy.modules.system.domain.Role;
 import cn.odboy.modules.system.domain.User;
-import cn.odboy.modules.system.domain.vo.RoleQueryCriteria;
+import cn.odboy.modules.system.domain.vo.RoleQueryArgs;
 import cn.odboy.modules.system.mapper.RoleDeptMapper;
 import cn.odboy.modules.system.mapper.RoleMapper;
 import cn.odboy.modules.system.mapper.RoleMenuMapper;
@@ -46,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -68,12 +69,12 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
     }
 
     @Override
-    public List<Role> queryAll(RoleQueryCriteria criteria) {
+    public List<Role> queryAll(RoleQueryArgs criteria) {
         return roleMapper.selectRoles(criteria);
     }
 
     @Override
-    public PageResult<Role> queryAll(RoleQueryCriteria criteria, Page<Object> page) {
+    public PageResult<Role> queryAll(RoleQueryArgs criteria, Page<Object> page) {
         criteria.setOffset(page.offset());
         List<Role> roles = roleMapper.selectRoles(criteria);
         Long total = roleMapper.countByBlurry(criteria);
@@ -152,7 +153,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
 
     @Override
     public List<Role> findByUsersId(Long userId) {
-        return roleMapper.selectRolesByUserId(userId);
+        String key = CacheKey.ROLE_USER + userId;
+        List<Role> roles = redisUtil.getList(key, Role.class);
+        if (CollUtil.isEmpty(roles)) {
+            roles = roleMapper.selectRolesByUserId(userId);
+            redisUtil.set(key, roles, 1, TimeUnit.DAYS);
+        }
+        return roles;
     }
 
     @Override
@@ -223,6 +230,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             redisUtil.delByKeys(CacheKey.DATA_USER, userIds);
             redisUtil.delByKeys(CacheKey.MENU_USER, userIds);
             redisUtil.delByKeys(CacheKey.ROLE_AUTH, userIds);
+            redisUtil.delByKeys(CacheKey.ROLE_USER, userIds);
+
         }
         redisUtil.del(CacheKey.ROLE_ID + id);
     }

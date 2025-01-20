@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,14 +16,20 @@
 package cn.odboy.modules.devops.domain;
 
 import cn.odboy.base.MyLogicEntity;
+import cn.odboy.model.MyObject;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * <p>
@@ -68,4 +74,17 @@ public class K8sClusterConfig extends MyLogicEntity {
     @ApiModelProperty("健康状态(1、健康 0、不健康)")
     @TableField("status")
     private Boolean status;
+
+    @Data
+    @EqualsAndHashCode(callSuper = false)
+    public static class CreateArgs extends MyObject {
+        @NotBlank(message = "环境不能为空")
+        private String envCode;
+        @NotBlank(message = "集群编码不能为空")
+        private String clusterCode;
+        @NotBlank(message = "集群名称不能为空")
+        private String clusterName;
+        @NotBlank(message = "配置内容不能为空")
+        private String configContent;
+    }
 }

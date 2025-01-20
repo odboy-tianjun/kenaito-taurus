@@ -16,7 +16,7 @@
 package cn.odboy.modules.quartz.mapper;
 
 import cn.odboy.modules.quartz.domain.QuartzLog;
-import cn.odboy.modules.quartz.domain.vo.QuartzJobQueryCriteria;
+import cn.odboy.modules.quartz.domain.vo.QuartzJobQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -32,7 +32,7 @@ import java.util.List;
  **/
 @Mapper
 public interface QuartzLogMapper extends BaseMapper<QuartzLog> {
-    IPage<QuartzLog> selectLogs(@Param("criteria") QuartzJobQueryCriteria criteria, Page<Object> page);
+    IPage<QuartzLog> selectLogs(@Param("criteria") QuartzJobQueryArgs criteria, Page<Object> page);
 
-    List<QuartzLog> selectLogs(@Param("criteria") QuartzJobQueryCriteria criteria);
+    List<QuartzLog> selectLogs(@Param("criteria") QuartzJobQueryArgs criteria);
 }

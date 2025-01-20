@@ -18,7 +18,7 @@ package cn.odboy.modules.maint.service.impl;
 import cn.hutool.core.util.IdUtil;
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.DeployHistory;
-import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryArgs;
 import cn.odboy.modules.maint.mapper.DeployHistoryMapper;
 import cn.odboy.modules.maint.service.DeployHistoryService;
 import cn.odboy.util.DateUtil;
@@ -44,12 +44,12 @@ public class DeployHistoryServiceImpl extends ServiceImpl<DeployHistoryMapper, D
     private final DeployHistoryMapper deployhistoryMapper;
 
     @Override
-    public PageResult<DeployHistory> queryAll(DeployHistoryQueryCriteria criteria, Page<Object> page) {
+    public PageResult<DeployHistory> queryAll(DeployHistoryQueryArgs criteria, Page<Object> page) {
         return PageUtil.toPage(deployhistoryMapper.selectDeployHistory(criteria, page));
     }
 
     @Override
-    public List<DeployHistory> queryAll(DeployHistoryQueryCriteria criteria) {
+    public List<DeployHistory> queryAll(DeployHistoryQueryArgs criteria) {
         return deployhistoryMapper.selectDeployHistory(criteria);
     }
 

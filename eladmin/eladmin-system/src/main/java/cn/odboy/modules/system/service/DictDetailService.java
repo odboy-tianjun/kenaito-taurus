@@ -17,7 +17,7 @@ package cn.odboy.modules.system.service;
 
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.system.domain.DictDetail;
-import cn.odboy.modules.system.domain.vo.DictDetailQueryCriteria;
+import cn.odboy.modules.system.domain.vo.DictDetailQueryArgs;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -56,7 +56,7 @@ public interface DictDetailService extends IService<DictDetail> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<DictDetail> queryAll(DictDetailQueryCriteria criteria, Page<Object> page);
+    PageResult<DictDetail> queryAll(DictDetailQueryArgs criteria, Page<Object> page);
 
     /**
      * 根据字典名称获取字典详情

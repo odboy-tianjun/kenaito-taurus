@@ -17,7 +17,7 @@ package cn.odboy.modules.maint.service;
 
 import cn.odboy.model.PageResult;
 import cn.odboy.modules.maint.domain.DeployHistory;
-import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DeployHistoryQueryArgs;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -37,7 +37,7 @@ public interface DeployHistoryService extends IService<DeployHistory> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<DeployHistory> queryAll(DeployHistoryQueryCriteria criteria, Page<Object> page);
+    PageResult<DeployHistory> queryAll(DeployHistoryQueryArgs criteria, Page<Object> page);
 
     /**
      * 查询全部
@@ -45,7 +45,7 @@ public interface DeployHistoryService extends IService<DeployHistory> {
      * @param criteria 条件
      * @return /
      */
-    List<DeployHistory> queryAll(DeployHistoryQueryCriteria criteria);
+    List<DeployHistory> queryAll(DeployHistoryQueryArgs criteria);
 
     /**
      * 创建

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2022-2025 Tian Jun
+ *  Copyright 2021-2025 Tian Jun
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,16 +24,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
+/**
+ * 审批流消息监听
+ *
+ * @author odboy
+ * @date 2025-02-09
+ */
 @Slf4j
 @Configuration
 public class DingtalkWorkflowRegisterConfig {
     @Autowired
     private DingtalkProperties dingtalkProperties;
+    @Autowired
+    private Environment environment;
 
     @Bean
     public DingtalkWorkflowListener listener() {
-        return new cn.odboy.consumer.DingtalkWorkflowListener(dingtalkProperties, event -> {
+        return new cn.odboy.consumer.DingtalkWorkflowListener(dingtalkProperties, environment, event -> {
             try {
                 // 消费成功
                 ThreadUtil.execAsync(new DingtalkWorkflowConsumeRunner(event));

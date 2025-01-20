@@ -26,7 +26,7 @@ import cn.odboy.modules.maint.domain.App;
 import cn.odboy.modules.maint.domain.Deploy;
 import cn.odboy.modules.maint.domain.DeployHistory;
 import cn.odboy.modules.maint.domain.Server;
-import cn.odboy.modules.maint.domain.dto.DeployQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DeployQueryArgs;
 import cn.odboy.modules.maint.mapper.DeployMapper;
 import cn.odboy.modules.maint.mapper.DeployServerMapper;
 import cn.odboy.modules.maint.service.DeployHistoryService;
@@ -67,7 +67,7 @@ public class DeployServiceImpl extends ServiceImpl<DeployMapper, Deploy> impleme
     private final Integer count = 30;
 
     @Override
-    public PageResult<Deploy> queryAll(DeployQueryCriteria criteria, Page<Object> page) {
+    public PageResult<Deploy> queryAll(DeployQueryArgs criteria, Page<Object> page) {
         criteria.setOffset(page.offset());
         List<Deploy> deploys = deployMapper.selectDeploys(criteria);
         Long total = deployMapper.countByAppName(criteria);
@@ -75,7 +75,7 @@ public class DeployServiceImpl extends ServiceImpl<DeployMapper, Deploy> impleme
     }
 
     @Override
-    public List<Deploy> queryAll(DeployQueryCriteria criteria) {
+    public List<Deploy> queryAll(DeployQueryArgs criteria) {
         return deployMapper.selectDeploys(criteria);
     }
 

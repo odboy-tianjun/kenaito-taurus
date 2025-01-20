@@ -16,7 +16,7 @@
 package cn.odboy.modules.maint.mapper;
 
 import cn.odboy.modules.maint.domain.Database;
-import cn.odboy.modules.maint.domain.dto.DatabaseQueryCriteria;
+import cn.odboy.modules.maint.domain.dto.DatabaseQueryArgs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -32,7 +32,7 @@ import java.util.List;
  **/
 @Mapper
 public interface DatabaseMapper extends BaseMapper<Database> {
-    IPage<Database> selectDatabases(@Param("criteria") DatabaseQueryCriteria criteria, Page<Object> page);
+    IPage<Database> selectDatabases(@Param("criteria") DatabaseQueryArgs criteria, Page<Object> page);
 
-    List<Database> selectDatabases(@Param("criteria") DatabaseQueryCriteria criteria);
+    List<Database> selectDatabases(@Param("criteria") DatabaseQueryArgs criteria);
 }

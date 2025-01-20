@@ -16,7 +16,6 @@
 package cn.odboy.service;
 
 import cn.odboy.domain.SysLog;
-import cn.odboy.domain.vo.SysLogQueryCriteria;
 import cn.odboy.model.PageResult;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -39,7 +38,7 @@ public interface SysLogService extends IService<SysLog> {
      * @param page     分页参数
      * @return /
      */
-    PageResult<SysLog> queryAll(SysLogQueryCriteria criteria, Page<SysLog> page);
+    PageResult<SysLog> queryAll(SysLog.QueryArgs criteria, Page<SysLog> page);
 
     /**
      * 查询全部数据
@@ -47,7 +46,7 @@ public interface SysLogService extends IService<SysLog> {
      * @param criteria 查询条件
      * @return /
      */
-    List<SysLog> queryAll(SysLogQueryCriteria criteria);
+    List<SysLog> queryAll(SysLog.QueryArgs criteria);
 
     /**
      * 查询用户日志
@@ -56,7 +55,7 @@ public interface SysLogService extends IService<SysLog> {
      * @param page     分页参数
      * @return -
      */
-    PageResult<SysLog> queryAllByUser(SysLogQueryCriteria criteria, Page<SysLog> page);
+    PageResult<SysLog> queryAllByUser(SysLog.QueryArgs criteria, Page<SysLog> page);
 
     /**
      * 保存日志数据

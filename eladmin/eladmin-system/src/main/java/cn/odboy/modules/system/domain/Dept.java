@@ -16,7 +16,7 @@
 package cn.odboy.modules.system.domain;
 
 import cn.odboy.base.MyEntity;
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -80,15 +80,15 @@ public class Dept extends MyEntity implements Serializable {
     public int hashCode() {
         return Objects.hash(id, name);
     }
-
+    @ApiModelProperty(value = "是否有子节点")
     public Boolean getHasChildren() {
         return subCount > 0;
     }
-
+    @ApiModelProperty(value = "是否为叶子")
     public Boolean getLeaf() {
         return subCount <= 0;
     }
-
+    @ApiModelProperty(value = "标签名称")
     public String getLabel() {
         return name;
     }
