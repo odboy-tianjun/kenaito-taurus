@@ -15,10 +15,10 @@
         <module>eladmin-system</module>
         <module>eladmin-tools</module>
         <module>eladmin-generator</module>
-        <module>eladmin-k8s-boot-starter</module>
-        <module>eladmin-gitlab-boot-starter</module>
+<!--        <module>eladmin-k8s-boot-starter</module>-->
+<!--        <module>eladmin-gitlab-boot-starter</module>-->
         <module>eladmin-dingtalk-boot-starter</module>
-        <module>eladmin-minio-boot-starter</module>
+<!--        <module>eladmin-minio-boot-starter</module>-->
     </modules>
     <name>ELADMIN 后台管理</name>
     <url>https://eladmin.vip</url>
@@ -39,7 +39,6 @@
         <java.version>1.8</java.version>
         <swagger.version>2.9.2</swagger.version>
         <fastjson.version>1.2.83</fastjson.version>
-        <druid.version>1.2.24</druid.version>
         <commons-pool2.version>2.11.1</commons-pool2.version>
         <mybatis-plus.version>3.5.9</mybatis-plus.version>
     </properties>
@@ -136,7 +135,7 @@
             <artifactId>spring-security-core</artifactId>
             <version>5.8.12</version>
         </dependency>
-        <!-- Spring boot AOP（druid spring监控支持） -->
+        <!-- Spring boot AOP -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
@@ -172,7 +171,7 @@
             <artifactId>mybatis-plus-join-boot-starter</artifactId>
             <version>1.5.2</version>
         </dependency>
-        <!--spring boot 集成redis所需common-pool2-->
+        <!-- spring boot 集成redis所需common-pool2 -->
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -220,12 +219,6 @@
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>9.1.0</version>
-        </dependency>
-        <!-- druid数据源驱动 -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>${druid.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.dreamlu/mica-ip2region -->
         <dependency>

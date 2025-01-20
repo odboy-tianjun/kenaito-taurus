@@ -62,6 +62,11 @@
 - 字典管理：可维护常用一些固定的数据，如：状态，性别等
 - 系统日志：记录用户操作日志与异常日志，方便开发人员定位排错
 - SQL监控：采用druid 监控数据库访问性能，默认用户名admin，密码123456
+  ```text
+    已删除，用默认Hikari连接池替代。
+    原因是因为在生产环境，Init DruidDataSource方法，会导致应用hang住；
+    还会导致获取不到/非常的慢获取连接池内的连接；
+  ```
 - 定时任务：整合Quartz做定时任务，加入任务日志，任务运行情况一目了然
 - 代码生成：高灵活度生成前后端代码，减少大量重复的工作任务
 - 邮件工具：配合富文本，发送html格式的邮件
@@ -140,19 +145,19 @@
 #### Gitlab全自动化构建流程展示
 > 感兴趣的可以参考我的博客进行环境的搭建 https://blog.odboy.cn/%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%BF%90%E7%BB%B4%E5%B9%B3%E5%8F%B0/
 
-![AutoPipeline1](eladmin/doc/gitlab/AutoPipeline1.png)
+![AutoPipeline1](doc/gitlab/AutoPipeline1.png)
 
-![AutoPipeline2](eladmin/doc/gitlab/AutoPipeline2.png)
+![AutoPipeline2](doc/gitlab/AutoPipeline2.png)
 
-![AutoPipeline3](eladmin/doc/gitlab/AutoPipeline3.png)
+![AutoPipeline3](doc/gitlab/AutoPipeline3.png)
 
-![AutoPipeline4](eladmin/doc/gitlab/AutoPipeline4.png)
+![AutoPipeline4](doc/gitlab/AutoPipeline4.png)
 
-![AutoPipeline5](eladmin/doc/gitlab/AutoPipeline5.png)
+![AutoPipeline5](doc/gitlab/AutoPipeline5.png)
 
-![AutoPipeline6](eladmin/doc/gitlab/AutoPipeline6.png)
+![AutoPipeline6](doc/gitlab/AutoPipeline6.png)
 
-![AutoPipeline7](eladmin/doc/gitlab/AutoPipeline7.png)
+![AutoPipeline7](doc/gitlab/AutoPipeline7.png)
 
 #### 特别鸣谢
 

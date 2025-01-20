@@ -110,7 +110,7 @@ public class LoginProperties {
         @Override
         protected char[] alphas() {
             // 生成随机数字和运算符
-            int n1 = num(1, 100), n2 = num(1, 100);
+            int n1 = num(1, 10), n2 = num(1, 10);
             int opt = num(3);
             // 计算结果
             int res = new int[]{n1 + n2, n1 - n2, n1 * n2}[opt];

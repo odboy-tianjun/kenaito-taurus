@@ -17,8 +17,8 @@ package cn.odboy.modules.maint.util;
 
 import cn.odboy.modules.maint.constant.DataTypeEnum;
 import cn.odboy.util.CloseUtil;
-import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
@@ -47,7 +47,7 @@ public class SqlUtil {
      * @return DataSource
      */
     private static DataSource getDataSource(String jdbcUrl, String userName, String password) {
-        DruidDataSource druidDataSource = new DruidDataSource();
+        HikariDataSource druidDataSource = new HikariDataSource();
         String className;
         try {
             className = DriverManager.getDriver(jdbcUrl.trim()).getClass().getName();
@@ -65,23 +65,10 @@ public class SqlUtil {
         }
         // 去掉不安全的参数
         jdbcUrl = sanitizeJdbcUrl(jdbcUrl);
-        druidDataSource.setUrl(jdbcUrl);
+        druidDataSource.setJdbcUrl(jdbcUrl);
         druidDataSource.setUsername(userName);
         druidDataSource.setPassword(password);
-        // 配置获取连接等待超时的时间
-        druidDataSource.setMaxWait(3000);
-        // 配置初始化大小、最小、最大
-        druidDataSource.setInitialSize(1);
-        druidDataSource.setMinIdle(1);
-        druidDataSource.setMaxActive(1);
-        // 如果链接出现异常则直接判定为失败而不是一直重试
-        druidDataSource.setBreakAfterAcquireFailure(true);
-        try {
-            druidDataSource.init();
-        } catch (SQLException e) {
-            log.error("Exception during pool initialization", e);
-            throw new RuntimeException(e.getMessage());
-        }
+        druidDataSource.setConnectionTimeout(3000);
         return druidDataSource;
     }
 

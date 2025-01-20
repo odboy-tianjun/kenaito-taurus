@@ -15,9 +15,9 @@
  */
 package cn.odboy.util;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.util.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.google.common.collect.Lists;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -46,7 +47,7 @@ public class SqlUtil {
      * @return DataSource
      */
     private static DataSource getDataSource(String jdbcUrl, String userName, String password) {
-        DruidDataSource druidDataSource = new DruidDataSource();
+        HikariDataSource druidDataSource = new HikariDataSource();
         String className;
         try {
             className = DriverManager.getDriver(jdbcUrl.trim()).getClass().getName();
@@ -62,23 +63,10 @@ public class SqlUtil {
         } else {
             druidDataSource.setDriverClassName(className);
         }
-        druidDataSource.setUrl(jdbcUrl);
+        druidDataSource.setJdbcUrl(jdbcUrl);
         druidDataSource.setUsername(userName);
         druidDataSource.setPassword(password);
-        // 配置获取连接等待超时的时间
-        druidDataSource.setMaxWait(3000);
-        // 配置初始化大小、最小、最大
-        druidDataSource.setInitialSize(1);
-        druidDataSource.setMinIdle(1);
-        druidDataSource.setMaxActive(1);
-        // 如果链接出现异常则直接判定为失败而不是一直重试
-        druidDataSource.setBreakAfterAcquireFailure(true);
-        try {
-            druidDataSource.init();
-        } catch (SQLException e) {
-            log.error("Exception during pool initialization", e);
-            throw new RuntimeException(e.getMessage());
-        }
+        druidDataSource.setConnectionTimeout(3000);
         return druidDataSource;
     }
 
@@ -178,7 +166,7 @@ public class SqlUtil {
         List<String> sqlList = Lists.newArrayList();
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                new FileInputStream(sqlFile), StandardCharsets.UTF_8))) {
+                Files.newInputStream(sqlFile.toPath()), StandardCharsets.UTF_8))) {
             String tmp;
             while ((tmp = reader.readLine()) != null) {
                 log.info("line:{}", tmp);
