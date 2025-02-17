@@ -32,7 +32,7 @@ import java.lang.reflect.Field;
 import java.util.Date;
 
 /**
- * 通用字段， is_del 根据需求自行添加
+ * 逻辑删除通用模型
  *
  * @author odboy
  * @date 2025-01-12

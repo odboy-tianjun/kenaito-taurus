@@ -41,6 +41,7 @@ public class FastJsonRedisSerializer<T> implements RedisSerializer<T> {
             return null;
         }
         String str = new String(bytes, StandardCharsets.UTF_8);
+        // 支持AutoType
         return JSON.parseObject(str, clazz, JSONReader.Feature.SupportAutoType);
     }
 }

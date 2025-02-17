@@ -65,13 +65,11 @@ public class GeneratorServiceImpl extends ServiceImpl<ColumnInfoMapper, ColumnIn
     @Transactional(rollbackFor = Exception.class)
     public List<ColumnInfo> getColumns(String tableName) {
         List<ColumnInfo> columnInfos = columnInfoMapper.selectGenColumnInfosByTableName(tableName);
-        if (CollectionUtil.isNotEmpty(columnInfos)) {
-            return columnInfos;
-        } else {
+        if (!CollectionUtil.isNotEmpty(columnInfos)) {
             columnInfos = query(tableName);
             saveBatch(columnInfos);
-            return columnInfos;
         }
+        return columnInfos;
     }
 
     @Override
@@ -112,7 +110,9 @@ public class GeneratorServiceImpl extends ServiceImpl<ColumnInfoMapper, ColumnIn
         // 第二种情况，数据库字段删除了
         for (ColumnInfo columnInfo : columnInfos) {
             // 根据字段名称查找
-            List<ColumnInfo> columns = columnInfoList.stream().filter(c -> c.getColumnName().equals(columnInfo.getColumnName())).collect(Collectors.toList());
+            List<ColumnInfo> columns = columnInfoList.stream()
+                    .filter(c -> c.getColumnName().equals(columnInfo.getColumnName()))
+                    .collect(Collectors.toList());
             // 如果找不到，就代表字段被删除了，则需要删除该字段
             if (CollectionUtil.isEmpty(columns)) {
                 removeById(columnInfo);

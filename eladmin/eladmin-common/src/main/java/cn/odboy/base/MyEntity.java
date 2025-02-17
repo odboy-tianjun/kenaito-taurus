@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
 import java.util.Date;
 
 /**
- * 通用字段， is_del 根据需求自行添加
+ * 非逻辑删除通用模型
  *
  * @author Zheng Jie
  * @Date 2019年10月24日20:46:32
