@@ -41,6 +41,17 @@ public class K8sResourceNameUtil {
         return String.format("devops-svc-%s-%s", appName, envCode);
     }
 
+    /**
+     * 用于创建一个Headless服务，这个服务将提供每个Pod的稳定网络标识符
+     */
+    public static String getServiceHeadlessName(String appName, String envCode){
+        return String.format("devops-hls-%s-%s", appName, envCode);
+    }
+
+    public static String getVolumeName(String appName, String envCode){
+        return String.format("devops-vol-%s-%s", appName, envCode);
+    }
+
     public static String getIngressName(String appName, String envCode) {
         return String.format("devops-ing-%s-%s", appName, envCode);
     }
