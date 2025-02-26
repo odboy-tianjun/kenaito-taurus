@@ -1,20 +1,16 @@
-<h1 style="text-align: center">ELADMIN 后台管理系统</h1>
+<h1 style="text-align: center">Taurus自动化运维系统</h1>
 
 #### 项目简介
 
-一个基于 Spring Boot 2.7.18 、 Mybatis-Plus、 JWT、Spring Security、Redis、Vue的前后端分离的后台管理系统
-
-**开发文档：**  [https://eladmin.vip](https://eladmin.vip)
-
-**体验地址：**  [https://eladmin.vip/demo](https://eladmin.vip/demo)
+一个基于 Spring Boot 2.7.18 、 Mybatis-Plus、 JWT、Spring Security、Redis、Vue的前后端分离的自动化运维系统
 
 **账号密码：** `admin / 123456`
 
 #### 项目源码
 
-|        | 后端源码(eladmin)                               | 前端源码(eladmin-web)                           |
-|--------|---------------------------------------------|---------------------------------------------|
-| github | https://github.com/odboy-tianjun/eladmin-mp | https://github.com/odboy-tianjun/eladmin-mp |
+|        | 后端源码(kenaito-taurus)                            | 前端源码(kenaito-taurus-front)                            |
+|--------|-------------------------------------------------|-------------------------------------------------------|
+| github | https://github.com/odboy-tianjun/kenaito-taurus | https://github.com/odboy-tianjun/kenaito-taurus-front |
 
 #### 实验环境
 
@@ -143,21 +139,23 @@
 ```
 
 #### Gitlab全自动化构建流程展示
-> 感兴趣的可以参考我的博客进行环境的搭建 https://blog.odboy.cn/%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%BF%90%E7%BB%B4%E5%B9%B3%E5%8F%B0/
 
-![AutoPipeline1](eladmin/doc/gitlab/AutoPipeline1.png)
+>
+感兴趣的可以参考我的博客进行环境的搭建 https://blog.odboy.cn/%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E8%BF%90%E7%BB%B4%E5%B9%B3%E5%8F%B0/
 
-![AutoPipeline2](eladmin/doc/gitlab/AutoPipeline2.png)
+![AutoPipeline1](doc/gitlab/AutoPipeline1.png)
 
-![AutoPipeline3](eladmin/doc/gitlab/AutoPipeline3.png)
+![AutoPipeline2](doc/gitlab/AutoPipeline2.png)
 
-![AutoPipeline4](eladmin/doc/gitlab/AutoPipeline4.png)
+![AutoPipeline3](doc/gitlab/AutoPipeline3.png)
 
-![AutoPipeline5](eladmin/doc/gitlab/AutoPipeline5.png)
+![AutoPipeline4](doc/gitlab/AutoPipeline4.png)
 
-![AutoPipeline6](eladmin/doc/gitlab/AutoPipeline6.png)
+![AutoPipeline5](doc/gitlab/AutoPipeline5.png)
 
-![AutoPipeline7](eladmin/doc/gitlab/AutoPipeline7.png)
+![AutoPipeline6](doc/gitlab/AutoPipeline6.png)
+
+![AutoPipeline7](doc/gitlab/AutoPipeline7.png)
 
 #### 特别鸣谢
 

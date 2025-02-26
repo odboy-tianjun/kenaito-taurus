@@ -1,0 +1,57 @@
+{
+	"assignees": [],
+	"author": {
+		"avatarUrl": "https://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61?s=80&d=identicon",
+		"id": 1,
+		"name": "Administrator",
+		"state": "active",
+		"username": "root",
+		"webUrl": "http://127.0.0.1:20080/root"
+	},
+	"blockingDiscussionsResolved": true,
+	"changesCount": "1",
+	"createdAt": 1725879456392,
+	"description": "change Description",
+	"diffRefs": {
+		"baseSha": "088aed36a7c7fa7bdf6031e53cf13368d3a3f8aa",
+		"headSha": "70e96008a76bcf624a7168986cc61eb0ad0cedd9",
+		"startSha": "088aed36a7c7fa7bdf6031e53cf13368d3a3f8aa"
+	},
+	"downvotes": 0,
+	"forceRemoveSourceBranch": false,
+	"hasConflicts": true,
+	"id": 1,
+	"iid": 1,
+	"labels": [],
+	"mergeStatus": "cannot_be_merged",
+	"mergeWhenPipelineSucceeds": false,
+	"projectId": 6,
+	"references": {
+		"full": "root/test-02!1",
+		"relative": "!1",
+		"short": "!1"
+	},
+	"reviewers": [],
+	"sha": "70e96008a76bcf624a7168986cc61eb0ad0cedd9",
+	"sourceBranch": "test002",
+	"sourceProjectId": 6,
+	"squash": false,
+	"state": "opened",
+	"subscribed": true,
+	"targetBranch": "master",
+	"targetProjectId": 6,
+	"taskCompletionStatus": {
+		"completedCount": 0,
+		"count": 0
+	},
+	"timeStats": {
+		"timeEstimate": 0,
+		"totalTimeSpent": 0
+	},
+	"title": "Update README.md",
+	"updatedAt": 1725879456392,
+	"upvotes": 0,
+	"userNotesCount": 0,
+	"webUrl": "http://127.0.0.1:20080/root/test-02/-/merge_requests/1",
+	"workInProgress": false
+}

@@ -1,0 +1,10 @@
+### IDEA ###
+~/*
+.idea/*
+*.iml
+*/target/*
+*/*.iml
+/.gradle/
+/application.pid
+/logs/application.log
+.DS_Store

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.odboy.mapper.ProductLineUserMapper">
+    <select id="selectProductLineUserList" resultType="cn.odboy.model.MetaOption">
+        SELECT t2.user_id  AS `value`,
+               t3.username AS `label`
+        FROM devops_product_line t1
+                 LEFT JOIN devops_product_line_user t2 ON t1.id = t2.product_line_id
+                 LEFT JOIN system_user t3 ON t2.user_id = t3.user_id
+        WHERE t3.enabled = 1
+          AND t1.available = 1
+          AND t1.id = #{productLineId}
+          AND t2.role_code = #{roleCode}
+    </select>
+</mapper>

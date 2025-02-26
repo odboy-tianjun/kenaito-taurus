@@ -1,0 +1,4 @@
+include:
+  - project: 'root/devops-ci-template'
+    ref: master
+    file: '/java/springboot/.gitlab-ci.yml'

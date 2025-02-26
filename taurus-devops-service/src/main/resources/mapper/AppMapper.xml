@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.odboy.mapper.AppMapper">
+    <select id="selectCollectList" resultType="cn.odboy.domain.App$QueryPage">
+        SELECT t2.*
+        FROM devops_app_user_collect t1
+                 LEFT JOIN devops_app t2 ON t1.app_id = t2.id
+        WHERE t2.available = 1
+          AND t1.user_id = #{userId}
+    </select>
+</mapper>
