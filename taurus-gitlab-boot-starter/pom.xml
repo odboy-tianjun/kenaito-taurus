@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>cn.odboy</groupId>
-            <artifactId>taurus-infra-exception</artifactId>
+            <artifactId>taurus-exception</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

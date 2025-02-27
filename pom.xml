@@ -8,8 +8,8 @@
     <packaging>pom</packaging>
     <version>1.0</version>
     <modules>
-        <module>taurus-infra-base</module>
-        <module>taurus-infra-exception</module>
+        <module>taurus-base</module>
+        <module>taurus-exception</module>
         <module>taurus-common</module>
         <module>taurus-logging</module>
         <module>taurus-tools</module>
