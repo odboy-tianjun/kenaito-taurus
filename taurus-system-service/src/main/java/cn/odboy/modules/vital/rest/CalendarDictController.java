@@ -15,9 +15,8 @@
  */
 package cn.odboy.modules.vital.rest;
 
-import cn.odboy.model.MetaOption;
-import cn.odboy.modules.vital.domain.BirthDate;
-import cn.odboy.modules.vital.service.CalendarDictService;
+import cn.odboy.vital.domain.BirthDate;
+import cn.odboy.vital.service.CalendarDictService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * <p>

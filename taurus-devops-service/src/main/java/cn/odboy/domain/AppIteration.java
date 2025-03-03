@@ -1,6 +1,6 @@
 package cn.odboy.domain;
 
-import cn.odboy.base.MyLogicEntity;
+import cn.odboy.mybatisplus.model.MyLogicEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**

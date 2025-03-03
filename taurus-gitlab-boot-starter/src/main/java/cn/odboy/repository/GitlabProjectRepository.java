@@ -16,14 +16,14 @@
 package cn.odboy.repository;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.odboy.constant.EnvEnum;
+import cn.odboy.devops.constant.EnvEnum;
 import cn.odboy.constant.GitlabBizConst;
 import cn.odboy.context.GitlabAuthAdmin;
 import cn.odboy.context.GitlabCiFileAdmin;
 import cn.odboy.context.GitlabIgnoreFileAdmin;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import cn.odboy.model.GitlabProject;
-import cn.odboy.util.ValidationUtil;
+import cn.odboy.system.core.util.ValidationUtil;
 import com.github.xiaoymin.knife4j.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.gitlab4j.api.GitLabApi;

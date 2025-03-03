@@ -16,7 +16,7 @@
 package cn.odboy.modules.vital.mapper;
 
 import cn.odboy.infra.mybatisplus.EasyMapper;
-import cn.odboy.modules.vital.domain.BirthDateTimeline;
+import cn.odboy.vital.domain.BirthDateTimeline;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

@@ -15,7 +15,7 @@
  */
 package cn.odboy.modules.vital.mapper;
 
-import cn.odboy.modules.vital.domain.PwdInfo;
+import cn.odboy.vital.domain.PwdInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

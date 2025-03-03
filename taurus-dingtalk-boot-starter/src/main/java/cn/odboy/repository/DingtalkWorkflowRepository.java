@@ -16,17 +16,17 @@
 package cn.odboy.repository;
 
 import cn.hutool.core.lang.Assert;
+import cn.odboy.system.core.util.ValidationUtil;
 import com.aliyun.dingtalkworkflow_1_0.models.*;
 import com.aliyun.tea.TeaException;
 import com.aliyun.teautil.models.RuntimeOptions;
 import lombok.extern.slf4j.Slf4j;
 import cn.odboy.constant.DingtalkProcessInstanceResultEnum;
 import cn.odboy.context.DingtalkAuthAdmin;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.infra.exception.util.LoggerFmtUtil;
+import cn.odboy.exception.BadRequestException;
+import cn.odboy.exception.util.LoggerFmtUtil;
 import cn.odboy.model.DingtalkWorkflow;
 import cn.odboy.util.DingtalkClientConfigFactory;
-import cn.odboy.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

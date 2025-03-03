@@ -33,8 +33,8 @@ import com.dingtalk.api.response.OapiMessageCorpconversationGetsendresultRespons
 import com.dingtalk.api.response.OapiMessageCorpconversationRecallResponse;
 import lombok.extern.slf4j.Slf4j;
 import cn.odboy.context.DingtalkProperties;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.infra.exception.util.LoggerFmtUtil;
+import cn.odboy.exception.BadRequestException;
+import cn.odboy.exception.util.LoggerFmtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,5 +1,6 @@
 package cn.odboy.model;
 
+import cn.odboy.mybatisplus.model.MyObject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

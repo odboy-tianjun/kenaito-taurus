@@ -1,7 +1,7 @@
 package cn.odboy.domain;
 
-import cn.odboy.base.MyLogicEntity;
-import cn.odboy.model.MetaOption;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.MyLogicEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -106,7 +106,7 @@ public class ProductLine extends MyLogicEntity {
         private String name;
         private String description;
         private Long pid;
-        private List<MetaOption> adminList;
-        private List<MetaOption> peList;
+        private List<MetaOptionModel> adminList;
+        private List<MetaOptionModel> peList;
     }
 }

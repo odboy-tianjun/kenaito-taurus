@@ -1,9 +1,9 @@
 package cn.odboy.rest;
 
-import cn.odboy.annotation.Log;
 import cn.odboy.domain.App;
-import cn.odboy.model.PageArgs;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.service.AppService;
+import cn.odboy.system.logging.annotation.Log;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

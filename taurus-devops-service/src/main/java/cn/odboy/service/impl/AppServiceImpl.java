@@ -8,20 +8,19 @@ import cn.odboy.constant.AppUserRoleEnum;
 import cn.odboy.domain.App;
 import cn.odboy.domain.AppUser;
 import cn.odboy.domain.AppUserCollect;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import cn.odboy.model.GitlabProject;
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.mapper.AppMapper;
 import cn.odboy.mapper.AppUserCollectMapper;
-import cn.odboy.modules.system.domain.User;
-import cn.odboy.modules.system.service.UserService;
+import cn.odboy.system.core.domain.User;
+import cn.odboy.system.core.service.UserService;
 import cn.odboy.repository.GitlabProjectRepository;
 import cn.odboy.service.AppService;
 import cn.odboy.service.AppUserService;
 import cn.odboy.service.ProductLineAppService;
 import cn.odboy.util.SecurityUtil;
-import com.aliyun.dingtalkworkflow_1_0.models.SelectOption;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -152,10 +151,10 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     }
 
     @Override
-    public List<MetaOption> queryLevelList() {
-        List<MetaOption> result = new ArrayList<>();
+    public List<MetaOptionModel> queryLevelList() {
+        List<MetaOptionModel> result = new ArrayList<>();
         for (AppLevelEnum level : AppLevelEnum.values()) {
-            MetaOption option = new MetaOption();
+            MetaOptionModel option = new MetaOptionModel();
             option.setLabel(level.getDesc());
             option.setValue(level.getCode());
             result.add(option);
@@ -164,10 +163,10 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     }
 
     @Override
-    public List<MetaOption> queryLanguageList() {
-        List<MetaOption> result = new ArrayList<>();
+    public List<MetaOptionModel> queryLanguageList() {
+        List<MetaOptionModel> result = new ArrayList<>();
         for (AppLanguageEnum level : AppLanguageEnum.values()) {
-            MetaOption option = new MetaOption();
+            MetaOptionModel option = new MetaOptionModel();
             option.setLabel(level.getDesc());
             option.setValue(level.getCode());
             result.add(option);
@@ -209,10 +208,10 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     }
 
     @Override
-    public List<MetaOption> queryRoleList() {
-        List<MetaOption> result = new ArrayList<>();
+    public List<MetaOptionModel> queryRoleList() {
+        List<MetaOptionModel> result = new ArrayList<>();
         for (AppUserRoleEnum level : AppUserRoleEnum.values()) {
-            MetaOption option = new MetaOption();
+            MetaOptionModel option = new MetaOptionModel();
             option.setLabel(level.getDesc());
             option.setValue(level.getCode());
             result.add(option);
@@ -258,9 +257,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     }
 
     @Override
-    public List<MetaOption> queryProjectUrlList(App.QueryProjectUrlListArgs args) {
+    public List<MetaOptionModel> queryProjectUrlList(App.QueryProjectUrlListArgs args) {
         List<Project> projects = gitlabProjectRepository.listProjectsByAppName(args.getKey());
-        return projects.stream().map(m -> MetaOption.builder()
+        return projects.stream().map(m -> MetaOptionModel.builder()
                 .label(m.getHttpUrlToRepo())
                 .value(m.getId() + "")
                 .build()).collect(Collectors.toList());

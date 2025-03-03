@@ -15,11 +15,11 @@
  */
 package cn.odboy.modules.vital.rest;
 
-import cn.odboy.annotation.Log;
-import cn.odboy.model.CommonModel;
-import cn.odboy.model.PageArgs;
-import cn.odboy.modules.vital.domain.FavorDealingHistory;
-import cn.odboy.modules.vital.service.FavorDealingHistoryService;
+import cn.odboy.system.logging.annotation.Log;
+import cn.odboy.common.model.CommonModel;
+import cn.odboy.mybatisplus.model.PageArgs;
+import cn.odboy.vital.domain.FavorDealingHistory;
+import cn.odboy.vital.service.FavorDealingHistoryService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

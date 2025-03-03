@@ -4,8 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.odboy.domain.PipelineTemplateLanguage;
 import cn.odboy.domain.PipelineTemplateType;
 import cn.odboy.mapper.PipelineTemplateLanguageMapper;
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.service.PipelineTemplateLanguageConfigService;
 import cn.odboy.service.PipelineTemplateLanguageService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -34,12 +34,12 @@ public class PipelineTemplateLanguageServiceImpl extends ServiceImpl<PipelineTem
     private final PipelineTemplateLanguageConfigService pipelineTemplateLanguageConfigService;
 
     @Override
-    public List<MetaOption> queryLanguageList(PipelineTemplateLanguage.QueryArgs args) {
+    public List<MetaOptionModel> queryLanguageList(PipelineTemplateLanguage.QueryArgs args) {
         return list(new LambdaQueryWrapper<PipelineTemplateLanguage>()
                         .eq(PipelineTemplateLanguage::getTemplateId, args.getTemplateId())
                         .eq(PipelineTemplateLanguage::getEnvCode, args.getEnvCode())
                         .eq(PipelineTemplateLanguage::getAppLanguage, args.getAppLanguage())
-                ).stream().map(m -> MetaOption.builder().value(String.valueOf(m.getId())).label(m.getTemplateName()).build())
+                ).stream().map(m -> MetaOptionModel.builder().value(String.valueOf(m.getId())).label(m.getTemplateName()).build())
                 .collect(Collectors.toList());
     }
 

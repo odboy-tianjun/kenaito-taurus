@@ -30,8 +30,8 @@ import io.kubernetes.client.openapi.models.V1PodSpec;
 import io.kubernetes.client.openapi.models.V1PodStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.util.ValidationUtil;
+import cn.odboy.exception.BadRequestException;
+import cn.odboy.system.core.util.ValidationUtil;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;

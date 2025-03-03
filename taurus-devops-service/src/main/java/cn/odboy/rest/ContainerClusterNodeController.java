@@ -2,7 +2,7 @@ package cn.odboy.rest;
 
 import cn.odboy.domain.ContainerdClusterConfig;
 import cn.odboy.domain.ContainerdClusterNode;
-import cn.odboy.model.PageArgs;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.service.ContainerdClusterConfigService;
 import cn.odboy.service.ContainerdClusterNodeService;
 import io.swagger.annotations.Api;

@@ -15,15 +15,23 @@
     <dependencies>
         <dependency>
             <groupId>cn.odboy</groupId>
-            <artifactId>taurus-system-service</artifactId>
+            <artifactId>taurus-dingtalk-boot-starter</artifactId>
             <version>1.0</version>
         </dependency>
-
-        <!-- 文字转拼音 -->
         <dependency>
-            <groupId>com.belerweb</groupId>
-            <artifactId>pinyin4j</artifactId>
-            <version>2.5.1</version>
+            <groupId>cn.odboy</groupId>
+            <artifactId>taurus-gitlab-boot-starter</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.odboy</groupId>
+            <artifactId>taurus-k8s-boot-starter</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.odboy</groupId>
+            <artifactId>taurus-minio-boot-starter</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>

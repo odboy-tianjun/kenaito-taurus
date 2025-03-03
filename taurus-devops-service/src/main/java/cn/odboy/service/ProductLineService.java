@@ -1,8 +1,8 @@
 package cn.odboy.service;
 
 import cn.odboy.domain.ProductLine;
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -58,12 +58,12 @@ public interface ProductLineService extends IService<ProductLine> {
      *
      * @return /
      */
-    List<MetaOption> queryList();
+    List<MetaOptionModel> queryList();
 
     /**
      * 获取产品线路径列表
      *
      * @return /
      */
-    List<MetaOption> queryPathList();
+    List<MetaOptionModel> queryPathList();
 }

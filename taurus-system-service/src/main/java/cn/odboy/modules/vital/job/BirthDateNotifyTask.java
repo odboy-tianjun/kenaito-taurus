@@ -17,8 +17,8 @@
 //
 //import cn.hutool.core.collection.CollUtil;
 //import cn.hutool.core.date.DateUtil;
-//import cn.odboy.modules.vital.domain.BirthDateTimeline;
-//import cn.odboy.modules.vital.service.BirthDateTimelineService;
+//import cn.odboy.vital.domain.BirthDateTimeline;
+//import cn.odboy.vital.service.BirthDateTimelineService;
 //import cn.odboy.repository.DingtalkMessageRepository;
 //import cn.odboy.util.DingTalkTextColorUtil;
 //import lombok.RequiredArgsConstructor;

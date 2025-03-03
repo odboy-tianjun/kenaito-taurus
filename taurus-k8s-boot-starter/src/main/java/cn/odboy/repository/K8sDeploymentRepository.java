@@ -29,13 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 import cn.odboy.constant.K8sActionReasonCodeEnum;
 import cn.odboy.constant.K8sPodStatusEnum;
 import cn.odboy.context.K8sClientAdmin;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import cn.odboy.model.request.K8sDeployment;
 import cn.odboy.model.request.K8sPod;
 import cn.odboy.model.response.K8sResource;
 import cn.odboy.util.K8sDryRunUtil;
 import cn.odboy.util.K8sResourceNameUtil;
-import cn.odboy.util.ValidationUtil;
+import cn.odboy.system.core.util.ValidationUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

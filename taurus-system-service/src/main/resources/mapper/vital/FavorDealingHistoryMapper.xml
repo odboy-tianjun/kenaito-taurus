@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.odboy.modules.vital.mapper.FavorDealingHistoryMapper">
-    <select id="selectFavorDealingHistorys" resultType="cn.odboy.modules.vital.domain.FavorDealingHistory$SearchFavorDealingHistorys">
+    <select id="selectFavorDealingHistorys" resultType="cn.odboy.vital.domain.FavorDealingHistory$SearchFavorDealingHistorys">
         SELECT
         t1.*,
         t2.real_name AS contact_real_name,

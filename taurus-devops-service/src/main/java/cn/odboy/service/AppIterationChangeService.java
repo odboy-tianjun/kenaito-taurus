@@ -1,7 +1,7 @@
 package cn.odboy.service;
 
 import cn.odboy.domain.AppIterationChange;
-import cn.odboy.model.PageArgs;
+import cn.odboy.mybatisplus.model.PageArgs;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 

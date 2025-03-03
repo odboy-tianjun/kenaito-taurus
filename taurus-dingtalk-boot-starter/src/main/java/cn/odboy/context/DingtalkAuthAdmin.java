@@ -17,8 +17,8 @@ package cn.odboy.context;
 
 import cn.hutool.core.util.StrUtil;
 import cn.odboy.constant.DingtalkCacheKeyConst;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.infra.exception.util.LoggerFmtUtil;
+import cn.odboy.exception.BadRequestException;
+import cn.odboy.exception.util.LoggerFmtUtil;
 import cn.odboy.util.DingtalkClientConfigFactory;
 import cn.odboy.util.RedisUtil;
 import com.aliyun.dingtalkoauth2_1_0.models.GetAccessTokenResponse;

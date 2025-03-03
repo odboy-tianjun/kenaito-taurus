@@ -1,6 +1,6 @@
 package cn.odboy.domain;
 
-import cn.odboy.model.MyObject;
+import cn.odboy.mybatisplus.model.MyObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;

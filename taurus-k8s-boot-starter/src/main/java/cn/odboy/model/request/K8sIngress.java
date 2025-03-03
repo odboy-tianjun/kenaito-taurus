@@ -15,7 +15,7 @@
  */
 package cn.odboy.model.request;
 
-import cn.odboy.model.MyObject;
+import cn.odboy.mybatisplus.model.MyObject;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

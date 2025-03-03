@@ -1,10 +1,10 @@
 package cn.odboy.rest;
 
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
-import cn.odboy.model.PageResult;
-import cn.odboy.modules.system.domain.User;
-import cn.odboy.modules.system.service.UserService;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
+import cn.odboy.mybatisplus.model.PageResult;
+import cn.odboy.system.core.domain.User;
+import cn.odboy.system.core.service.UserService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,8 +38,8 @@ public class UserDataController {
     @PostMapping("/pageList")
     public ResponseEntity<Object> pageList(@RequestBody PageArgs<User.QueryArgs> args) {
         PageResult<User> result = userService.pageList(args.getBody(), new Page<>(args.getPage(), args.getPageSize()));
-        List<MetaOption> selectOptions = result.getContent().stream().map(m -> {
-            MetaOption option = new MetaOption();
+        List<MetaOptionModel> selectOptions = result.getContent().stream().map(m -> {
+            MetaOptionModel option = new MetaOptionModel();
             option.setValue(String.valueOf(m.getId()));
             option.setLabel(m.getUsername());
             return option;

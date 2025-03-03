@@ -2,11 +2,11 @@ package cn.odboy.modules.security.config;
 
 import cn.odboy.constant.RequestMethodEnum;
 import cn.odboy.modules.security.context.TokenHelper;
-import cn.odboy.modules.security.security.JwtAccessDeniedHandler;
-import cn.odboy.modules.security.security.JwtAuthenticationEntryPoint;
-import cn.odboy.modules.security.security.TokenConfigurer;
-import cn.odboy.modules.security.security.TokenProvider;
-import cn.odboy.modules.security.service.OnlineUserService;
+import cn.odboy.modules.security.context.JwtAccessDeniedHandler;
+import cn.odboy.modules.security.context.JwtAuthenticationEntryPoint;
+import cn.odboy.modules.security.context.TokenConfigurer;
+import cn.odboy.modules.security.context.TokenProvider;
+import cn.odboy.modules.security.service.OnlineUserServiceImpl;
 import cn.odboy.util.AnonTagUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
@@ -44,7 +44,7 @@ public class SpringSecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final ApplicationContext applicationContext;
     private final SecurityProperties properties;
-    private final OnlineUserService onlineUserService;
+    private final OnlineUserServiceImpl onlineUserService;
     private final TokenHelper tokenHelper;
 
     @Bean

@@ -16,10 +16,10 @@
 package cn.odboy.modules.vital.job;
 
 import cn.hutool.core.date.*;
-import cn.odboy.modules.vital.constant.BirthDateComputeModeEnum;
-import cn.odboy.modules.vital.domain.BirthDate;
-import cn.odboy.modules.vital.service.BirthDateService;
-import cn.odboy.modules.vital.service.CalendarDictService;
+import cn.odboy.vital.constant.BirthDateComputeModeEnum;
+import cn.odboy.vital.domain.BirthDate;
+import cn.odboy.vital.service.BirthDateService;
+import cn.odboy.vital.service.CalendarDictService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;

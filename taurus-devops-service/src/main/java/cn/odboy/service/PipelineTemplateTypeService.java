@@ -1,8 +1,8 @@
 package cn.odboy.service;
 
 import cn.odboy.domain.PipelineTemplateType;
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * @since 2024-11-22
  */
 public interface PipelineTemplateTypeService extends IService<PipelineTemplateType> {
-    List<MetaOption> queryList();
+    List<MetaOptionModel> queryList();
 
     IPage<PipelineTemplateType.QueryPage> queryPage(PageArgs<PipelineTemplateType> args);
 

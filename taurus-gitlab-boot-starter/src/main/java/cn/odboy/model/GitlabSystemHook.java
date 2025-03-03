@@ -15,6 +15,7 @@
  */
 package cn.odboy.model;
 
+import cn.odboy.mybatisplus.model.MyObject;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;

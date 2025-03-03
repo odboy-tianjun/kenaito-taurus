@@ -6,10 +6,10 @@ import cn.odboy.constant.GitlabBizConst;
 import cn.odboy.context.K8sConfigHelper;
 import cn.odboy.context.K8sHealthChecker;
 import cn.odboy.domain.ContainerdClusterConfig;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import cn.odboy.constant.K8sEnvEnum;
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.mapper.ContainerdClusterConfigMapper;
 import cn.odboy.service.ContainerdClusterConfigService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -87,10 +87,10 @@ public class ContainerdClusterConfigServiceImpl extends ServiceImpl<ContainerdCl
     }
 
     @Override
-    public List<MetaOption> queryEnvList() {
-        List<MetaOption> result = new ArrayList<>();
+    public List<MetaOptionModel> queryEnvList() {
+        List<MetaOptionModel> result = new ArrayList<>();
         for (K8sEnvEnum level : K8sEnvEnum.values()) {
-            MetaOption option = new MetaOption();
+            MetaOptionModel option = new MetaOptionModel();
             option.setLabel(level.getDesc());
             option.setValue(level.getCode());
             result.add(option);

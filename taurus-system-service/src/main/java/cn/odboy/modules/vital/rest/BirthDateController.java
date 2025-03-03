@@ -15,12 +15,11 @@
  */
 package cn.odboy.modules.vital.rest;
 
-import cn.odboy.annotation.Log;
-import cn.odboy.model.CommonModel;
-import cn.odboy.model.PageArgs;
-import cn.odboy.model.PageResult;
-import cn.odboy.modules.vital.domain.BirthDate;
-import cn.odboy.modules.vital.service.BirthDateService;
+import cn.odboy.system.logging.annotation.Log;
+import cn.odboy.common.model.CommonModel;
+import cn.odboy.mybatisplus.model.PageArgs;
+import cn.odboy.vital.domain.BirthDate;
+import cn.odboy.vital.service.BirthDateService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;

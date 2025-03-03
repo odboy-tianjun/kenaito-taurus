@@ -19,7 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import cn.odboy.model.MyObject;
+import cn.odboy.mybatisplus.model.MyObject;
 
 import javax.validation.constraints.NotBlank;
 

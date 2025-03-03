@@ -2,8 +2,8 @@ package cn.odboy.service;
 
 import cn.odboy.constant.ContainerdClusterConfigEnvStatusEnum;
 import cn.odboy.domain.ContainerdClusterConfig;
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -22,7 +22,7 @@ public interface ContainerdClusterConfigService extends IService<ContainerdClust
 
     void create(ContainerdClusterConfig.CreateArgs args);
 
-    List<MetaOption> queryEnvList();
+    List<MetaOptionModel> queryEnvList();
 
     void modify(ContainerdClusterConfig.ModifyArgs args);
 

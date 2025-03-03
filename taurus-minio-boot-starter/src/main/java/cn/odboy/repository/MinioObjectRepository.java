@@ -21,7 +21,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.odboy.constant.MinioConst;
 import cn.odboy.context.MinioClientAdmin;
 import cn.odboy.context.MinioProperties;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import cn.odboy.model.MinioStorage;
 import cn.odboy.util.RedisUtil;
 import io.minio.*;

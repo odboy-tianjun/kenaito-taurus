@@ -1,7 +1,7 @@
 package cn.odboy.service.impl;
 
 import cn.odboy.domain.ProductLineApp;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import cn.odboy.mapper.ProductLineAppMapper;
 import cn.odboy.service.ProductLineAppService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

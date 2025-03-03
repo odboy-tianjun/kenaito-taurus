@@ -15,9 +15,10 @@
  */
 package cn.odboy.model.request;
 
+import cn.odboy.mybatisplus.model.MyObject;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import cn.odboy.model.MyObject;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -36,6 +37,7 @@ public class K8sDeployment {
      * 创建Deployment
      */
     @Data
+    @Builder
     @EqualsAndHashCode(callSuper = false)
     public static class CreateArgs extends MyObject {
         /**

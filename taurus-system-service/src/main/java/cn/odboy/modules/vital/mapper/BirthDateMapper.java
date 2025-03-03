@@ -15,7 +15,7 @@
  */
 package cn.odboy.modules.vital.mapper;
 
-import cn.odboy.modules.vital.domain.BirthDate;
+import cn.odboy.vital.domain.BirthDate;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;

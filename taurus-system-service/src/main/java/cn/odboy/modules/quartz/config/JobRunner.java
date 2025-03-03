@@ -16,7 +16,7 @@
 package cn.odboy.modules.quartz.config;
 
 import cn.odboy.modules.quartz.context.QuartzManage;
-import cn.odboy.modules.quartz.domain.QuartzJob;
+import cn.odboy.system.quartz.domain.QuartzJob;
 import cn.odboy.modules.quartz.mapper.QuartzJobMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

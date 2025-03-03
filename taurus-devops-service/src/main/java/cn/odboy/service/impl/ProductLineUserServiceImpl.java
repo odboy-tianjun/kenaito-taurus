@@ -2,7 +2,7 @@ package cn.odboy.service.impl;
 
 import cn.odboy.domain.ProductLineUser;
 import cn.odboy.mapper.ProductLineUserMapper;
-import cn.odboy.model.MetaOption;
+import cn.odboy.common.model.MetaOptionModel;
 import cn.odboy.service.ProductLineUserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -35,7 +35,7 @@ public class ProductLineUserServiceImpl extends ServiceImpl<ProductLineUserMappe
     }
 
     @Override
-    public List<MetaOption> queryProductLineUserList(Long productLineId, String roleCode) {
+    public List<MetaOptionModel> queryProductLineUserList(Long productLineId, String roleCode) {
         return getBaseMapper().selectProductLineUserList(productLineId, roleCode);
     }
 }

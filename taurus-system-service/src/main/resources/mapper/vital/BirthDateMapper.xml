@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.odboy.modules.vital.mapper.BirthDateMapper">
-    <select id="selectBirthDates" resultType="cn.odboy.modules.vital.domain.BirthDate$SearchBirthDates">
+    <select id="selectBirthDates" resultType="cn.odboy.vital.domain.BirthDate$SearchBirthDates">
         SELECT t1.*,
         t2.real_name AS contact_real_name,
         t2.nick_name AS contact_nick_name

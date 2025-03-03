@@ -1,11 +1,8 @@
 package cn.odboy.service;
 
-//import cn.odboy.base.model.SelectOption;
-
 import cn.odboy.domain.App;
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
-import com.aliyun.dingtalkworkflow_1_0.models.SelectOption;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -41,14 +38,14 @@ public interface AppService extends IService<App> {
      *
      * @return /
      */
-    List<MetaOption> queryLevelList();
+    List<MetaOptionModel> queryLevelList();
 
     /**
      * 获取应用语言列表
      *
      * @return /
      */
-    List<MetaOption> queryLanguageList();
+    List<MetaOptionModel> queryLanguageList();
 
     /**
      * 收藏应用
@@ -69,7 +66,7 @@ public interface AppService extends IService<App> {
      *
      * @return /
      */
-    List<MetaOption> queryRoleList();
+    List<MetaOptionModel> queryRoleList();
 
     /**
      * 绑定应用成员
@@ -92,5 +89,5 @@ public interface AppService extends IService<App> {
      */
     void unBindMember(App.UnBindMemberArgs args);
 
-    List<MetaOption> queryProjectUrlList(App.QueryProjectUrlListArgs args);
+    List<MetaOptionModel> queryProjectUrlList(App.QueryProjectUrlListArgs args);
 }

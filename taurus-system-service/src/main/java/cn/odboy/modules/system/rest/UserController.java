@@ -16,17 +16,17 @@
 package cn.odboy.modules.system.rest;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.odboy.annotation.Log;
+import cn.odboy.mybatisplus.model.PageResult;
+import cn.odboy.system.core.service.*;
+import cn.odboy.system.core.util.PageUtil;
+import cn.odboy.system.logging.annotation.Log;
 import cn.odboy.constant.CodeEnum;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import cn.odboy.infra.security.RsaProperties;
-import cn.odboy.model.PageResult;
-import cn.odboy.modules.system.domain.Dept;
-import cn.odboy.modules.system.domain.Role;
-import cn.odboy.modules.system.domain.User;
-import cn.odboy.modules.system.domain.vo.UserPassVo;
-import cn.odboy.modules.system.service.*;
-import cn.odboy.util.PageUtil;
+import cn.odboy.system.core.domain.Dept;
+import cn.odboy.system.core.domain.Role;
+import cn.odboy.system.core.domain.User;
+import cn.odboy.system.core.model.UserPassVo;
 import cn.odboy.util.RsaUtil;
 import cn.odboy.util.SecurityUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;

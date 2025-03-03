@@ -3,7 +3,7 @@ package cn.odboy.service.impl;
 import cn.hutool.core.util.StrUtil;
 import cn.odboy.domain.ContainerdClusterNode;
 import cn.odboy.constant.K8sEnvEnum;
-import cn.odboy.model.PageArgs;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.mapper.ContainerdClusterNodeMapper;
 import cn.odboy.service.ContainerdClusterNodeService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;

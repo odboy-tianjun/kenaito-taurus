@@ -28,7 +28,7 @@ import com.dingtalk.api.response.OapiChatSubadminUpdateResponse;
 import com.dingtalk.api.response.OapiChatUpdateResponse;
 import lombok.extern.slf4j.Slf4j;
 import cn.odboy.context.DingtalkAuthAdmin;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

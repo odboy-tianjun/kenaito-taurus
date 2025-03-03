@@ -16,7 +16,7 @@
 package cn.odboy.repository;
 
 import cn.odboy.context.GitlabAuthAdmin;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.gitlab4j.api.GitLabApi;
 import org.gitlab4j.api.GroupApi;

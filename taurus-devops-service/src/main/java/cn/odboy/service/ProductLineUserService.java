@@ -1,7 +1,7 @@
 package cn.odboy.service;
 
 import cn.odboy.domain.ProductLineUser;
-import cn.odboy.model.MetaOption;
+import cn.odboy.common.model.MetaOptionModel;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -20,5 +20,5 @@ public interface ProductLineUserService extends IService<ProductLineUser> {
 
     void removeBatchByProductLineIds(List<Long> ids);
 
-    List<MetaOption> queryProductLineUserList(Long productLineId, String roleCode);
+    List<MetaOptionModel> queryProductLineUserList(Long productLineId, String roleCode);
 }

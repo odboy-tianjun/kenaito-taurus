@@ -19,7 +19,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.odboy.callback.GitlabPipelineJobExecuteCallback;
 import cn.odboy.context.GitlabAuthAdmin;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import cn.odboy.model.GitlabPipelineJob;
 import lombok.extern.slf4j.Slf4j;
 import org.gitlab4j.api.GitLabApi;

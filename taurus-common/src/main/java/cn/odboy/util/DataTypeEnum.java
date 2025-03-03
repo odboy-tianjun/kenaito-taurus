@@ -35,7 +35,7 @@ public enum DataTypeEnum {
      */
     ORACLE("oracle", "oracle", "oracle.jdbc.driver.OracleDriver", "\"", "\"", "\"", "\""),
     /**
-     * sql server
+     * sql config
      */
     SQLSERVER("sqlserver", "sqlserver", "com.microsoft.sqlserver.jdbc.SQLServerDriver", "\"", "\"", "\"", "\""),
     /**

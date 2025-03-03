@@ -1,7 +1,7 @@
 package cn.odboy.rest;
 
 import cn.odboy.domain.AppIterationChange;
-import cn.odboy.model.PageArgs;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.service.AppIterationChangeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -6,12 +6,12 @@ import cn.odboy.constant.ProductLineUserRoleEnum;
 import cn.odboy.domain.ProductLine;
 import cn.odboy.domain.ProductLineUser;
 import cn.odboy.mapper.ProductLineMapper;
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.service.ProductLineAppService;
 import cn.odboy.service.ProductLineService;
 import cn.odboy.service.ProductLineUserService;
-import cn.odboy.util.CollUtil;
+import cn.odboy.common.util.CollUtil;
 import cn.odboy.util.ProductLineHelper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -144,9 +144,9 @@ public class ProductLineServiceImpl extends ServiceImpl<ProductLineMapper, Produ
     }
 
     @Override
-    public List<MetaOption> queryList() {
+    public List<MetaOptionModel> queryList() {
         return list().stream().map(m -> {
-            MetaOption selectOption = new MetaOption();
+            MetaOptionModel selectOption = new MetaOptionModel();
             selectOption.setLabel(String.valueOf(m.getId()));
             selectOption.setValue(m.getName());
             return selectOption;
@@ -154,8 +154,8 @@ public class ProductLineServiceImpl extends ServiceImpl<ProductLineMapper, Produ
     }
 
     @Override
-    public List<MetaOption> queryPathList() {
-        List<MetaOption> result = new ArrayList<>(10);
+    public List<MetaOptionModel> queryPathList() {
+        List<MetaOptionModel> result = new ArrayList<>(10);
         List<ProductLine> productLines = list(new LambdaQueryWrapper<ProductLine>()
                 .orderByDesc(ProductLine::getId)
         );
@@ -167,13 +167,13 @@ public class ProductLineServiceImpl extends ServiceImpl<ProductLineMapper, Produ
 
         for (ProductLine productLine : productLines) {
             List<String> paths = ProductLineHelper.generatePath(productLine, menuMap);
-            MetaOption option = new MetaOption();
+            MetaOptionModel option = new MetaOptionModel();
             option.setLabel(String.join("/", paths));
             option.setValue(String.valueOf(productLine.getId()));
             result.add(option);
         }
 
-        result.sort(Comparator.comparing(MetaOption::getLabel));
+        result.sort(Comparator.comparing(MetaOptionModel::getLabel));
         return result;
     }
 }

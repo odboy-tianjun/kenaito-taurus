@@ -15,9 +15,10 @@
  */
 package cn.odboy.model.request;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import cn.odboy.model.MyObject;
+import cn.odboy.mybatisplus.model.MyObject;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -32,6 +33,7 @@ import java.util.Map;
  */
 public class K8sStatefulSet {
     @Data
+    @Builder
     @EqualsAndHashCode(callSuper = false)
     public static class CreateArgs extends MyObject {
         /**
@@ -93,6 +95,7 @@ public class K8sStatefulSet {
     }
 
     @Data
+    @Builder
     @EqualsAndHashCode(callSuper = false)
     public static class ChangeReplicasArgs extends MyObject {
         /**
@@ -118,6 +121,7 @@ public class K8sStatefulSet {
     }
 
     @Data
+    @Builder
     @EqualsAndHashCode(callSuper = false)
     public static class ChangeImageArgs extends MyObject {
         /**
@@ -142,6 +146,7 @@ public class K8sStatefulSet {
     }
 
     @Data
+    @Builder
     @EqualsAndHashCode(callSuper = false)
     public static class ChangeSpecsArgs extends MyObject {
         /**

@@ -10,7 +10,7 @@ import cn.odboy.repository.K8sNodeRepository;
 import cn.odboy.repository.K8sPodRepository;
 import cn.odboy.service.ContainerdClusterConfigService;
 import cn.odboy.service.ContainerdClusterNodeService;
-import cn.odboy.util.CollUtil;
+import cn.odboy.common.util.CollUtil;
 import io.kubernetes.client.openapi.models.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

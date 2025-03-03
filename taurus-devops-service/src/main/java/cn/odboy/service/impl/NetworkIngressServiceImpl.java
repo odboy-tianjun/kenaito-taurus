@@ -8,7 +8,7 @@ import cn.odboy.constant.NetworkTypeSuffixEnum;
 import cn.odboy.domain.NetworkIngress;
 import cn.odboy.domain.NetworkService;
 import cn.odboy.mapper.NetworkIngressMapper;
-import cn.odboy.model.PageArgs;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.model.request.K8sIngress;
 import cn.odboy.model.request.K8sNamespace;
 import cn.odboy.repository.K8sIngressRepository;

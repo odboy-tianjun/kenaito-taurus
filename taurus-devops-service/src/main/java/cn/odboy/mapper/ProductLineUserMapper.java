@@ -1,7 +1,7 @@
 package cn.odboy.mapper;
 
 import cn.odboy.domain.ProductLineUser;
-import cn.odboy.model.MetaOption;
+import cn.odboy.common.model.MetaOptionModel;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -18,5 +18,5 @@ import java.util.List;
  */
 @Mapper
 public interface ProductLineUserMapper extends BaseMapper<ProductLineUser> {
-    List<MetaOption> selectProductLineUserList(@Param("productLineId") Long productLineId, @Param("roleCode") String roleCode);
+    List<MetaOptionModel> selectProductLineUserList(@Param("productLineId") Long productLineId, @Param("roleCode") String roleCode);
 }

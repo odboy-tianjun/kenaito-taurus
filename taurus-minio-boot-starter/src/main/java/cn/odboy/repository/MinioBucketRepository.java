@@ -17,8 +17,8 @@ package cn.odboy.repository;
 
 import cn.odboy.constant.MinioConst;
 import cn.odboy.context.MinioClientAdmin;
-import cn.odboy.infra.exception.BadRequestException;
-import cn.odboy.infra.exception.util.LoggerFmtUtil;
+import cn.odboy.exception.BadRequestException;
+import cn.odboy.exception.util.LoggerFmtUtil;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;

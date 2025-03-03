@@ -16,7 +16,7 @@
 package cn.odboy.modules.vital.mapper;
 
 import cn.odboy.infra.mybatisplus.EasyMapper;
-import cn.odboy.modules.vital.domain.FavorDealingHistory;
+import cn.odboy.vital.domain.FavorDealingHistory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

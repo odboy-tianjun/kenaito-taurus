@@ -4,10 +4,10 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.odboy.constant.RegexConst;
 import cn.odboy.domain.PipelineTemplateType;
-import cn.odboy.infra.exception.BadRequestException;
+import cn.odboy.exception.BadRequestException;
 import cn.odboy.mapper.PipelineTemplateTypeMapper;
-import cn.odboy.model.MetaOption;
-import cn.odboy.model.PageArgs;
+import cn.odboy.common.model.MetaOptionModel;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.service.PipelineTemplateLanguageService;
 import cn.odboy.service.PipelineTemplateTypeService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -35,9 +35,9 @@ public class PipelineTemplateTypeServiceImpl extends ServiceImpl<PipelineTemplat
     private final PipelineTemplateLanguageService pipelineTemplateLanguageService;
 
     @Override
-    public List<MetaOption> queryList() {
+    public List<MetaOptionModel> queryList() {
         return list().stream()
-                .map(m -> MetaOption.builder()
+                .map(m -> MetaOptionModel.builder()
                         .label(m.getTemplateName())
                         .value(String.valueOf(m.getId()))
                         .build())

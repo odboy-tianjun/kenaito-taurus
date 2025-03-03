@@ -1,7 +1,7 @@
 package cn.odboy.rest;
 
 import cn.odboy.domain.ContainerdSpecConfig;
-import cn.odboy.model.PageArgs;
+import cn.odboy.mybatisplus.model.PageArgs;
 import cn.odboy.service.ContainerdSpecConfigService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -129,11 +129,11 @@ public class KruiseAppsV1alpha1ImageTagSpec {
     }
 
     /**
-     * An opaque value that represents the internal version of this tag that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the server.   Populated by the system. Read-only. Value must be treated as opaque by clients and .
+     * An opaque value that represents the internal version of this tag that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the config.   Populated by the system. Read-only. Value must be treated as opaque by clients and .
      *
      * @return version
      **/
-    @ApiModelProperty(value = "An opaque value that represents the internal version of this tag that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the server.   Populated by the system. Read-only. Value must be treated as opaque by clients and .")
+    @ApiModelProperty(value = "An opaque value that represents the internal version of this tag that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the config.   Populated by the system. Read-only. Value must be treated as opaque by clients and .")
     public Long getVersion() {
         return version;
     }

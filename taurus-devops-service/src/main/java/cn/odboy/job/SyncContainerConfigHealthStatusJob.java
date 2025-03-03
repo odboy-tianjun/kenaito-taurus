@@ -5,7 +5,7 @@ import cn.odboy.context.K8sConfigHelper;
 import cn.odboy.context.K8sHealthChecker;
 import cn.odboy.domain.ContainerdClusterConfig;
 import cn.odboy.service.ContainerdClusterConfigService;
-import cn.odboy.util.CollUtil;
+import cn.odboy.common.util.CollUtil;
 import io.kubernetes.client.openapi.ApiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
